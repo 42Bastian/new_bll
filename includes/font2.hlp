@@ -1,0 +1,35 @@
+;***************
+;* loads fonts
+;* !! place at very end
+;***************
+	align 2	; Ladeadresse gerade
+BigFnt	IF BIGFNTuser
+	ibytes <font/big.fnt>
+	ELSE
+	dw 0
+	ENDIF
+	align 2
+LittleFnt	IF LITTLEFNTuser
+	ibytes <font/little.fnt>
+	ELSE
+	dw 0
+	ENDIF
+	align 2
+SmallFnt	IF SMALLFNTuser
+	ibytes <font/small.fnt>
+	ELSE
+	dw 0
+	endif
+	align 2
+SmallFnt2	IF SMALLFNT2user
+	ibytes <font/small2.fnt>
+	ELSE
+	dw 0
+	ENDIF
+	align 2
+LittleFnt2	IF LITTLEFNT2user
+	ibytes <font/little2.fnt>
+	ELSE
+	dw 0
+	ENDIF
+
