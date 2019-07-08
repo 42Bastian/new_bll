@@ -1,0 +1,49 @@
+  # This is a comment. It extends to the end of the line
+GLOBAL {	
+    OUTPUTNAME      "rom.s";
+    INPUTNAME       "LYNX.ROM";
+    STARTADDR       $FE00;
+    PAGELENGTH      0;                  
+    CPU             "65SC02";
+  };
+
+LABEL { NAME "blockCount"; ADDR $7;    };
+LABEL { NAME "ptr";        ADDR 5; SIZE 2;};
+LABEL { NAME "MIKEY";      ADDR $FD00; };
+LABEL { NAME "SYSCTL1";    ADDR $FD87; };
+LABEL { NAME "IODIR";      ADDR $FD8A; };
+LABEL { NAME "IODAT";      ADDR $FD8B; };
+LABEL { NAME "MEMMAP";     ADDR $FFF9; };
+LABEL { NAME "GREEN_F";    ADDR $FDAF; };
+LABEL { NAME "BLUERED_F";  ADDR $FDBF; };
+LABEL { NAME "SDONEACK";   ADDR $FD90; };
+LABEL { NAME "CPUSLEEP";   ADDR $FD91; };
+
+LABEL { NAME "SUZY";       ADDR $FC00; };
+LABEL { NAME "SUZYHREV";   ADDR $FC88; };
+LABEL { NAME "RCARD";      ADDR $FCB2; };
+
+LABEL { NAME "selSector";  ADDR $FE00; };
+LABEL { NAME "boot";       ADDR $FF80; };
+LABEL { NAME "ClearRAM";   ADDR $FE19; };
+LABEL { NAME "setupMikey"; ADDR $FE26; };
+LABEL { NAME "setupSuzy";  ADDR $FEAA; };
+LABEL { NAME "ramCode";    ADDR $FEC1; };
+LABEL { NAME "sub";        ADDR $FF1E; };
+LABEL { NAME "xx";         ADDR $5000; };
+LABEL { NAME "sub_ram";    ADDR $505D; };
+LABEL { NAME "InsertDate_ram";    ADDR $5092; };
+
+RANGE { NAME "RSAKey"; START $FF9A; END $FFCB; TYPE ByteTable; };
+RANGE { NAME "InsertSCB"; START $FF43; END $FF47;TYPE ByteTable; };
+RANGE { NAME "InsertSpritePtr"; START $FF48; END $FF49;TYPE wordTable; };
+RANGE { NAME "InsertSCB2"; START $FF4a; END $FF52; TYPE ByteTable; };
+RANGE { NAME "InsertData"; START $FF53; END $FF7f; TYPE ByteTable; };
+RANGE { NAME "SuzyInitData"; START $FFEF;    END   $FFF7; TYPE ByteTable; };
+RANGE { NAME "SuzyInitOffset"; START $FFE6;    END   $FFEE; TYPE ByteTable; };
+
+RANGE { NAME "MikeyInitOffset"; START $FFCC;    END   $FFD7; TYPE ByteTable; };
+RANGE { NAME "MikeyInitData"; START $FFD8;    END   $FFE5; TYPE ByteTable; };
+#RANGE { NAME "INSERT_GAME"; START $FF4C;    END   $FF7F; TYPE ByteTable; };
+RANGE { START $FFFA; END $FFFF; TYPE WORDTABLE; };
+

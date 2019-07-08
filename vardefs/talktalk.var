@@ -1,0 +1,34 @@
+*************************
+* TALKTALK-vars
+* (c) 1994 Bastian Schick
+* created : 290694
+* modified
+* 06.05.96	BS	-> English
+************************
+IFND MessageBufferLen
+MessageBufferLen equ 10
+ENDIF
+
+ BEGIN_ZP
+MessagePtrIn	ds 1
+MessagePtrOut	ds 1
+MessageLenIn	ds 1
+MessageLenOut	ds 1
+MessageReceived	ds 1
+MessageDone	ds 1
+FirstByteIn	ds 1
+
+SerialContrl	ds 1
+SerialTimeOut	ds 1
+SerialStat	ds 1
+TimeOutFlag	ds 1
+
+CheckInFlag	ds 1
+CheckIn	ds 1
+CheckOutFlag	ds 1
+ END_ZP
+
+ BEGIN_MEM
+MessageBufferIn	ds MessageBufferLen
+MessageBufferOut ds MessageBufferLen
+ END_MEM

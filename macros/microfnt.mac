@@ -1,0 +1,69 @@
+;
+; MACROs for microfnt and microfn1
+;
+
+                macro INIT_MICROFNT
+
+                ifnd mfnt
+
+                include <microfnt/microfnt.equ>
+                jmp .\_0
+mfnt            ibytes <microfnt/microfnt.o>
+
+.\_0            clc
+                lda mfnt+3
+                adc #32
+                sta temp
+                lda mfnt+2
+                adc #0
+                sta temp+1
+
+                lda #<(mfnt+10+32)
+                sta temp1
+                lda #>(mfnt+10+32)
+                sta temp1+1
+
+                sec
+                lda mfnt+5
+                sbc #32
+                sta mfnt+5
+                lda mfnt+4
+                sbc #0
+                tax
+
+                ldy #0
+.\_1             lda (temp1),y
+                sta (temp),y
+                iny
+                bne .\_1
+                inc temp+1
+                inc temp1+1
+                dex
+                bne .\_1
+.\_2             lda (temp1),y
+                sta (temp),y
+                iny
+                cpy mfnt+5
+                bne .\_2
+
+                ldx #7
+.\_3              lda mfnt+10,x
+                  sta $fda0,x
+                  lda mfnt+10+16,x
+                  sta $fdb0,x
+                  dex
+                bpl .\_3
+
+                endif
+                endm
+
+
+                macro MFNT_PRINTSTRINGXY
+                ldx \0
+                ldy \1
+                lda #>\2
+                pha
+                lda #<\2
+                jsr MFNT_PrintStringXY
+                ENDM
+

@@ -1,0 +1,19 @@
+_PAUSE	equ %00001
+_FIREA	equ %00010
+_FIREB	equ %00100
+_OPT2	equ %01000
+_OPT1	equ %10000
+
+_RESTART	equ _PAUSE+_OPT1
+_FLIP	equ _PAUSE+_OPT2
+;---------------
+	MACRO SET_KEYCOUNTER
+	lda #$ff-(<(\0))
+	sta KeyCounter
+	lda #$ff-(>(\0))
+	sta KeyCounter+1
+	ENDM
+
+	MACRO INITKEY
+	jsr InitKey
+	ENDM

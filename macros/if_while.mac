@@ -1,0 +1,415 @@
+;**************
+                MACRO _IFNE
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                beq .\_ELSE@
+                ENDM
+
+                MACRO _IFEQ
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                bne .\_ELSE@
+                ENDM
+
+                MACRO _IFHI
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                bcc .\_ELSE@
+                beq .\_ELSE@
+                ENDM
+
+                MACRO _IFLS
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                beq .\mcont@
+                bcs .\_ELSE@
+.\mcont@
+                ENDM
+                MACRO _IFLO
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                bcs .\_ELSE@
+                ENDM
+
+                MACRO _IFGE
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                blt .\_ELSE@
+                ENDM
+*
+                MACRO _IFLT
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                bge .\_ELSE@
+                ENDM
+*
+                MACRO _IFPL
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                bmi .\_ELSE@
+                ENDM
+*
+                MACRO _IFMI
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                INC@
+                bpl .\_ELSE@
+                ENDM
+
+                MACRO _IFCC
+                INC@
+                bcs .\_ELSE@
+                ENDM
+
+
+                MACRO _IFCS
+                INC@
+                bcc .\_ELSE@
+                ENDM
+
+                MACRO _IFVC
+                INC@
+                bvs .\_ELSE@
+                ENDM
+
+
+                MACRO _IFVS
+                INC@
+                bvc .\_ELSE@
+                ENDM
+
+
+;***************
+                MACRO _ELSE
+                IFVAR \0
+                  jmp .\_ENDIF@
+                ELSE
+                  bra .\_ENDIF@
+                ENDIF
+.\_ELSE@
+                ENDM
+;***************
+                MACRO _ENDIF
+.\_ELSE@
+.\_ENDIF@
+                DEC@
+                ENDM
+;***************
+                MACRO _SWITCH
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+FIRSTCASE       SET 0
+                INC@
+                ENDM
+;***************
+                MACRO _CASE
+FIRSTCASE       set FIRSTCASE+1
+                IF FIRSTCASE>1
+                  bra .\ENDSWITCH
+                ENDIF
+.\_CASE@        IFVAR \0
+                  CMP \0
+                ENDIF
+                INC@
+                bne .\_CASE@
+                ENDM
+
+                MACRO _BCASE
+FIRSTCASE       set FIRSTCASE+1
+                IF FIRSTCASE>1
+                  bra .\ENDSWITCH
+                ENDIF
+.\_CASE@        IFVAR \0
+                  BIT \0
+                ENDIF
+                INC@
+                beq .\_CASE@
+                ENDM
+;***************
+                MACRO _ELSES
+                bra .\ENDSWITCH
+.\_CASE@
+                ENDM
+                MACRO _ENDS
+.\_CASE@
+.\ENDSWITCH
+                rept FIRSTCASE+1
+                dec@
+                endr
+                ENDM
+;***************
+                MACRO _WHILENE
+                INC@
+_WHILE@         SET *
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                BEQ .\WEND@
+                ENDM
+                MACRO _WHILEEQ
+                INC@
+_WHILE@         SET *
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                BNE .\WEND@
+                ENDM
+                MACRO _WHILEHI
+                INC@
+_WHILE@         SET *
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                BCC .\WEND@
+                BEQ .\WEND@
+                ENDM
+                MACRO _WHILEHS
+                INC@
+_WHILE@         SET *
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                BCC .\WEND@
+                ENDM
+                MACRO _WHILELO
+                INC@
+_WHILE@         SET *
+                IFVAR \0
+                  SWITCH "\0"
+                    CASE "X"
+                      txa
+                    CASE "x"
+                      txa
+                    CASE "Y"
+                      tya
+                    CASE "y"
+                      tya
+                    ELSES
+                      LDA \0
+                  ENDS
+                ENDIF
+                IFVAR \1
+                  CMP \1
+                ENDIF
+                BCS .\WEND@
+                ENDM
+
+                MACRO _WEND
+                bra _WHILE@
+.\WEND@
+                DEC@
+                ENDM
+;***************
+

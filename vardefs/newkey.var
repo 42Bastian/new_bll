@@ -1,0 +1,39 @@
+* NewKey.Var
+*
+* created : 28.03.96
+*
+* last modified :
+*
+* 31.03.96	Keybuffer included
+*
+*
+* * Enable*Repeat :
+* a set bit enable repeat for that key
+*
+
+ BEGIN_ZP
+DelayCursor	ds 1
+RepeatCursor	ds 1
+DelayButton	ds 1
+RepeatButton	ds 1
+EnableCursorRepeat
+	ds 1
+EnableButtonRepeat
+	ds 1
+
+LastButton	ds 1
+LastCursor	ds 1
+CurrentButton	ds 1	; last key outa buffer
+CurrentCursor	ds 1
+KeyPtrIn	ds 1
+KeyPtrOut	ds 1
+
+PauseEnable	ds 1
+PauseFlag	ds 1
+PausePtr	ds 4
+ END_ZP
+
+ BEGIN_MEM
+KeyBuffer	ds 8	; button-buffer
+	ds 8	; cursor-buffer
+ END_MEM

@@ -1,0 +1,65 @@
+; -*-asm-*-
+; variables for WINDOW
+
+ STRUCT WCB
+ IF SCR_MAX_X>255
+WCBX	dw 0
+ ELSE
+WCBX	db 0
+ ENDIF
+ IF SCR_MAX_Y>255
+WCBY	dw 0
+ ELSE
+WCBY	db 0
+ ENDIF
+ IF SCR_MAX_X>255
+WCBW	dw 0
+ ELSE
+WCBW	db 0	; width in pels
+ ENDIF
+ IF SCR_MAX_Y>255
+WCBH	dw 0
+ ELSE
+WCBH	db 0	; height in pels
+ ENDIF
+WCBCol	db 0	; inner color
+WCBBorder	db 0	; frame-color
+WCBBorderW	db 0	; frame-width
+WCBDest	dw 0	; address for buffered-background
+		; 0 => no buffering
+ ENDSTRUCT WCB
+*************
+* Control-Block for lines,points and (filled) rectangles
+*************
+ STRUCT LCB	; LineControlBlock
+ IF SCR_MAX_X>255
+LineX	dw 0
+ ELSE
+LineX	db 0
+ ENDIF
+ IF SCR_MAX_Y>255
+LineY	dw 0
+ ELSE
+LineY	db 0
+ ENDIF
+ IF SCR_MAX_X>255
+LineW	dw 0
+ ELSE
+LineW	db 0
+ ENDIF
+ IF SCR_MAX_Y>255
+LineH	dw 0
+ ELSE
+LineH	db 0
+ ENDIF
+LineColor	db 0
+LineWidth	db 0
+ ENDSTRUCT LCB
+
+ BEGIN_ZP
+ptr	dw 0
+ptr2	dw 0
+TempLCB	ds LCB.LEN
+TempVal	dw 0
+TempVal2	dw 0
+ END_ZP

@@ -1,0 +1,39 @@
+DEFINT "a-z"
+color=0
+CLR c
+OPEN "o",#1,"f:\colors.dat"
+FOR col=0 TO 15
+  OUT #1,255
+  add=1
+  CLR col1
+  FOR blocks=0 TO 99
+    co=SHL(col1,4) OR col
+    OUT #1,SHR(co,8) AND 255
+    ADD col1,add
+    IF col1=15 OR col1=0
+      add=-add
+    ENDIF
+  NEXT blocks
+  OUT #1,RANDOM(255)
+  FOR i=1 TO 256-102
+    OUT #1,0
+  NEXT i
+NEXT col
+FOR col=0 TO 15
+  OUT #1,255
+  add=1
+  CLR col1
+  FOR blocks=0 TO 99
+    co=SHL(col1,4) OR col
+    OUT #1,co AND 255
+    ADD col1,add
+    IF col1=15 OR col1=0
+      add=-add
+    ENDIF
+  NEXT blocks
+  OUT #1,RANDOM(255)
+  FOR i=1 TO 256-102
+    OUT #1,0
+  NEXT i
+NEXT col
+CLOSE #1

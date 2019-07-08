@@ -1,0 +1,77 @@
+        MACRO DELAY
+ps    set \0
+        REPT 10
+        IF ps > 255
+          dc.b $82,0
+ps    set ps - 256
+        ELSE
+          IF ps > 0
+            dc.b $82,ps
+ps      set 0
+          ENDIF
+        ENDIF
+        ENDR
+        ENDM
+
+        MACRO PLAY
+        dc.b \0
+        IF \1 > 255
+        dc.b 0
+ps2     set \1-256
+        DELAY ps2
+        ELSE
+        dc.b \1
+        ENDIF
+        ENDM
+
+        MACRO PLAY2
+        dc.b $85
+        dc.b \0     ; reload
+        dc.b \1     ; prescale
+        IF \2 > 255
+        dc.b 0
+ps2     set \2-256
+        DELAY ps2
+        ELSE
+        dc.b \2
+        ENDIF
+        ENDM
+
+
+        MACRO PATTERN
+        dc.b $86
+        dc.w \0
+        ENDM
+
+        MACRO DEFFRQ
+        dc.b $8a,\0
+        dc.w \1
+        ENDM
+
+        MACRO DEFVOL
+        dc.b $88,\0
+        dc.w \1
+        ENDM
+
+        MACRO SETFRQ
+        dc.b $8b,\0
+        ENDM
+
+        MACRO SETVOL
+        dc.b $89,\0
+        ENDM
+
+        MACRO INSTR
+        dc.b $84,0,0,\0,\1,\2
+        ENDM
+
+        MACRO STOP
+        dc.b $83
+        ENDM
+
+        MACRO DO
+        dc.b $80,\0
+        ENDM
+        MACRO LOOP
+        dc.b $81
+        ENDM

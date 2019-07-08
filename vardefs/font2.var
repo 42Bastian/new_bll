@@ -1,0 +1,61 @@
+; Variablen fr FONT
+
+ BEGIN_ZP
+TextPtr	dw 0
+TextPtr2	dw 0
+TextPtr3	dw 0
+MaxTextLen	dw 0
+CurrFntNr	db 0
+CurrFnt	dw 0	; ptr to Font-data
+CurrLen	dw 0	; ptr to length-table
+CurrByteOff	dw 0	; ptr to Byte-Offset-Table
+CurrBitOff	dw 0	; ptr to Bit-Offset-Table
+CurrLineOff	db 0	; Line-Offset
+CurrHeight	db 0	; char height
+CurrFirst	db 0	; first char
+CurrLast	db 0	; last char
+CurrBiggest	db 0	; max. char-width
+CurrOffset	db 0	; Line-Offset
+CurrAjust	db 0
+Invers	db 0
+CurrSize	db 0
+ IF SCR_MAX_X>255
+CurrX	dw 0
+ ELSE
+CurrX	db 0
+ ENDIF
+ IF SCR_MAX_Y>255
+CurrY	dw 0
+ ELSE
+CurrY	db 0
+ ENDIF
+ IF SCR_MAX_X>255
+MinX	dw 0	; cursor limits
+MaxX	dw 0
+ ELSE
+MinX	db 0
+MaxX	db 0
+ ENDIF
+ IF SCR_MAX_Y>255
+MinY	dw 0
+MaxY	dw 0
+ ELSE
+MinY	db 0
+MaxY	db 0
+ ENDIF
+BG_Color	db 0 
+FG_Color	db 0 
+ END_ZP
+
+; these vars needn't to be in ZP
+
+ BEGIN_ZP
+LocalFont	equ *
+Ycount	db 0	; Line counter
+ByteCount	db 0	; byte per line
+_Bit	db 0	; which bit ?
+Byte	db 0
+BitCount	db 0	; significant bits
+FontBitBuffer	ds 3
+ END_ZP
+

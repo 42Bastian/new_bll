@@ -1,0 +1,133 @@
+	MACRO DEFLCB	; LineControlBlock definieren
+	IF SCR_MAX_X>255  ; X
+	  dw \0
+	ELSE
+	  db <(\0)
+	ENDIF
+	IF SCR_MAX_Y>255  ; Y
+	  dw \1
+	ELSE
+	  db <(\1)
+	ENDIF
+	IF SCR_MAX_X>255  ; W
+	  dw \2
+	ELSE
+	  db <(\2)
+	ENDIF
+	IF SCR_MAX_Y>255  ; H
+	  dw \3
+	ELSE
+	  db <(\3)
+	ENDIF
+	db \4	; Color
+	IFVAR \5
+	  db \5
+	ELSE
+	  db 1
+	ENDIF
+	ENDM
+
+
+	MACRO DEFWCB	; WindowControlBlock definieren
+	IF SCR_MAX_X>255  ; X
+	  dw \0
+	ELSE
+	  db <(\0)
+	ENDIF
+	IF SCR_MAX_Y>255  ; Y
+	  dw \1
+	ELSE
+	  db <(\1)
+	ENDIF
+	IF SCR_MAX_X>255  ; W
+	  dw \2
+	ELSE
+	  db <(\2)
+	ENDIF
+	IF SCR_MAX_Y>255  ; H
+	  dw \3
+	ELSE
+	  db <(\3)
+	ENDIF
+	IFVAR \4
+	  db \4	; Color
+	ELSE
+	  ECHO "DEFWCB : Farbe fehlt"
+	  db 0
+	ENDIF
+	IFVAR \5
+	  db \5	; Rahmen-Farbe
+	ELSE
+	  ECHO "DEFWCB : Rahmen-Farbe fehlt"
+	  db 15
+	ENDIF
+	IFVAR \6
+	  db \6	; Rahmen-Dicke
+	ELSE
+	  db 1
+	ENDIF
+	ENDM
+
+	MACRO CLS
+CLSuser	SET 1
+	IFVAR \0
+	LDA \0
+	ENDIF
+	jsr cls
+	ENDM
+
+	MACRO WINDOW
+	IFVAR \0
+	  lda #<(\0)
+	  ldy #>(\0)
+	ENDIF
+	jsr OpenWindow
+	ENDM
+
+	MACRO RECTANGLE
+	IFVAR \0
+	  lda #<(\0)
+	  ldy #>(\0)
+	ENDIF
+	jsr Rectangle
+	ENDM
+	MACRO BOX ; X,Y,W,H,C
+	lda #<(\0)
+	sta TempLCB+LineX
+	lda #<(\2)
+	sta TempLCB+LineW
+	IF SCR_MAX_X>255
+	  lda #>(\0)
+	  sta TempLCB+LineX+1
+	  lda #>(\2)
+	  sta TempLCB+LineW+1
+	ENDIF
+	lda #<(\1)
+	sta TempLCB+LineY
+	lda #<(\3)
+	sta TempLCB+LineH
+	IF SCR_MAX_Y>255
+	  lda #>(\1)
+	  sta TempLCB+LineY+1
+	  lda #<(\3)
+	  sta TempLCB+LineH+1
+	ENDIF
+	IFVAR \4
+	  LDA #\4
+	ELSE
+	  lda FG_Color
+	ENDIF
+	sta TempLCB+LineColor
+	lda #1
+	sta TempLCB+LineWidth
+	jsr Rectangle0
+	ENDM
+
+	MACRO PLOT
+PlotUser	SET 1
+	IFVAR \0
+	  lda #<(\0)
+	  ldy #>(\0)
+	ENDIF
+	jsr Plot
+	ENDM

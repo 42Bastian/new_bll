@@ -1,0 +1,535 @@
+; some helpful MACROs
+; created 11.05.93 Bastian Schick
+;
+; last modified :
+;
+; 24.04.96      BS              English
+;                               bug in CLEAR_MEM
+; 12.08.96      BS              CLEAR_ZP with parameter clears stack too
+
+; MOVE is in 68k-mode : src,dst !!
+
+                MACRO SWAP
+                ldx \0
+                lda \1
+                stx \1
+                sta \0
+                ldx 1+\0
+                lda 1+\1
+                stx 1+\1
+                sta 1+\0
+                ENDM
+
+                MACRO MOVEB
+                lda \0
+                sta \1
+                ENDM
+
+                MACRO MOVEBX
+                ldx \0
+                stx \1
+                ENDM
+
+                MACRO MOVEBY
+                ldy \0
+                sty \1
+                ENDM
+
+
+                MACRO MOVE
+                lda \0
+                sta \1
+                lda 1+\0
+                sta 1+\1
+                ENDM
+
+                MACRO MOVEX
+                ldx \0
+                stx \1
+                ldx 1+\0
+                stx 1+\1
+                ENDM
+
+                MACRO MOVEY
+                ldy \0
+                sty \1
+                ldy 1+\0
+                sty 1+\1
+                ENDM
+
+
+                MACRO MOVEI
+                lda #<(\0)
+                sta \1
+                lda #>(\0)
+                sta 1+\1
+                ENDM
+
+                MACRO MOVEIX
+                ldx #<(\0)
+                stx \1
+                ldx #>(\0)
+                stx 1+\1
+                ENDM
+                MACRO MOVEIY
+                ldy #<(\0)
+                sty \1
+                ldy #>(\0)
+                sty 1+\1
+                ENDM
+
+
+                MACRO CMPW      ; compare word
+                lda \1
+                cmp \0
+                lda \1+1
+                sbc \0+1
+                ENDM            ; C=1 => \1 > \0
+
+                MACRO CMPWI     ; compare word immediate
+                lda \1
+                cmp #<(\0)
+                lda \1+1
+                sbc #>(\0)
+                ENDM
+
+;>                MACRO CMPWS     ; compare word signed
+;>                lda \1
+;>                cmp \0
+;>                lda \1+1
+;>                sbc \0+1
+;>                lda \1+1
+;>                eor \0+1
+;>                _IFMI
+;>                _IFCC
+;>                sec
+;>                _ELSE
+;>                clc
+;>                _ENDIF
+;>                _ENDIF
+;>                ENDM
+
+                MACRO CMPWS
+                lda \0+1
+                cmp \1+1
+                bmi .\yes
+                bne .\no
+                lda \0
+                cmp \1
+                bcc .\yes
+                beq .\yes
+.\no            clc
+                bra .\ee
+.\yes           sec
+.\ee
+                endm
+
+
+
+                MACRO CMPWIS    ; compare word immediate signed
+                lda \1
+                cmp #<(\0)
+                lda \1+1
+                sbc #>(\0)
+                lda \1+1
+                eor #>(\0)
+                _IFMI
+                  _IFCC
+                    sec
+                  _ELSE
+                    clc
+                  _ENDIF
+                _ENDIF
+                ENDM
+
+;>                MACRO ADDW      ; b=a+b
+;>                clc
+;>                lda \0
+;>                adc \1
+;>                sta \1
+;>                lda \0+1
+;>                adc \1+1
+;>                sta \1+1
+;>                ENDM
+
+
+                MACRO ADDWABC   ; c=a+b
+                clc
+                lda \0
+                adc \1
+                sta \2
+                lda \0+1
+                adc \1+1
+                sta \2+1
+                ENDM
+
+;/- 30.6.97 42BS -\
+                MACRO ADDW
+                clc
+                lda \0
+                adc \1
+                IFVAR \2
+                  sta \2
+                ELSE
+                  sta \1
+                ENDIF
+                lda \0+1
+                adc \1+1
+                IFVAR \2
+                  sta \2+1
+                ELSE
+                  sta \1+1
+                ENDIF
+                ENDM
+
+                MACRO SUBW
+                sec
+                lda \1
+                sbc \0
+                IFVAR \2
+                  sta \2
+                ELSE
+                  sta \1
+                ENDIF
+                lda \1+1
+                sbc \0+1
+                IFVAR \2
+                  sta \2+1
+                ELSE
+                  sta \1+1
+                ENDIF
+                ENDM
+
+;\_______________/
+                MACRO ADDIW
+                clc
+                lda #<(\0)
+                adc \1
+                IFVAR \2
+                  sta \2
+                ELSE
+                  sta \1
+                ENDIF
+                lda #>(\0)
+                adc \1+1
+                IFVAR \2
+                  sta \2+1
+                ELSE
+                  sta \1+1
+                ENDIF
+                ENDM
+
+                MACRO SUBIW
+                sec
+                lda \1
+                sbc #<(\0)
+                IFVAR \2
+                  sta \2
+                ELSE
+                  sta \1
+                ENDIF
+                lda \1+1
+                sbc #>(\0)
+                IFVAR \2
+                  sta \2+1
+                ELSE
+                  sta \1+1
+                ENDIF
+                ENDM
+
+
+                MACRO SUBWABC   ; c=b-a
+                sec
+                lda \1
+                sbc \0
+                sta \2
+                lda \1+1
+                sbc \0+1
+                sta \2+1
+                ENDM
+
+                MACRO NEGW
+                sec
+                lda #0
+                sbc \0
+                sta \0
+                lda #0
+                sbc \0+1
+                sta \0+1
+                ENDM
+
+                MACRO NEGWY     ; assumes Y = 0
+                sec
+                tya
+                sbc \0
+                sta \0
+                tya
+                sbc \0+1
+                sta \0+1
+                ENDM
+
+;/- 30.6.97 42BS -\
+                MACRO SHRW
+                IFVAR \0
+                 phy
+                 ldy \0
+                 lda \1+1
+.\_0              lsr
+                  ror \1
+                  dey
+                 bne .\_0
+                 sta \1+1
+                 ply
+                ELSE
+                lsr \1+1
+                ror \1
+                ENDIF
+                ENDM
+
+                MACRO SHLW
+                IFVAR \0
+                 phy
+                 ldy \0
+                 lda \1
+.\_0              asl
+                  rol \1+1
+                  dey
+                 bne .\_0
+                 sta \1
+                 ply
+                ELSE
+                asl \1
+                rol \1+1
+                ENDIF
+                ENDM
+
+;\_______________/
+
+
+                MACRO DP        ; Pallete Define
+                SWITCH \#
+                CASE 16         ;4 Bit
+DB >$\0,>$\1,>$\2,>$\3,>$\4,>$\5,>$\6,>$\7,>$\8,>$\9,>$\10,>$\11,>$\12,>$\13,>$\14,>$\15
+DB <$\0,<$\1,<$\2,<$\3,<$\4,<$\5,<$\6,<$\7,<$\8,<$\9,<$\10,<$\11,<$\12,<$\13,<$\14,<$\15
+                CASE 8          ;3 Bit
+DB >$\0,>$\1,>$\2,>$\3,>$\4,>$\5,>$\6,>$\7
+DB <$\0,>$\1,<$\2,<$\3,<$\4,<$\5,<$\6,<$\7
+                CASE 4          ; 2 Bit
+DB >$\0,>$\1,>$\2,>$\3
+DB <$\0,<$\1,<$\2,<$\3
+                CASE 2          ; 1 Bit
+DB >$\0,>$\1
+DB <$\0,<$\1
+                ELSES
+                fail "Error using DP"
+                ENDS
+                ENDM
+
+
+
+NEXT_ZP         SET 0
+
+                MACRO BEGIN_ZP
+BEGIN_ZP_PC     SET *
+                ORG NEXT_ZP
+                ENDM
+
+                MACRO END_ZP
+NEXT_ZP         SET *
+                IF NEXT_ZP>=$100
+                  fail "ZERO-Page overflow ! ->%HNEXT_ZP"
+                ENDIF
+                ORG BEGIN_ZP_PC
+                ENDM
+
+IFND NEXT_MEM
+NEXT_MEM        SET $200
+ENDIF
+
+LOMEM           SET $300
+                ORG LOMEM
+
+                MACRO BEGIN_MEM
+BEGIN_MEM_PC    SET *
+                ORG NEXT_MEM
+                ENDM
+
+                MACRO END_MEM
+NEXT_MEM        SET *
+                ORG BEGIN_MEM_PC
+
+                IF NEXT_MEM>LOMEM
+LOMEM           SET NEXT_MEM
+                ENDIF
+
+                ENDM
+
+
+                MACRO CLEAR_MEM
+                stz 0
+                lda #2
+                sta 1
+                ldx #>NEXT_MEM-2
+                ldy #0
+                tya
+.\clmloop       sta (0),y
+                iny
+                bne .\clmloop
+                inc 1
+                dex
+                bne .\clmloop   ; clear all pages
+
+                IF <NEXT_MEM
+                  ldx #<NEXT_MEM
+.\clmloop1        sta (0),y
+                  iny
+                  dex
+                  bne .\clmloop1                ; clear last page
+                ENDIF
+                ENDM
+
+                MACRO STRUCT
+                IFVAR \0
+                INC@
+STRUCT_PC@      SET *           ; save current PC
+\0              EQU *           ; start of STRUCTure
+                ORG 0           ; needed for offsets
+                ELSE
+                  fail "Error : Name of STRUCT missing !!"
+                ENDIF
+                ENDM
+
+; if a parameter is given, also the stack is cleared
+
+                MACRO CLEAR_ZP
+                ldx #0
+.\M_1           stz 0,x
+                IFVAR \0
+                  stz $100,x
+                ENDIF
+                dex
+                bne .\M_1
+                ENDM
+
+                MACRO ENDSTRUCT
+                IFVAR \0
+\0.LEN          EQU *           ; size of STRUCTure
+                ORG STRUCT_PC@+\0.LEN ; restore PC
+                DEC@
+                ELSE
+                  fail "Error : ENDSTRUCT : Name missing !!"
+                ENDIF
+                ENDM
+
+                MACRO MOVE.W
+                lda \0
+                sta \1
+                lda 1+\0
+                sta 1+\1
+                ENDM
+
+                MACRO MOVE.L
+                lda \0
+                sta \1
+                lda 1+\0
+                sta 1+\1
+                lda 2+\0
+                sta 2+\1
+                lda 3+\0
+                sta 3+\1
+                ENDM
+
+                MACRO LDAY
+                lda #<(\0)
+                ldy #>(\0)
+                ENDM
+
+                MACRO LDAX
+                lda #<(\0)
+                ldx #>(\0)
+                ENDM
+
+
+                MACRO START_UP
+                sei
+                cld
+                lda #$80
+                trb $fd01
+                trb $fd05
+                trb $fd09
+                trb $fd0d
+;                trb $fd11
+                trb $fd15
+                trb $fd19
+                trb $fd1d       ; disable all timers
+                lda #%11101
+                sta $fd8c       ; disable RX/TX-irq, set to 8E1
+                lda $fd81
+                sta $fd80       ; clear all pending interrupts
+                ldx #$ff
+                txs             ; init stack-pointer
+                ENDM
+*
+                MACRO lbra
+lbrad           set *-\0
+                IF lbrad<0
+lbrad           set -lbrad
+                ENDIF
+                IF lbrad<124
+                bra \0
+                ELSE
+                jmp \0
+                ENDIF
+                ENDM
+
+                MACRO lbeq
+lbned           set *-\0
+                IF lbned<0
+lbned           set -lbned
+                ENDIF
+                IF lbned<124
+                beq \0
+                ELSE
+                bne *+5
+                jmp \0
+                ENDIF
+                ENDM
+
+                MACRO lbne
+lbned           set *-\0
+                IF lbned<0
+lbned           set -lbned
+                ENDIF
+                IF lbned<124
+                bne \0
+                ELSE
+                beq *+5
+                jmp \0
+                ENDIF
+                ENDM
+
+                MACRO lbcc
+lbned           set *-\0
+                IF lbned<0
+lbned           set -lbned
+                ENDIF
+                IF lbned<124
+                bcc \0
+                ELSE
+                bcs *+5
+                jmp \0
+                ENDIF
+                ENDM
+
+                MACRO lbcs
+lbned           set *-\0
+                IF lbned<0
+lbned           set -lbned
+                ENDIF
+                IF lbned<124
+                bcs \0
+                ELSE
+                bcc *+5
+                jmp \0
+                ENDIF
+                ENDM

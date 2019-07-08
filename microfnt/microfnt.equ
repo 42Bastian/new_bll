@@ -1,0 +1,12 @@
+MFNT_char_x		EQU $F882
+MFNT_char_y		EQU $F883
+MFNT_PrintStringXY		EQU $F9AE
+MFNT_PrintChar		EQU $FA17
+MFNT_PrintString		EQU $F9B4
+MFNT_PrintHexXY		EQU $F9E6
+fontPAL		EQU $F860
+MFNT_screenbase		EQU $F880
+MFNT_PrintHex		EQU $F9EC
+MFNT_PrintCharXY		EQU $FA11
+charDatahi		EQU $F982
+charDatalo		EQU $F956

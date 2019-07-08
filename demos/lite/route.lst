@@ -1,0 +1,69 @@
+BOX 0,0,160,102
+vx=0
+vy=0
+px=0
+py=0
+ax=0
+ay=0
+x=8
+y=8
+d=0.1
+dv=0.01
+da=0.9
+c=0
+DIM lx(2000),ly(2000)
+lmx=MOUSEX
+lmy=MOUSEY
+REPEAT
+UNTIL MOUSEK=1
+x=MOUSEX
+nx=x
+y=MOUSEY
+ny=y
+REPEAT
+  mx=MOUSEX
+  my=MOUSEY
+  px=d*(mx-x)
+  py=d*(my-y)
+  ax=(ax+px)*da
+  ay=(ay+py)*da
+  vx=(vx+ax)*dv
+  vy=(vy+ay)*dv
+  nx=nx+vx
+  ny=ny+vy
+  IF ABS(nx-x)>10 OR ABS(ny-y)>10
+    PRINT AT(1,1);c
+    PLOT x,y
+    lx(c)=x DIV 4
+    ly(c)=y DIV 4
+    INC c
+    x=nx
+    y=ny
+  ENDIF
+UNTIL MOUSEK=2
+OPEN "o",#1,"route.dat"
+PRINT #1,"route_x       dc.b ";
+CLR l
+FOR i=0 TO c-1
+  IF l<16
+    PRINT #1,INT(lx(i));",";
+    INC l
+  ELSE
+    PRINT #1
+    PRINT #1,"dc.b ";
+    CLR l
+  ENDIF
+NEXT i
+PRINT #1,"route_y       dc.b ";
+CLR l
+FOR i=0 TO c-1
+  IF l<16
+    PRINT #1,INT(ly(i));",";
+    INC l
+  ELSE
+    PRINT #1
+    PRINT #1,"dc.b ";
+    CLR l
+  ENDIF
+NEXT i
+CLOSE

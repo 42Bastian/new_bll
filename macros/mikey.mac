@@ -1,0 +1,276 @@
+****************
+* MIKEY.MAC
+*
+* created :     who knows ?
+*
+* modified
+* 10.12.94      Init of $fd8b now $1b instead $13 ('cause of LYNX I und 301er)
+* 19.06.95      change in SCRBASE : AND #$FC removed
+* 20.06.95      HOME included
+* 21.06.95      Flag : DBUFuser = 1 => ...
+* 31.03.96      $fd8c now to $4
+* 06.05.96      to English
+* 26.03.97      added timer-prescaler values
+*
+* macros :
+*
+* INITMIKEY     set Mikey to a defined state
+* SETRGB pal    set whole palette
+* VSYNC         wait for fly-back
+* HOME          reset HOFF and VOFF
+* SCRBASE a[,b] set up for single/double-buffered display
+* FLIP          upside-down
+* SWITCHBUF     switch between render/display-buffer
+* SWITCH_IRQ    same, only for VBL-irq-routines
+* FRAMERATE     set framerate to 50Hz,60Hz or 75Hz
+
+
+
+_1MHz           equ %000
+_500kHz         equ %001
+_250kHz         equ %010
+_125kHz         equ %011
+_62500Hz        equ %100
+_31250Hz        equ %101
+_15625Hz        equ %110
+
+SCREEN.LEN      EQU 80*102
+
+                MACRO INITMIKEY
+                IFND MikeyInitFlag              ; only once
+
+MikeyInitFlag   EQU 1
+                ldx #14
+.\mloop         ldy .\MikeyInitReg,x
+                lda .\MikeyInitData,x
+                sta $fd00,y
+                dex
+                bpl .\mloop
+                bra .\mcont
+.\MikeyInitReg  db $00,$01,$08,$09,$20,$28,$30,$38,$44,$50,$8a,$8b,$8c,$92,$93
+.\MikeyInitData db $9e,$18,$68,$1f,$00,$00,$00,$00,$00,$ff,$1A,$0b,$04,$0D,$29
+.\mcont         lda #$0b
+                sta _IOdat      ; $1b if 2 banks, $0b for EEPROM
+                lda #$1a
+                sta _IOdir
+                lda #$d
+                sta _VIDEODMA
+
+                ENDIF
+                ENDM
+
+                MACRO SETRGB
+                ldx #$1f
+.\loopm           lda \0,x
+                  sta $FDA0,X
+                  dex
+                bpl .\loopm
+                ENDM
+
+                MACRO VSYNC
+.\mwait         lda $fd0a
+                bne .\mwait
+                ENDM
+
+
+                MACRO SCRBASE
+                PHP
+                SEI
+DBUFuser        set 0
+                lda #<(\0)&$fc
+                sta ScreenBase
+                ldx #>(\0)
+                stx ScreenBase+1 ; ScreenBase = draw-buffer
+                IFVAR \1
+DBUFuser        set 1
+                  lda #<(\1)&$fc
+                  sta ScreenBase2
+                  ldx #>(\1)
+                  stx ScreenBase2+1 ; ScreenBase2 = display-buffer
+                ENDIF
+                sta $fd94
+                stx $fd95
+                PLP
+                ENDM
+
+                MACRO FLIP
+                LDA _SPRSYS
+                EOR #8
+                STA _SPRSYS
+                STA SPRSYS
+                LDA _VIDEODMA
+                EOR #2
+                STA _VIDEODMA
+                sta VIDEODMA
+                and #2
+                _IFNE
+                  IF DBUFuser
+                    clc
+                    lda ScreenBase2
+                    adc #$df
+                    sta $fd94
+                    lda ScreenBase2+1
+                    adc #$1f
+                    sta $fd95
+                  ELSE
+                    clc
+                    lda ScreenBase
+                    adc #$df
+                    sta $fd94
+                    lda ScreenBase+1
+                    adc #$1f
+                    sta $fd95
+                  ENDIF
+                _ELSE
+                  IF DBUFuser
+                    MOVE ScreenBase2,$fd94
+                  ELSE
+                    MOVE ScreenBase,$fd94
+                  ENDIF
+                _ENDIF
+                ENDM
+
+IFD IRQ_SWITCHBUF_USR
+                MACRO SWITCHBUF
+                dec SWITCHFlag
+.\switch        bit SWITCHFlag
+                bmi .\switch
+                ENDM
+ELSE
+                MACRO SWITCHBUF
+                VSYNC
+                php
+                sei
+                ldx ScreenBase
+                ldy ScreenBase+1
+
+                lda ScreenBase2
+                sta ScreenBase
+                lda ScreenBase2+1
+                sta ScreenBase+1
+
+                stx ScreenBase2
+                sty ScreenBase2+1
+
+                lda _VIDEODMA
+                and #2
+                beq .\okFLIP
+                clc
+                txa
+                adc #$df
+                tax
+                tya
+                adc #$1f
+                tay
+.\okFLIP        stx $fd94
+                sty $fd95
+                plp
+                ENDM
+ENDIF
+                MACRO IRQ_SWITCHBUF
+IFD IRQ_SWITCHBUF_USR
+
+                _IFNE SWITCHFlag
+                  stz SWITCHFlag
+                  lda _VIDEODMA
+                  and #2
+                  _IFEQ
+                    lda ScreenBase
+                    ldx ScreenBase2
+                    sta ScreenBase2
+                    stx ScreenBase
+                    sta $fd94
+                    lda ScreenBase+1
+                    sta $fd95
+                    ldx ScreenBase2+1
+                    sta ScreenBase2+1
+                    stx ScreenBase+1
+                  _ELSE
+                    lda ScreenBase
+                    ldx ScreenBase2
+                    sta ScreenBase2
+                    stx ScreenBase
+                    clc
+                    adc #$df
+                    sta $fd94
+                    lda ScreenBase+1
+                    ldx ScreenBase2+1
+                    sta ScreenBase2+1
+                    stx ScreenBase+1
+                    adc #$1f
+                    sta $fd95
+                  _ENDIF
+                _ENDIF
+ELSE
+ FAIL "IRQ_SWITCHBUF_USR not defined !"
+ENDIF
+                ENDM
+
+
+                MACRO FrameRate
+                fail "change FrameRate to FRAMERATE"
+                ENDM
+
+                MACRO FRAMERATE
+                IFVAR \0
+                  VSYNC
+                  SWITCH \0
+                  CASE 50       ; 50 Hz
+                    lda #$bd
+                    sta $fd00
+                    lda #$31
+                    sta $fd93
+                  CASE 60       ; 60 Hz
+                    lda #$9e
+                    sta $fd00
+                    lda #$29
+                    sta $fd93
+                  CASE 75       ; 75 Hz
+                    lda #$7e
+                    sta $fd00
+                    lda #$20
+                    sta $fd93
+                  ELSES
+                    ECHO "\0 Hz not supported,only 50/60 or 75 !"
+                  ENDS
+                ENDIF
+                ENDM
+
+
+                MACRO STANDARD_PAL
+ DP 000,007,070,700,077,770,707,777,333,00F,0F0,F00,0FF,FF0,F0F,FFF
+                ENDM
+
+BLACK           set 0
+RED             set 1
+BLUE            set 2
+GREEN           set 3
+
+LIGHTGREY       set 7
+GREY            set 8
+LIGHTRED        set 9
+LIGHTBLUE       set 10
+LIGHTGREEN      set 11
+PINK            set 12
+
+YELLOW          set 14
+WHITE           set 15
+;---------------
+SCHWARZ         set 0
+ROT             set 1
+BLAU            set 2
+GRUEN           set 3
+LILA            set 4
+TUERKIS         set 5
+ORANGE          set 6
+BRAUN           set 6
+HELLGRAU        set 7
+GRAU            set 8
+HELLROT         set 9
+HELLBLAU        set 10
+HELLGRUEN       set 11
+PINK            set 12
+
+
+GELB            set 14
+WEISS           set 15

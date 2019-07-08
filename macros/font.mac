@@ -1,0 +1,172 @@
+IFND SCR_MAX_X
+SCR_MAX_X       EQU 160
+SCR_MAX_Y       EQU 102
+ENDIF
+
+BIGFNT          equ 0
+SMALLFNT        equ 1
+LITTLEFNT       equ 2
+SMALLFNT2       equ 3
+LITTLEFNT2      equ 4
+
+NO_FLIP         equ 0
+HORI_FLIP       equ $20
+VERT_FLIP       equ $10
+NORMAL_SIZE     equ $100
+HALF_SIZE       equ $80
+DOUBLE_SIZE     equ $200
+LEFT_ADJUST      equ 0
+RIGHT_ADJUST     equ 1
+CENTER_ADJUST    equ -1
+
+
+SMALLFNTuser    set 0
+LITTLEFNTuser   set 0
+BIGFNTuser      set 0
+SMALLFNT2user   set 0
+LITTLEFNT2user  set 0
+
+                MACRO SET_XY    ; Grafik-Cursor setzen
+                lda #<(\0)
+                sta CurrX
+                IF SCR_MAX_X>255
+                  IF >(\0)=0
+                    stz CurrX+1
+                  ELSE
+                    lda #>(\0)
+                    sta CurrX+1
+                  ENDIF
+                ENDIF
+                lda #<(\1)
+                sta CurrY
+                IF SCR_MAX_Y>255
+                  IF >(\1)=0
+                    stz CurrY+1
+                  ELSE
+                    lda #>(\1)
+                    sta CurrY+1
+                  ENDIF
+                ENDIF
+                ENDM
+                
+                MACRO INC_CURRY
+                IF SCR_MAX_Y>255
+                  IFVAR \0
+                    clc
+                    lda #<(\0)
+                    adc CurrY
+                    sta CurrY
+                    lda #>(\0)
+                    adc CurrY+1
+                    sta CurrY+1
+                  ELSE
+                    CLC
+                    lda #1
+                    adc CurrY
+                    sta CurrY
+                    lda #0
+                    adc CurrY+1
+                    sta CurrY+1
+                  ENDIF
+                ELSE
+                  IFVAR \0
+                    clc
+                    lda #(\0)
+                    adc CurrY
+                    sta CurrY
+                  ELSE
+                    inc CurrY
+                  ENDIF
+                ENDIF
+                ENDM
+
+                MACRO SET_MINMAX
+                lda #<(\0)
+                sta MinX
+                lda #<(\1)
+                sta MinY
+                lda #<(\2)
+                sta MaxX
+                lda #<(\3)
+                sta MaxY
+                IF SCR_MAX_X>255
+                  IF >(\0)=0
+                    stz MinX+1
+                  ELSE
+                    lda #>(\0)
+                    sta MinX+1
+                  ENDIF
+                  IF >(\1)=0
+                    stz MaxX+1
+                  ELSE
+                    lda #>(\2)
+                    sta MaxX+1
+                  ENDIF
+                ENDIF
+                IF SCR_MAX_Y>255
+                  IF >(\1)=0
+                    STZ MinY+1
+                  ELSE
+                    lda #>(\1)
+                    sta MinY+1
+                  ENDIF
+                  IF (>\3)=0
+                    STZ MaxY+1
+                  ELSE
+                    lda #>(\3)
+                    sta MaxY+1
+                  ENDIF
+                ENDIF
+                ENDM
+                
+                MACRO PRINT
+                IFVAR \2
+                  bra .\_print1
+.\_print0         db \0
+                  db 0
+.\_print1         lda #<(.\_print0)
+                  ldy #>(.\_print0)
+                ELSE
+                  IFVAR \1
+                    lda \0
+                    ldy 1+\0
+                  ELSE
+                    lda #<(\0)
+                    ldy #>(\0)
+                  ENDIF
+                ENDIF
+                jsr print
+                ENDM
+                
+                MACRO INITFONT ; Font,BG_color,FG_color,Ajust
+                IFVAR \0
+                SWITCH \0
+                CASE SMALLFNT
+SMALLFNTuser    set 1
+                CASE LITTLEFNT
+LITTLEFNTuser   set 1
+                CASE BIGFNT
+BIGFNTuser      set 1
+                CASE SMALLFNT2
+SMALLFNT2user   set 1
+                CASE LITTLEFNT2
+LITTLEFNT2user  set 1
+                ENDS
+                ldx #\0
+                jsr InitFont
+                ENDIF
+                IFVAR \1
+                  lda #\1
+                  sta BG_Color
+                ENDIF
+                IFVAR \2
+                  lda #\2
+                  sta FG_Color
+                ENDIF
+                IFVAR \3
+                   lda #\3
+                   sta CurrAdjust
+                ENDIF
+                ENDM
+                END
+

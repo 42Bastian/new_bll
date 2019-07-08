@@ -1,0 +1,91 @@
+	MACRO INITIRQ
+irq_vecs	equ \0
+	jsr InitIRQ
+	ENDM
+
+	MACRO IRQ
+irq::	cld
+	phx
+	pha
+	IFD break_user
+	  tsx
+	  inx
+	  inx
+	  inx
+	  lda $100,x	; p-register
+	  bit #$10	; break ??
+	  beq .no_break
+	  and #$ef
+	  sta $100,x
+	  pla
+	  plx
+	  jmp (break_vec)
+	ENDIF
+
+.no_break	lda $fd81
+	sta $fd80
+	ldx #0
+.loop	lsr
+	bcc .cont
+	sta irq_save_a
+	stx irq_save_x
+	jsr .do_irq
+	ldx irq_save_x
+	lda irq_save_a
+.cont	beq end_irq
+	inx
+	inx
+	bra .loop
+.do_irq	jmp (irq_vecs,x)
+
+dummy_irq	rts
+
+end_irq	pla
+	plx
+	rti
+	ENDM
+	
+	MACRO END_IRQ
+	pla
+	plx
+	rti
+	ENDM
+
+	MACRO SETIRQ
+	php
+	sei
+	ifVAR \0
+	IFVAR \1
+	  lda #<(\1)
+	  sta irq_vecs+(\0)*2
+	  lda #>(\1)
+	  sta irq_vecs+(\0)*2+1
+	endif
+	endif
+	if \0<>4
+	  lda #$80
+	  tsb $fd01+(\0)*4
+	endif	  
+	plp
+	ENDM
+	
+	MACRO SETIRQVEC
+	ifVAR \0
+	IFVAR \1
+	  lda #<(\1)
+	  sta irq_vecs+(\0)*2
+	  lda #>(\1)
+	  sta irq_vecs+(\0)*2+1
+	endif
+	endif
+	ENDM
+	
+	MACRO RESIRQ
+	php
+	sei
+	if \0<>4
+	  lda #$80
+	  trb $fd01+(\0)*4
+	endif
+	plp
+	ENDM

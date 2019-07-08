@@ -1,0 +1,12 @@
+****************
+* ZP-vars of EEPROM
+* created  : 11.5.95
+* modified : 
+* 
+* 16.02.96	removed I2Cbyte (not needed anymore)
+*
+* (c) 1995 Bastian Schick
+****************
+ BEGIN_ZP
+I2Cword	ds 2
+ END_ZP

@@ -1,0 +1,42 @@
+* NewKey.mac
+*
+* created : 28.03.96
+*
+* (c) Bastian Schick
+*
+* last modified :
+*
+* 04.05.96	BS	include EQUs for cursor-buttons
+NEWKEY	set 1
+
+_PAUSE	equ %00001
+_FIREA	equ %00010
+_FIREB	equ %00100
+_OPT2	equ %01000
+_OPT1	equ %10000
+
+_RESTART	equ _PAUSE+_OPT1
+_FLIP	equ _PAUSE+_OPT2
+
+_UP	equ %10000000
+_DOWN	equ %01000000
+_LEFT	equ %00100000
+_RIGHT	equ %00010000
+
+;---------------
+
+	MACRO INITKEY
+	IFVAR \0
+	  lda #\0
+	ELSE
+	  lda #$f0
+	ENDIF
+	sta EnableCursorRepeat
+	IFVAR \1
+	  lda #\1
+	ELSE
+	  lda #$1f
+	ENDIF
+	sta EnableButtonRepeat
+	jsr InitKey
+	ENDM

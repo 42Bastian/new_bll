@@ -1,0 +1,14 @@
+; vars for MIKEY
+
+ BEGIN_ZP
+ScreenBase      dw 0
+ScreenBase2     dw 0
+COMLYNXCntrl    db 0
+_IOdat          db 0
+_IOdir          db 0
+_VIDEODMA
+_DISPCTL        db 0            ; two names ;)
+ IFD IRQ_SWITCHBUF_USR
+SWITCHFlag      db 0
+ ENDIF
+ END_ZP

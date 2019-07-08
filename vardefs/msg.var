@@ -1,0 +1,24 @@
+; vars for MSG
+; 97/08/13      42BS            commented out all tx-irq stuff
+; 07/08/21      42BS            deleted all tx-irq stuff
+
+IFND MSG_SIZE
+MSG_SIZE        EQU 8
+ENDIF
+
+RxParityErr     equ %00010000
+RxOverrun       equ %00001000
+RxFrameErr      equ %00000100
+RxBreak         equ %00000010
+
+ BEGIN_ZP
+RxPtrIn         ds 1
+RxDone          ds 1
+
+SerialStat      ds 1            ; ComLynx-Errors $FD8C(r)
+ END_ZP
+
+ BEGIN_MEM
+TxBuffer        ds MSG_SIZE
+RxBuffer        ds MSG_SIZE
+ END_MEM

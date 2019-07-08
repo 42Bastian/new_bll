@@ -1,0 +1,67 @@
+****************
+* Sound-variablen
+ BEGIN_ZP
+t1              ds 1
+t2              ds 2
+
+SndSema         ds 1            ; <>0 => Sound IRQ in progress
+SndPtrTmp       ds 2
+SndTmp          ds 2
+SndEnvPtr       ds 2
+ END_ZP
+
+ BEGIN_MEM
+SndPtrLo        ds 4
+SndPtrHi        ds 4
+
+SndDelay        ds 4
+SndLoopCnt      ds 4
+SndLoopPtrLo    ds 4
+SndLoopPtrHi    ds 4
+SndVolume       ds 4
+SndMaxVolume    ds 4
+SndNotePlaying  ds 4
+SndRetAddr      ds 4*2
+
+SndActive       ds 4            ; <>0 => channel active
+SndReqStop      ds 4
+SndEnvVol       ds 4            ; <>0 => use envelope x
+SndEnvFrq       ds 4            ; dito
+;>SndEnvPly       ds 4            ; dito
+
+SndChannel      ds 4*8          ; current values
+* volume env.
+SndEnvVolCnt    ds 4
+SndEnvVolInc    ds 4
+SndEnvVolOff    ds 4
+SndEnvVolLoop   ds 4
+SndEnvVolParts  ds 4
+SndEnvVolParts2 ds 4
+
+
+*
+* frequenz env.
+SndEnvFrqCnt    ds 4
+SndEnvFrqInc    ds 4
+SndEnvFrqOff    ds 4
+SndEnvFrqLoop   ds 4
+SndEnvFrqParts  ds 4
+SndEnvFrqParts2 ds 4
+
+*
+
+SndEnvVolPtrLo  ds 16
+SndEnvVolPtrHi  ds 16
+SndEnvFrqPtrLo  ds 16
+SndEnvFrqPtrHi  ds 16
+;>SndEnvPlyPtrLo  ds 16
+;>SndEnvPlyPtrHi  ds 16
+ END_MEM
+
+****************
+
+
+
+
+
+

@@ -1,0 +1,269 @@
+IFND SCR_MAX_X
+SCR_MAX_X       EQU 160
+SCR_MAX_Y       EQU 102
+ENDIF
+
+; font numbers (see FONT.HLP)
+
+BIGFNT          equ 0
+SMALLFNT        equ 1
+LITTLEFNT       equ 2
+SMALLFNT2       equ 3
+LITTLEFNT2      equ 4
+
+; see description of SPRCTL0 !!
+
+NO_FLIP         equ 0
+HORI_FLIP       equ $20
+VERT_FLIP       equ $10
+
+; size
+
+NORMAL_SIZE     equ $100
+HALF_SIZE       equ $80
+DOUBLE_SIZE     equ $200
+
+; init some flags
+
+SMALLFNTuser    set 0
+LITTLEFNTuser   set 0
+BIGFNTuser      set 0
+SMALLFNT2user   set 0
+LITTLEFNT2user  set 0
+
+; set up some offsets
+; may be done by ...EQU ... but this is easier ;-)
+
+ STRUCT PCB                      ; Print Control Block
+TextData        dw 0            ; ptr to the string
+TextFont        db 0            ; font number
+TextFlip        db 0            ; ORed into SCBCTL0
+TextSCB                         ; start of a normal SCB
+TextSPRCTL0     db 0
+TextSPRCTL1     db $90          ; we're literal
+TextSPRCOL      db 0
+TextNextSCB     dw 0
+TextBuffer      dw 0            ; ptr to the sprite data
+TextXpos        dw 0
+TextYpos        dw 0
+TextXsize       dw 0
+TextYsize       dw 0
+TextColor       db 0            ; well, the color
+ ENDSTRUCT PCB
+
+                MACRO SET_XY    ; set cursor
+                lda #<(\0)
+                sta CurrX
+                IF SCR_MAX_X>255
+                  IF >\0=0
+                    stz CurrX+1
+                  ELSE
+                    lda #>(\0)
+                    sta CurrX+1
+                  ENDIF
+                ENDIF
+                lda #<(\1)
+                sta CurrY
+                IF SCR_MAX_Y>255
+                  IF >\1=0
+                    stz CurrY+1
+                  ELSE
+                    lda #>(\1)
+                    sta CurrY+1
+                  ENDIF
+                ENDIF
+                ENDM
+                
+                MACRO INC_CURRY
+                IF SCR_MAX_Y>255
+                  IFVAR \0
+                    clc
+                    lda #<(\0)
+                    adc CurrY
+                    sta CurrY
+                    lda #>(\0)
+                    adc CurrY+1
+                    sta CurrY+1
+                  ELSE
+                    CLC
+                    lda #1
+                    adc CurrY
+                    sta CurrY
+                    lda #0
+                    adc CurrY+1
+                    sta CurrY+1
+                  ENDIF
+                ELSE
+                  IFVAR \0
+                    clc
+                    lda #(\0)
+                    adc CurrY
+                    sta CurrY
+                  ELSE
+                    inc CurrY
+                  ENDIF
+                ENDIF
+                ENDM
+
+                MACRO SET_MINMAX                ; set window-boundaries
+                lda #<(\0)
+                sta MinX
+                lda #<(\1)
+                sta MinY
+                lda #<(\2)
+                sta MaxX
+                lda <(\3)
+                sta MaxY
+                IF SCR_MAX_X>255
+                  IF >\0=0
+                    stz MinX+1
+                  ELSE
+                    lda #>(\0)
+                    sta MinX+1
+                  ENDIF
+                  IF >\1=0
+                    stz MaxX+1
+                  ELSE
+                    lda #>(\2)
+                    sta MaxX+1
+                  ENDIF
+                ENDIF
+                IF SCR_MAX_Y>255
+                  IF >\1=0
+                    STZ MinY+1
+                  ELSE
+                    lda #>(\1)
+                    sta MinY+1
+                  ENDIF
+                  IF >\3=0
+                    STZ MaxY+1
+                  ELSE
+                    lda #>(\3)
+                    sta MaxY+1
+                  ENDIF
+                ENDIF
+                ENDM
+                
+                MACRO PRINT                     ; print a text
+                IFVAR \1                        ; got a second parameter ?
+                  ldx \0                        ; yes => indirect
+                  ldy \0+1
+                ELSE
+                  ldx #<(\0)                    ; no => first one is absolute-address
+                  ldy #>(\0)                    ; of a PCB
+                ENDIF
+                jsr print                       ; prepare sprite-data
+                IFVAR \1                        ; again : second parameter ?
+                  clc                           ; yes => compute the SCB
+                  lda #TextSCB
+                  adc \0
+                  pha
+                  lda #0
+                  adc \0+1
+                  tay
+                  pla
+                ELSE
+                  lda #<(\0+TextSCB)            ; no => the compute it thru the assmebler
+                  ldy #>(\0+TextSCB)
+                ENDIF
+                jsr DrawSprite                  ; and draw it
+                ENDM
+                
+                MACRO REPRINT                   ; draw a previously prepared text
+                IFVAR \1                        ; indirect ?
+                  clc
+                  lda #TextSCB
+                  adc \0
+                  pha
+                  lda #0
+                  adc \0+1
+                  tay
+                  pla
+                ELSE
+                  lda #<(\0+TextSCB)
+                  ldy #>(\0+TextSCB)
+                ENDIF
+                jsr DrawSprite                  ; draw it
+                ENDM
+
+;
+; define a PCB
+;
+
+                MACRO DEFTEXT   ; daten,puffer,font,flip,xs,ys,col
+                SWITCH \2
+                CASE SMALLFNT
+SMALLFNTuser    set 1
+                CASE LITTLEFNT
+LITTLEFNTuser   set 1
+                CASE BIGFNT
+BIGFNTuser      set 1
+                CASE SMALLFNT2
+SMALLFNT2user   set 1
+                CASE LITTLEFNT2
+LITTLEFNT2user  set 1
+                ENDS
+
+                dw \0           ; ptr to the string
+                db \2           ; font-number
+                db \3           ; Flip sprite
+                db $05,$90,$20
+                dw 0
+                dw \1           ; buffer for Sprite-data
+                dw 0,0          ; X/Y-Pos
+                dw \4,\5        ; X/Y-Size
+                db \6           ; color
+                ENDM
+                
+;
+; shorter call of a PCB
+; no Flip no resizing
+;
+
+                MACRO DEFTEXT2  ; daten,puffer,font,col
+                SWITCH \2
+                CASE SMALLFNT
+SMALLFNTuser    set 1
+                CASE LITTLEFNT
+LITTLEFNTuser   set 1
+                CASE BIGFNT
+BIGFNTuser      set 1
+                CASE SMALLFNT2
+SMALLFNT2user   set 1
+                CASE LITTLEFNT2
+LITTLEFNT2user  set 1
+                ENDS
+
+                dw \0           ; Zeiger auf Text
+                db \2           ; Font
+                db NO_FLIP      ; Flip
+                db $05,$90,$20  ; Sprite-Control : kein Size-Reload
+                dw 0
+                dw \1           ; Puffer fÅr Sprite-Daten
+                dw 0,0          ; X/Y-Pos
+                dw NORMAL_SIZE,NORMAL_SIZE
+                db \3           ; Farbe
+                ENDM
+                
+                MACRO INITFONT
+                IFVAR \0
+                SWITCH \0
+                CASE SMALLFNT
+SMALLFNTuser    set 1
+                CASE LITTLEFNT
+LITTLEFNTuser   set 1
+                CASE BIGFNT
+BIGFNTuser      set 1
+                CASE SMALLFNT2
+SMALLFNT2user   set 1
+                CASE LITTLEFNT2
+LITTLEFNT2user  set 1
+                ENDS
+                ldx \0
+                jsr InitFont
+                ELSE
+                FAIL "INITFONT : Which font ??" ; created error
+                ENDIF
+                ENDM
+                END
+

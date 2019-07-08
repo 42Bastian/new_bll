@@ -1,0 +1,16 @@
+; -*-asm-*-
+; vars for FPOLYGON
+ BEGIN_ZP
+tiltAB          ds 2
+tiltAC          equ temp1
+tiltBC          equ temp2
+IFND x1
+x1              ds 2
+y1              ds 2
+x2              ds 2
+y2              ds 2
+x3              ds 2
+y3              ds 2
+ENDIF
+ END_ZP
+

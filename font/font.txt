@@ -1,0 +1,35 @@
+* FONT.DOC
+* (C) Bastian Schick
+
+1. All these fonts are proportional !
+2. Only characters needed are in a font !
+3. All fonts are mono-chrome !
+
+struct FontHeader {
+  BYTE fntLineOffset;	/* points to the next data line */
+  BYTE fntHeight;	/*  ?? */
+  BYTE fntFirst,fntLast;	/* first/last char. in the font */
+  BYTE fntBitLen[ ... ]	/* width of each char in bit */
+  BYTE fntCharOffset[ ... ]	/* byte position of each char */
+  BYTE fntBitOffset[ ... ]	/* bit positon in the first byte */
+  BYTE fntData[fntLineOffset][fntHeight]
+ }
+ 
+example : Font with '!','"' and '#'
+
+	dc.b 3
+	dc.b 8
+	dc.b "!","#"
+	dc.b 4,5,8
+	dc.b 0,0,1
+	dc.b 7,3,6
+	dc.b 23,40,128
+	.
+	.
+	dc.b 0,45,128
+
+ => "!" is in the first byte (char-off = 0) in the MSB (7.) to the 4th bit.
+    "#" is in the second byte (char-off = 1) in bit 6 to the MSB of byte 3.
+ 
+
+

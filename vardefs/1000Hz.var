@@ -1,0 +1,16 @@
+* -*-asm-*-
+* _1000Hz.var
+* (c) 1994 Bastian Schick
+* last change :
+* 25.04.96	BS	to English
+*
+ BEGIN_ZP
+milli	ds 2
+_1000Hz	ds 3
+seconds	ds 1
+minutes	ds 1
+hours	ds 1
+ IFD FlipUser
+FlipFlag	ds 1
+ ENDIF
+ END_ZP

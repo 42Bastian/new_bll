@@ -1,0 +1,62 @@
+* DEBUG.MAC
+* created : ??.??.19??
+*
+* 28.8.96       new MACRO : BREAKPOINT [x[,"remote-command"]]
+
+
+                MACRO INITBRK
+
+IFD BRKuser     
+                jsr InitBRK
+ENDIF
+                ENDM
+
+
+                MACRO BREAKPOINT
+                IFVAR \0
+                  IF \0 > $1f
+                    fail "BREAKPOINT: Number to big !"
+                  ENDIF
+                  IFVAR \1
+                    brk #(\0)|$20
+.\_0                dc.b .\_1-.\_0
+                    dc.b \1
+.\_1
+                  ELSE
+                    brk #\0
+                  ENDIF
+                ELSE
+                  brk #\0
+                ENDIF
+                ENDM
+
+                MACRO DEBUG
+                php
+                pha
+                IFVAR \0
+                  SWITCH \0
+                  case "X"
+                    txa
+                  case "Y"
+                    tya
+                  elses
+                    lda \0
+                  ENDS
+                ENDIF
+;               jsr SndComLynxByte
+.\wait_         bit $fd8c
+                bpl .\wait_
+                sta $fd8d
+                pla
+                plp
+                ENDM
+
+                MACRO DEBUG_WAIT
+                php
+                pha
+                stz DebugFlag
+.\wait_deb      lda DebugFlag
+                beq .\wait_deb
+                pla
+                plp
+                ENDM

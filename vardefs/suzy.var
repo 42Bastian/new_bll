@@ -1,0 +1,7 @@
+
+; Suzy-vars
+ BEGIN_ZP
+_SPRSYS	db 0
+Cursor	db 0
+Button	db 0
+ END_ZP

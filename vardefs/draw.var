@@ -1,0 +1,12 @@
+; vars for DRAW.INC
+ BEGIN_ZP
+ IFND x1
+x1              ds 2
+y1              ds 2
+x2              ds 2
+y2              ds 2
+x3              ds 2
+y3              ds 2
+ ENDIF
+ END_ZP
+

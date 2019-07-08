@@ -1,0 +1,12 @@
+; BSS-variables KEY
+; 23.6.93
+
+
+ BEGIN_ZP
+KeyCounter	ds 2
+LastButton	ds 1
+LastCursor	ds 1
+PauseEnable	ds 1
+PauseFlag	ds 1
+PausePtr	ds 4
+ END_ZP

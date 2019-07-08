@@ -1,0 +1,15 @@
+******************************
+* MESSAGE
+* (c) 1994 Bastian Schick
+* modified:
+* 06.05.96	BS	-> English
+******************************
+
+MAX_PLAYER	equ 16
+GOON	equ $31
+
+ BEGIN_ZP
+player_id	ds MAX_PLAYER
+my_id	ds 1
+num_players	ds 1
+ END_ZP

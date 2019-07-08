@@ -1,0 +1,58 @@
+; MACROS und Konstanten fÅr FILE
+;
+IFND BlockSize
+BlockSize       set 1024
+ENDIF
+
+ STRUCT DirEntry
+StartBlock      db 0
+BlockOffset     dw 0
+ExecFlag        db 0
+DestAddr        dw 0
+FileLen         dw 0
+ ENDSTRUCT DirEntry
+                
+                MACRO LOADDIR
+                IFVAR \0
+                  lda \0
+                ENDIF
+                jsr LoadDir 
+                ENDM
+
+                MACRO LOADFILE
+LoadFileUser    SET 1
+                IFVAR \1
+                  IFVAR \0
+                    lda #<(\1)
+                    sta DestPtr
+                    lda #>(\1)
+                    sta DestPtr+1
+                    lda \0
+                  ELSE
+                    pha
+                    lda #<(\1)
+                    sta DestPtr
+                    lda #>(\1)
+                    sta DestPtr+1
+                    pla
+                  ENDIF         ; IFVAR \0
+                ELSE
+                  IFVAR \0
+                    lda \0
+                  ENDIF
+                ENDIF
+                jsr LoadFile
+                ENDM
+                
+                MACRO LOADPRG
+LoadPrgUser     SET 1
+                IFVAR \0
+                  lda \0
+                ENDIF
+                IFVAR \1
+                  ldy #$FF
+                ELSE
+                  ldy #0
+                ENDIF
+                jsr LoadPrg
+                ENDM

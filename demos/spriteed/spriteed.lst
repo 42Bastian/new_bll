@@ -1,0 +1,120 @@
+DEFINT "a-z"
+DIM sprite(8,16)
+BOX 0,0,480,306
+BOX 0,52*3,32*3,52*3+32*3
+LINE 0,60*3,32*3,60*3
+LINE 0,68*3,32*3,68*3
+LINE 0,76*3,32*3,76*3
+LINE 8*3,52*3,8*3,84*3
+LINE 16*3,52*3,16*3,84*3
+LINE 24*3,52*3,24*3,84*3
+BOX (80-16)*3,(52-16)*3,(80+16)*3,(52+16)*3
+BOX 0,90*3,16*4*3,101*3
+WHILE BIOS(1,1)
+  VOID INP(1)
+WEND
+p$="\"
+DO
+  SHOWM
+  @getmouse(*x,*y,*k)
+  IF ABS(x-ax)>0 OR ABS(y-ay)>0 OR k<>ak
+    ax=x
+    ay=y
+    ak=k
+    sendxyk(x,y,k)
+  ENDIF
+  IF BIOS(1,1)
+    a=INP(1)
+    IF a=&HAC
+      get_sprite
+    ENDIF
+    IF a=&HAB
+      send_sprite
+    ENDIF
+  ENDIF
+LOOP
+> PROCEDURE getmouse(x,y,k)
+  LOCAL a,b,c
+  MOUSE a,b,c
+  IF a>479
+    a=479
+  ENDIF
+  IF b>305
+    b=305
+  ENDIF
+  a=ROUND(a DIV 3)
+  b=ROUND(b DIV 3)
+  PRINT AT(1,1);a,b
+  *x=a
+  *y=b
+  *k=c
+RETURN
+PROCEDURE sendxyk(a,b,c)
+  OUT 1,170
+  VOID INP(1)
+  OUT 1,a
+  VOID INP(1)
+  OUT 1,b
+  VOID INP(1)
+  '  OUT 1,SHL(c AND 1,1) OR SHR(c AND 2,1)
+  OUT 1,c
+  VOID INP(1)
+RETURN
+> PROCEDURE send_sprite
+  ARRAYFILL sprite(),0
+  FILESELECT p$+"*.sps","",a$
+  IF EXIST(a$)
+    p$=LEFT$(a$,RINSTR(a$,"\"))
+    CLR y
+    OPEN "i",#1,a$
+    WHILE (NOT EOF(#1)) AND y<16
+      INPUT #1,b$
+      IF LEN(b$) AND 1
+        b$=b$+"0"
+      ENDIF
+      IF LEN(b$)>16
+        b$=LEFT$(b$,16)
+      ENDIF
+      PRINT b$
+      FOR i=1 TO LEN(b$)
+        IF MID$(b$,i,1)=" "
+          MID$(b$,i,1)="0"
+        ENDIF
+      NEXT i
+      FOR i=0 TO LEN(b$)/2-1
+        a=VAL("&"+MID$(b$,1+i*2,2))
+        sprite(i,y)=a
+      NEXT i
+      INC y
+    WEND
+    CLOSE
+    PRINT x,y
+    FOR y=0 TO 15
+      FOR x=0 TO 7
+        OUT 1,sprite(x,y)
+        VOID INP(1)
+      NEXT x
+    NEXT y
+  ENDIF
+RETURN
+> PROCEDURE get_sprite
+  FOR y=0 TO 15
+    FOR x=0 TO 7
+      IF BIOS(1,1)
+        sprite(x,y)=INP(1)
+      ENDIF
+    NEXT x
+  NEXT y
+  FILESELECT p$+"*.sps","",a$
+  IF NOT EXIST(a$)
+    p$=LEFT$(a$,RINSTR(a$,"\"))
+    OPEN "o",#1,a$
+    FOR y=0 TO 15
+      FOR x=0 TO 7
+        PRINT #1,HEX$(sprite(x,y),2);
+      NEXT x
+      PRINT #1
+    NEXT y
+    CLOSE
+  ENDIF
+RETURN

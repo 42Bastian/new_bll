@@ -1,0 +1,80 @@
+PAUSE:          SET 1
+BUTTON_A        SET 2
+BUTTON_B        SET 4
+OPTION_2        SET 8
+OPTION_1        SET 16
+
+                macro INITSUZY                  ; Suzy initalisieren
+                ifnd SuzyInitFlag
+SuzyInitFlag    equ 1
+                ldx #6
+.\mloop         ldy .\SuzyInitReg,x
+                lda .\SuzyInitData,x
+                sta $fc00,y
+                dex
+                bpl .\mloop
+                bra .\mcont
+.\SuzyInitReg   db $28,$2a,$04,$06,$92,$83,$90
+.\SuzyInitData  db $7f,$7f,$00,$00,$24,$f3,$01
+
+.\mcont         lda #$24
+                sta _SPRSYS
+                endif
+                endm
+
+                MACRO HOME
+                stz $fc04
+                stz $fc05
+                stz $fc06
+                stz $fc07
+                ENDM
+
+
+                MACRO READKEY
+                lda $fcb0
+                pha
+                and #$f0
+                sta Cursor
+                pla
+                and #$0f
+                asl
+                sta Button
+                lda $fcb1
+                and #1
+                ora Button
+                sta Button
+                ENDM
+                
+                MACRO READJOY   ; JoyPad
+                lda $fcb0
+                and #$f0
+                sta Cursor
+                ENDM
+
+                MACRO READBUTTON
+                lda $fcb0
+                and #$0f
+                asl
+                sta Button
+                lda $fcb1
+                and #1
+                ora Button
+                sta Button
+                ENDM
+                
+                MACRO WAITKEY
+.\WAITKEY0      lda $fcb0
+                beq .\WAITKEY0
+.\WAITKEY1      cmp $fcb0
+                beq .\WAITKEY1
+                ENDM
+
+                MACRO WAITNOKEY
+.\WAITNOKEY0    lda $fcb0
+                bne .\WAITNOKEY0
+                ENDM
+
+                MACRO WAITSUZY
+.\WAITSUZY0     bit SPRSYS
+                bmi .\WAITSUZY0
+                ENDM

@@ -1,0 +1,8 @@
+*
+* just three temp-registers ;)
+*
+ BEGIN_ZP
+temp::    ds 2
+temp1::   ds 2
+temp2::   ds 2
+ END_ZP

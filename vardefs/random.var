@@ -1,0 +1,5 @@
+; vars for RANDOM
+ BEGIN_ZP
+LastRND	dw 0
+RNDtmp	dw 0
+ END_ZP
