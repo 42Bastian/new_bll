@@ -3,7 +3,7 @@
 ;*********************
 
 ;****************
-;* Fenster îffnen
+;* Fenster ˆffnen
 ;****************
 OpenWindow::	phx
 	pha
@@ -46,7 +46,7 @@ OpenWindow::	phx
 BorderBox	ds 5
 WindBox	ds 5
 ;***************
-;* Fenterinhalt lîschen
+;* Fenterinhalt lˆschen
 ;***************
 ClearWindow::	phx
 	pha
@@ -146,7 +146,7 @@ WindSaveBack::	pha
 	sta .ByteCounter
 	iny
 	lda (ptr),y
-	sta .LineCounter ; Hîhe in Pixeln
+	sta .LineCounter ; Hˆhe in Pixeln
 	ldy #WCBDest
 	lda (ptr),y
 	tax
@@ -162,7 +162,7 @@ WindSaveBack::	pha
 	lda (ptr2),y
 	iny
 	dex
-	bne .loop1	
+	bne .loop1
 	sta (ptr),y
 	clc
 	tya
@@ -189,7 +189,7 @@ WindSaveBack::	pha
 .ByteCounter	ds 1
 .LineCounter	ds 1
 ;***************
-;* Hintergrund zurÅck
+;* Hintergrund zur¸ck
 ;***************
 CloseWindow
 WindRestoreBack:: pha
@@ -218,7 +218,7 @@ WindRestoreBack:: pha
 	plx
 	pla
 	rts
-	
+
 WBS	db $c1,$90,$00
 	dw 0
 WBSData	dw 0
@@ -256,7 +256,7 @@ DrawBox::	pha
 	ply
 	pla
 	rts
-	
+
 BS	db $c1,$90,00
 	dw 0
 	dw BSpixel

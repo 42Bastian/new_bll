@@ -1,10 +1,10 @@
-* letzte Žnderung : 20.6.95
+* letzte Äderung : 20.6.95
 * 20.6.95       Fehler in DrawSprite (SUZY-Busy)
 
 IFD CLSuser
 IFND cls
 ;***************
-;* Bildschirm l”schen
+;* Bildschirm löchen
 ;***************
 cls::           pha
                 phx
@@ -30,7 +30,7 @@ cls::           pha
 ENDIF
 ENDIF
 ;****************
-;* Fenster ”ffnen
+;* Fenster öfnen
 ;****************
 OpenWindow::    phx
                 pha
@@ -51,7 +51,7 @@ OpenWindow::    phx
                 jsr Rectangle0
                 bra contCLW
 ;***************
-;* Fenterinhalt l”schen
+;* Fenterinhalt löchen
 ;***************
 ClearWindow::   phx
                 pha
@@ -282,7 +282,7 @@ LineHo::        pha
                   lda #0
                   sta (ptr2),y
                 ENDIF
-                bra DrawBoxCont ; Box mit H”he 1
+                bra DrawBoxCont ; Box mit Höhe 1
 ;**************
 ;* zeichnet vertikale Linie
 ;* A:Y : Zeiger auf LCB
@@ -300,7 +300,7 @@ LineVe::        pha
                   lda #0
                   sta (ptr2),y
                 ENDIF
-                bra DrawBoxCont ; Box mit H”he 1
+                bra DrawBoxCont ; Box mit Höhe 1
 IFD PlotUser
 ;**************
 ;* zeichnet einzelne Punkt
@@ -315,11 +315,11 @@ Plot::          pha
                 sta (ptr2),y
                 ldy #LineH
                 sta (ptr2),y
-                bra DrawBoxCont ; Box mit H”he 1
+                bra DrawBoxCont ; Box mit Höhe 1
 ENDIF
 ;***************
 ;* DrawBox
-;* Zeichnet ausgeflltes Rechteck
+;* Zeichnet ausgefültes Rechteck
 ;* A:Y => LCB
 ;***************
 DrawBox0::      pha
@@ -367,7 +367,7 @@ DrawBoxCont     lda (ptr2)
                   ror
                   sta BSXsize
                 ENDIF
-                lda (ptr2),y    ; H”he
+                lda (ptr2),y    ; Höhe
                 iny
                 IF SCR_MAX_Y>255
                   sta BSYsize
