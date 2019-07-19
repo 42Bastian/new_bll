@@ -44,7 +44,7 @@ SuzyInitFlag    equ 1
                 ora Button
                 sta Button
                 ENDM
-                
+
                 MACRO READJOY   ; JoyPad
                 lda $fcb0
                 and #$f0
@@ -61,7 +61,7 @@ SuzyInitFlag    equ 1
                 ora Button
                 sta Button
                 ENDM
-                
+
                 MACRO WAITKEY
 .\WAITKEY0      lda $fcb0
                 beq .\WAITKEY0
