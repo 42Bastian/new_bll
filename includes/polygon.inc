@@ -1,3 +1,4 @@
+* -*-asm-*-
 ****************
 * wire-frame polygon
 
@@ -27,5 +28,3 @@ Polygon::       sta .pcolor
                 jmp DrawLine
 .pcolor         ds 1
 ****************
-
-

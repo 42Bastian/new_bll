@@ -1,10 +1,11 @@
+* -*-asm-*-
 ****************
 * EEPROM-routs
 * for 93C46 (1024bit => 64 16-bit words)
 *
 * created : 11.05.95
 * last modified :
-* 
+*
 * 16.02.96      leaner (thanks to Harry)
 * 12.03.96      test for busy after write and erase (well, Harry ;)) )
 * 11.01.99      new EEPROMs need DO to be set to 0 command write!
@@ -58,7 +59,7 @@ EE_C_EWDS       EQU    $00
                 dex
                 stx $fd87
                 ENDM
-                
+
 ****************
 * read 16bit Wort from address A
 ****************
@@ -76,7 +77,7 @@ EE_Read16Bit::
 ;               eor #$10
                 lda #$a
                 sta $fd8A       ; set AUDIN to Input
-                
+
                 clc
                 stz I2Cword
                 stz I2Cword+1
@@ -137,7 +138,7 @@ EE_wait         EE_SET_CS_HIGH
 ****************
 EE_Send9Bit::   EE_SET_CS_LOW   ; CLK = 0 / CS = 0
                 EE_SET_CS_HIGH
-                
+
                 ldy #8
                 sec             ; start bit
                 ror
@@ -194,4 +195,3 @@ EE_Send16Bit::  lda I2Cword
                 sta $fd8b
 
                 rts
-

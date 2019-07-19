@@ -1,3 +1,4 @@
+* -*-asm-*-
 * Mathe-Register
 * A = C * E
 * A : B = D + R/2

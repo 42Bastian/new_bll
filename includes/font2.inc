@@ -1,3 +1,4 @@
+* -*-asm-*-
 * FONT2.INC
 *
 * print a text as a sprite (proportional !)
@@ -227,7 +228,7 @@ print::         pha
 *
 * X,Y are saved
 ****************
-GetCharLineBytes:: 
+GetCharLineBytes::
                 phx
                 phy
                 sec
@@ -280,4 +281,3 @@ GetCharLineBytes::
 .exit           ply
                 plx
                 rts                             ; done ;-)
-

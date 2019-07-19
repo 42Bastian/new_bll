@@ -1,3 +1,4 @@
+* -*-asm-*-
 ****************
 PrintHex::	phx
 	pha
@@ -44,7 +45,7 @@ PrintDezA::
 	txa
 	jsr PrintChar
 	pla
-	jsr PrintChar	
+	jsr PrintChar
 	pla
 	ply
 	plx

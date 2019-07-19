@@ -1,3 +1,4 @@
+* -*-asm-*-
 ; Lynx hard-ware addresse
 ; written 8.3.96
 ; 42Bastian Schick
@@ -20,7 +21,7 @@ MAPCTL	EQU $FFF9	; set to 0 at reset
 ; Mikey/Suzy see all memory as RAM
 
 FREE_RAM	EQU $FFF8 (alway RAM !)
-; ROM 
+; ROM
 ; $FE00-FFF7
 
 
@@ -55,7 +56,7 @@ TIM_RESETDONE	EQU %01000000	; reset timer done
 TIM_MAGMODE	EQU %00100000	; nonsense in Lynx !!
 TIM_RELOAD	EQU %00010000	; enable reload
 TIM_COUNT	EQU %00001000	; enable counter
-TIM_LINK	EQU %00000111	
+TIM_LINK	EQU %00000111
 ; link timers (0->2->4 / 1->3->5->7->Aud0->Aud1->Aud2->Aud3->1
 TIM_64us	EQU %00000110
 TIM_32us	EQU %00000101
@@ -94,7 +95,7 @@ AUD_RESETDONE	EQU %01000000
 AUD_INTEGRATE	EQU %00100000
 AUD_RELOAD	EQU %00010000
 AUD_CNTEN	EQU %00001000
-AUD_LINK	EQU %00000111	
+AUD_LINK	EQU %00000111
 ; link timers (0->2->4 / 1->3->5->7->Aud0->Aud1->Aud2->Aud3->1
 AUD_64us	EQU %00000110
 AUD_32us	EQU %00000101
@@ -317,7 +318,7 @@ SCB_DONTCOLL	equ %00100000
 SPRINIT	EQU $FC83	; set to $F3 before any sprite-op
 SUZYBUSEN	EQU $FC90	; bit 0 EQU 1 Suzy bus enabled
 SPRGO	EQU $FC91	; Sprite Process Start Bit
-SCB_START	equ %00000001	
+SCB_START	equ %00000001
 ; write starts sprite-engine, is reset after completion
 SCB_EVERON	equ %00000100	; enable everon detector
 
@@ -362,5 +363,3 @@ CART0	EQU $FCB2
 CART1	EQU $FCB3
 
 ; $FCB4..$FCFF	not allocated or Howard-board specific
-
-

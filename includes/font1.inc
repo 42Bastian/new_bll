@@ -1,3 +1,4 @@
+* -*-asm-*-
 * FONT.INC
 * created: ??.??.??
 *
@@ -11,7 +12,7 @@
 *               Character SCB
 
 ***************
-* init font 
+* init font
 * IN : X - font number
 **************
 InitFont::      pha
@@ -82,7 +83,7 @@ InitFont::      pha
                 plx
                 pla
                 rts
-                
+
 ; see FONT.HLP
 FntAdrLo        db <BigFnt,<SmallFnt,<LittleFnt,<SmallFnt2,<LittleFnt2
 FntAdrHi        db >BigFnt,>SmallFnt,>LittleFnt,>SmallFnt2,>LittleFnt2
@@ -107,7 +108,7 @@ BuildChar::     pha
                 plx
                 pla
                 rts
-                
+
 .cont           sec
                 sbc CurrFirst
                 bcc .err_exit
@@ -146,7 +147,7 @@ BuildChar::     pha
 
 .cont0          sta BitBuff+2
                 lda BitCounter  ; width in bits
-                
+
                 clc
                 adc #7
                 lsr
@@ -158,7 +159,7 @@ BuildChar::     pha
                 sta (TextPtr2)
                 ldy #1
                 lda BitBuff
-                sta (TextPtr2),y 
+                sta (TextPtr2),y
                 iny
                 lda BitBuff+1
                 sta (TextPtr2),y
@@ -201,7 +202,7 @@ BuildChar::     pha
                 plx
                 pla             ; restore registers
                 rts
-                
+
 .maske          db $FF,$80,$C0,$E0,$F0,$F8,$FC,$FE
 ***************
 * CharOut
@@ -305,7 +306,7 @@ print::         pha
                 rts
 **************
 * PrintChar
-* print character A at CurrX,CurrY 
+* print character A at CurrX,CurrY
 * or do some action
 **************
 PrintChar::     _IFLO ,#" "     ; < " " ?
@@ -333,7 +334,7 @@ PrintChar::     _IFLO ,#" "     ; < " " ?
                   bcc .cont2
                   beq .cont2    ; no =>
                   jsr NewLine   ; next line
-                  
+
                   lda CurrX     ; compute pos. of the _next_ char
                   ldx CurrSize
 .loop1            clc
@@ -376,10 +377,10 @@ NewLine::       pha
                   sec
                   lda MaxX
                   inc
-                  sbc MinX       
+                  sbc MinX
                   sec
                   sbc CurrX
-                  lsr            
+                  lsr
                   adc MinX
                 _CASE #RIGHT_ADJUST
                   jsr GetLen
@@ -415,7 +416,7 @@ GetLen::        phx
                 sec
                 sbc CurrFirst
                 tay             ; offset
-                ldx CurrSize    
+                ldx CurrSize
 .loop1          clc
                 lda Laenge
                 adc (CurrLen),y
@@ -428,7 +429,7 @@ GetLen::        phx
                 ply
                 iny
                 bra .loop       ; next one
-                
+
 .exit           sec
                 lda MaxX
                 sbc MinX
@@ -443,4 +444,3 @@ GetLen::        phx
                 rts
 ***************
                 END
-

@@ -1,3 +1,4 @@
+* -*-asm-*-
 * letzte Äderung : 20.6.95
 * 20.6.95       Fehler in DrawSprite (SUZY-Busy)
 

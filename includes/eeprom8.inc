@@ -1,10 +1,11 @@
+* -*-asm-*-
 ****************
 * EEPROM-routines
 * for 93C46A (1024bit => 128 8-bit words)
 *
 * created : 11.05.95
 * last modified :
-* 
+*
 * 16.02.96	leaner (thanks to Harry)
 * 12.03.96	test for busy after write and erase (well, Harry ;)) )
 * 11.01.99	new EEPROMs need DO to be set to 0 command write!
@@ -58,11 +59,11 @@ EE_C_EWDS	EQU    $00
 	dex
 	stx $fd87
 	ENDM
-	
+
 ****************
 * read 16bit Wort from address A
 ****************
-EE_Read::	
+EE_Read::
 	pha			; save address
 	clc
 	jsr EE_ReadHigh
@@ -84,11 +85,11 @@ EE_ReadHigh:
 EE_Read8Bit::
 	lda #$a
 	sta $fd8A	; set AUDIN to Input
-	
+
 	clc
 	stz I2Cword
 	ldy #7
-.loop	
+.loop
 	EE_TOGGLE_CLK	; CLK = 1
 	EE_TOGGLE_CLK	; CLK = 0
 	lda $fd8b
@@ -104,11 +105,11 @@ EE_Read8Bit::
 	EE_SET_CS_LOW
 
 	rts
- IF 0 
+ IF 0
 ****************
 * clear word at address A
 ****************
-EE_Erase::	
+EE_Erase::
 	pha
 	lda #EE_C_EWEN	; EWEN
 	jsr EE_Send10Bit
@@ -121,7 +122,7 @@ EE_Erase::
 ****************
 * write word at address A
 ****************
-	
+
 EE_Write8:
 	and #$3f
 	rol
@@ -129,8 +130,8 @@ EE_Write8:
 	clc
 	jsr EE_Send10Bit
 	jsr EE_Send8Bit
-	
-EE_wait	
+
+EE_wait
 	EE_SET_CS_HIGH
 	lda #$0A
 	sta $fd8a	; AUDIN to input
@@ -138,15 +139,15 @@ EE_wait
 .wait	bit $fd8b	; 'til ready :D0-read is /D0-written
 	beq .wait
 	lda #$1a	; AUDIN to output
-	sta $fd8a	
+	sta $fd8a
 	rts
-	
-EE_Write::	
+
+EE_Write::
 	pha			; save address
 	clc
-	lda #EE_C_EWEN	
+	lda #EE_C_EWEN
 	jsr EE_Send10Bit	; enable write/erase
-	pla	
+	pla
 	pha
 	sec
 	jsr EE_Write8
@@ -161,7 +162,7 @@ EE_Write::
 * send A via I2C
 * A,Y destroyed
 ****************
-EE_Send10Bit::	
+EE_Send10Bit::
 	ror
 	ror
 	ror
@@ -178,10 +179,10 @@ EE_Send10Bit::
 
 	plp
 	ldy #8
-	
+
 	;; send y+1 bits
 EE_send:
-.loop	 
+.loop
 	 tax
 	 and #$10
 	 ora #$b
@@ -201,7 +202,7 @@ EE_send:
 * send I2Cword to EEPROM
 * A,Y detroyed
 ****************
-EE_Send8Bit::	
+EE_Send8Bit::
 	lda I2Cword
 	ror
 	ror
@@ -209,8 +210,7 @@ EE_Send8Bit::
 
 	ldy #7
 	jsr EE_send
-	
+
 	EE_SET_CS_LOW
 
 	rts
-

@@ -1,3 +1,4 @@
+* -*-asm-*-
 IFND DrawSprite
 ***************
 * draw a single Sprite

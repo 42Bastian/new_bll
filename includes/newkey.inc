@@ -1,3 +1,4 @@
+* -*-asm-*-
 * NewKey
 * created : 28.03.96
 *

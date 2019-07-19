@@ -1,3 +1,4 @@
+* -*-asm-*-
 ****************
 * CHECK_EE.INC
 * routine to check if there's a EEPROM and working correct
@@ -7,7 +8,7 @@
 * last modified :
 *
 ****************
-	
+
 okEEPROM	EQU $0
 noEEPROM	EQU $1
 koEEPROM	EQU $2
@@ -21,7 +22,8 @@ koEEPROM	EQU $2
 *
 * to be called once in a games live ;)
 ****************
-CheckEEPROM::	ldx #127-2
+CheckEEPROM::
+	ldx #127-2
 .1	  lda $fd02
 	  sta EEPROMbuffer,x
 .2	  dec
@@ -31,7 +33,7 @@ CheckEEPROM::	ldx #127-2
 	lda #<EEPROMbuffer
 	ldy #>EEPROMbuffer
 	jsr WriteSaveGame	; EEPROM = RND
-	
+
 	lda #<EEPROMbuffer
 	ldy #>EEPROMbuffer
 	jsr LoadSaveGame	; check it
@@ -54,7 +56,7 @@ CheckEEPROM::	ldx #127-2
 	lda #<EEPROMbuffer
 	ldy #>EEPROMbuffer
 	jsr WriteSaveGame	; EEPROM = 0
-	
+
 	lda #<EEPROMbuffer
 	ldy #>EEPROMbuffer
 	jsr LoadSaveGame	; check again
@@ -63,7 +65,6 @@ CheckEEPROM::	ldx #127-2
 	rts
 .ok	lda #okEEPROM
 	rts
-	
 *****
 *EOF*
 *****

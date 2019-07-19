@@ -1,4 +1,5 @@
-                db "SERIAL"
+* -*-asm-*-
+	db "SERIAL"
 * SERIAL
 * (c) 1993 Bastian Schick
 *
@@ -89,14 +90,14 @@ SerialIRQ::
                 stz RxPtrIn
                 stz RxPtrOut
 
-.noBreak        lda #$48|contrl        ; RxIRQ setzen und Fehler l”schen
+.noBreak        lda #$48|contrl        ; RxIRQ setzen und Fehler löschen
                 sta $fd8c
                 lda #$10
                 sta $fd80
 
                 END_IRQ
 
-.rx_irq         lda #$48|contrl        ; RxIRQ setzen und Fehler l”s"Jen
+.rx_irq         lda #$48|contrl        ; RxIRQ setzen und Fehler löschen
                 sta $fd8c
                 txa
 IFD DEBUG
@@ -129,7 +130,7 @@ ENDIF
 .exit0          lda #$10
                 sta $fd80
                 END_IRQ
-*************** 
+***************
 .tx_irq         ldx TxPtrOut
                 cpx TxPtrIn
                 beq .cont1

@@ -1,3 +1,4 @@
+* -*-asm-*-
 * RANDOM2.INC
 *
 * Offered by Rob Nicholson.
@@ -26,4 +27,3 @@ InitRandom::    phx
                 plx                                              ; restore X
                 rts
 *
-

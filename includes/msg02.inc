@@ -1,3 +1,4 @@
+* -*-asm-*-
 * MSG
 * (c) 1997 Bastian Schick
 *
@@ -178,4 +179,3 @@ MsgSendMessage::
 ;>                  clc
 ;>                _ENDIF
 ;>                rts
-

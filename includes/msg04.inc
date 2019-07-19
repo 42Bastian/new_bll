@@ -1,3 +1,4 @@
+* -*-asm-*-
 * MSG
 * (c) 1997 Bastian Schick
 *
@@ -147,7 +148,7 @@ ENDIF
 
 MsgReceivedHook dc.w 0
 .99             jmp (MsgReceivedHook)
-*************** 
+***************
 MsgSendMessage::
 ****************
                 _IFNE RxPtrIn
@@ -186,4 +187,3 @@ MsgSendMessage::
                 sta $fd8c
                 sec
                 rts
-

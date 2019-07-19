@@ -1,4 +1,5 @@
-                db "SERIAL"
+* -*-asm-*-
+	db "SERIAL"
 * SERIAL
 * (c) 1993 Bastian Schick
 *
@@ -112,7 +113,7 @@ ENDIF
                 lda #$10
                 sta $fd80
                 END_IRQ
-*************** 
+***************
 .tx_irq         ldx TxPtrOut
                 cpx TxPtrIn
                 beq .cont1

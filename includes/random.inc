@@ -1,11 +1,12 @@
+* -*-asm-*-
 **************************
 * ZUFALL
 * (c) 1994 Bastian Schick
 * erstellt : 260694-
-* Letzte Žnderung :
 **************************
 
-InitRandom::	lda $fd0A
+InitRandom::
+	lda $fd0A
 	sta seed_lo
 	adc $fd02
 	sta seed_lo+1
@@ -20,7 +21,8 @@ InitRandom::	lda $fd0A
 	adc $fd02
 	and #$3f
 	sta seed_hi+2
-Random::	phx
+Random::
+	phx
 	phy
 	lda _SPRSYS
 	ora #$C0	; mit Vorzeichen und Akku
@@ -49,7 +51,7 @@ Random::	phx
 	sta rnd_rest
 	lda rnd_rest+1
 	sbc #>32362
-	sta rnd_rest+1	
+	sta rnd_rest+1
 .ok	clc
 	lda rnd_rest
 	adc seed_lo+2
@@ -75,7 +77,8 @@ Random::	phx
 	lda rnd_rest
 	rts
 
-compute_seed::	lda rnd_divisor,x
+compute_seed::
+	lda rnd_divisor,x
 	sta MATHE_B
 	stz MATHE_B+1
 	lda seed_lo,x
@@ -135,4 +138,3 @@ rnd_add_hi	dc.b >32363,>31727,>31657
 rnd_rest
 seed_lo	dc.b 1,2,3
 seed_hi	dc.b 4,5,6
-

@@ -1,4 +1,5 @@
-; Eingabe von Texten Åber JoyPad
+* -*-asm-*-
+; Eingabe von Texten ¸bdr JoyPad
 ;
 	macro WaitJoy
 	ldx #12
@@ -8,7 +9,7 @@
 
 ;***************
 ;* Einzelnes Zeichen holen
-;* A  letztes Zeichen 
+;* A  letztes Zeichen
 ;* X:Y = Zeiger auf WCB
 ;***************
 ;* <- = BackSpace

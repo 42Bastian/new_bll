@@ -1,3 +1,4 @@
+* -*-asm-*-
 * 97/02/05      comments in English
 * 97/03/26      include new cart-header options
 *               (new dir-pos !)
@@ -47,7 +48,7 @@ LoadDir::       stz CurrBlock
                   sta entry,x
                   inx
                   dey
-                bne .loopLD     
+                bne .loopLD
                 rts
 IFD LoadPrgUser
 ****************
@@ -69,8 +70,8 @@ IFD LoadPckUser
                 bne .exit
                 jsr ReadPackedBytes
                 pla
-                beq .10         
-ENDIF           
+                beq .10
+ENDIF
 .2              jmp (entry+DestAddr)
 
 IFND LoadPckUser
@@ -78,14 +79,14 @@ IFND LoadPckUser
 ENDIF
 .exit           sec
                 rts
-                
+
 .9              jsr ReadBytes
                 pla
 .10             ldx entry+DestAddr
                 ldy entry+DestAddr+1
                 clc
                 rts
-ENDIF           
+ENDIF
 ****************
 * Open File, i.e. select block, over-read offset , set DestPtr
 * IN : A   : File-Number
@@ -255,4 +256,3 @@ SBL2            STX $FD87
 .exit           RTS
 
                 END
-

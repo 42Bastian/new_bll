@@ -1,3 +1,4 @@
+* -*-asm-*-
 ***********
 * SAVEGAME
 * created : 11.5.95
@@ -17,12 +18,12 @@
 * IN : Y:A address of 128byte default
 * byte 126/127 are used for checksum
 ****************
-WriteSaveGame::	
+WriteSaveGame::
 	stz temp
 	stz temp+1
 	sta temp1
 	sty temp1+1
-	
+
 	ldy #0
 	ldx #0
 .loop	phx

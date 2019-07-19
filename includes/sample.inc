@@ -1,3 +1,4 @@
+* -*-asm-*-
 * Sample
 * Date	changes
 * 28.11.94	InitSample stops  SampleTimer
@@ -30,7 +31,7 @@ StartSample::	nop
 	sta DigiCount
 	jsr ReadByte
 	sta $fd00+SmpTimer*4
-	
+
 	lda $fd50
 	and #$EE
 	sta $fd50	; Kanal A an
@@ -111,10 +112,10 @@ InitSample::	stz $fd01+SmpTimer*4
 	lda $fd44
 	ora $11
 	sta $fd44	; channel A - panning
-	
+
 	lda #$ff	; full volume right/left
 	sta $fd40
-	
+
 ;	lda #$77
 ;	sta $fd42	; channel C half volume right/left
 
@@ -126,4 +127,3 @@ InitSample::	stz $fd01+SmpTimer*4
 	stz $fd25	; Audio-Contrl A
 	stz $fd24
 	rts
-

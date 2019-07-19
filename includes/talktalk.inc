@@ -1,4 +1,5 @@
-                db "TALKTALK"
+* -*-asm-*-
+	db "TALKTALK"
 * SERIAL modified => TALKTALK
 * Version 1.0 of 28.3.94
 * (c) 1993 Bastian Schick
@@ -54,7 +55,7 @@ ENDIF
 
                 lda #%00011000
                 sta $fd11
-                
+
                 lda #SerialControl|$48
 ;>                sta SerialContrl
 ;>                ora #$48
@@ -70,7 +71,7 @@ ENDIF
 .loop1          lda $fd8d
                 bit $fd8c
                 bvs .loop1
-                
+
 .exit           SETIRQVEC 4,SerialIRQ
                 plp
                 rts
@@ -79,7 +80,7 @@ ENDIF
 ****************************
 SerialIRQ::     bit MessageDone
                 bpl .rx
-*************** 
+***************
 .tx_irq         ldx MessagePtrOut
                 cpx MessageLenOut
                 beq .cont1
@@ -124,7 +125,7 @@ SerialIRQ::     bit MessageDone
                 lda #$10
                 sta $fd80
                 END_IRQ
-                
+
 
 .rx_irq         lda #SerialControl|$48        ; RxIRQ setzen und Fehler l”schen
                 sta $fd8c
@@ -152,7 +153,7 @@ ENDIF
                 lda #$10
                 sta $fd80
                 END_IRQ
-                
+
 .ok_rx          ldx MessagePtrIn
                 sta MessageBufferIn,x
                 clc

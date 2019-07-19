@@ -1,3 +1,4 @@
+* -*-asm-*-
 IFD KBD_DELAY
 LongDelay	equ KBD_DELAY
 ELSE
@@ -10,7 +11,7 @@ ELSE
 ShortDelay	equ 200  ; ms
 ENDIF
 ;**************
-InitKey::	
+InitKey::
 	stz LastButton
 	stz LastCursor
 	stz KeyCounter
@@ -22,13 +23,13 @@ InitKey::
 	sta PausePtr+1
 	sta PausePtr+3
 	sei
-	
+
 .dummy	rts
 ;***************
 ;* Tastendruck mit
 ;* Delay/Repeat holen
 ;***************
-GetKey::	
+GetKey::
 	READKEY
 	lda Button
 	ora Cursor
@@ -65,10 +66,10 @@ GetKey::
 ;***************
 ;* Read button and do actions
 ;***************
-ReadKey::	
+ReadKey::
 	jsr GetKey
 	beq .exit1
-ReadKey2	
+ReadKey2
 	lda Button
 	beq .exit0
 	and #_RESTART	; Pause+Opt 1 => Restart
@@ -88,7 +89,7 @@ ReadKey2
 ;* auf Button warten
 ;***************
 WaitKey::
-WaitButton::	
+WaitButton::
 	jsr ReadKey
 	bne WaitButton
 .wait	jsr ReadKey
@@ -111,20 +112,20 @@ Pause::	lda PauseEnable	; Pause allowed ?
 .cont1	lda minutes	; save time
 	pha
 	lda seconds
-	pha	
+	pha
 	tsx
 	stx LastSP+1	; and current SP
 	lda PausePtr+1
 	beq .wait0
 	jsr DrawPause
 .wait0	  READKEY
-	  lda Button		; wait until 
+	  lda Button		; wait until
 	  bit #1		; pause-button is release
 	bne .wait0
 .wait1	jsr ReadKey		; and wait ...
 	bra .wait1
-	
-ExitPause::	
+
+ExitPause::
 	stz PauseFlag		; clear pause-flag
 LastSP	ldx #0
 	txs			; restore stack

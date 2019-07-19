@@ -44,7 +44,7 @@ end_irq	pla
 	plx
 	rti
 	ENDM
-	
+
 	MACRO END_IRQ
 	pla
 	plx
@@ -65,10 +65,10 @@ end_irq	pla
 	if \0<>4
 	  lda #$80
 	  tsb $fd01+(\0)*4
-	endif	  
+	endif
 	plp
 	ENDM
-	
+
 	MACRO SETIRQVEC
 	ifVAR \0
 	IFVAR \1
@@ -79,7 +79,7 @@ end_irq	pla
 	endif
 	endif
 	ENDM
-	
+
 	MACRO RESIRQ
 	php
 	sei

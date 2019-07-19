@@ -1,7 +1,8 @@
-* Entpack-Routine fü geTPackte Dateien
+* -*-asm-*-
+* depacker for TP packed files
 * (c) 1994 Bastian Schick
-* Letzte Änderung : 25.4.94
-* Länge : 119 Bytes
+* Last change : 25.4.94
+* Size : 119 Bytes
 *
 * Variablen (in ZP)
 IF 0

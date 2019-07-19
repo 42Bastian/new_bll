@@ -1,3 +1,4 @@
+* -*-asm-*-
 ; created : 17.8.92
 ; last changes : 170796/250296/131293/2406093
 
@@ -7,7 +8,7 @@
 
 InitIRQ::       php
                 sei
-                lda #$c         
+                lda #$c
                 sta $fff9
                 lda #<irq
                 sta $fffe
@@ -50,10 +51,10 @@ irq::           cld
                   jmp (BRKvec)
 .no_break
                 ENDIF
-                
+
                 ldx #0
                 lda $fd81
-                bit #$10
+                bit #$10	; SERIAL IRQ?
                 beq .1
                 jmp (irq_vecs+8)
 
@@ -71,7 +72,7 @@ mask            dc.w $01,$02,$04,$08,$10,$20,$40,$80
 
 dummy_irq       END_IRQ
                 END
-                
+
 ****************
 *old version
 
@@ -89,4 +90,3 @@ dummy_irq       END_IRQ
 
 .do_irq         sta $fd80
                 jmp (irq_vecs,x)
-

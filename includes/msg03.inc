@@ -1,3 +1,4 @@
+* -*-asm-*-
 * MSG
 * (c) 1997 Bastian Schick
 *
@@ -147,7 +148,7 @@ ENDIF
 
 MsgReceivedHook dc.w 0
 .99             jmp (MsgReceivedHook)
-*************** 
+***************
 ;>.tx_irq         ldx TxPtrOut
 ;>                inx
 ;>                cpx TxBuffer
@@ -227,4 +228,3 @@ MsgSendMessage::
 ;>                  clc
 ;>                _ENDIF
 ;>                rts
-
