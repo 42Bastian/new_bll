@@ -97,7 +97,23 @@ TSB  - test and set bit
 RMBx - reset bit x
 SMBx - set bit x
 
-Unsused opcodes act as NOP, either 1,2 or 3 cycles.
+Unsused opcodes act as NOP
+
+        Number of Bytes Expected   Number of
+Opcode  (Total- Including Opcode):  Cycles:
+X2                2                    2
+X3                1                    1
+X7                1                    1
+XB                1                    1
+XF                1                    1
+44                2                    3
+54                2                    4
+D4                2                    4
+F4                2                    4
+5C                3                    8
+DC                3                    4
+FC                3                    4
 
 
-(c) 1997 42Bastian Schick
+
+(c) 1997..2019 42Bastian Schick
