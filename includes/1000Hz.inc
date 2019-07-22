@@ -60,7 +60,6 @@ _1000HzIRQ::
 	adc #1
 	sta minutes
 .exit
-	cld
 .cont1
  ENDIF
  IFD KeyCounter
