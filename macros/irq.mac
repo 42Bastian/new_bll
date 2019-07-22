@@ -47,7 +47,6 @@ end_irq	pla
 
 	MACRO END_IRQ
 	pla
-	plx
 	rti
 	ENDM
 
