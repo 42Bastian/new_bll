@@ -35,11 +35,11 @@ ENDIF
 ;- Interrupt-Handler
 ;---------------
 ;
-; Timer 7 => 3+2+4+3+12          = 24
-; Timer 6 => 3+2+4+2+3+12        = 26
-; Timer 5 => 3+2+4+2+2+3+12      = 28
+; Timer 7 => 3+2+4+3+2+12        = 26
+; Timer 6 => 3+2+4+2+3+12        = 28
+; UART    => 3+2+4+3+6           = 18
 ; pre = 19
-; UART    => 19+4*(2+2)+6        = 41
+; Timer 5 => 19+4*(2+2)+12       = 47
 ; Timer 3 => 19+3*(2+2)+(2+3)+12 = 48
 ; Timer 2 => 19+2*(2+2)+(2+3)+12 = 44
 ; Timer 1 => 19+1*(2+2)+(2+3)+12 = 40
@@ -50,11 +50,11 @@ ENDIF
 
 irq::
 	pha		; 3
-	lda	#$20	; 2
+	lda	#$10	; 2
 	bit	$fd81	; 4
+	bne	_4	; 2,3
 	bmi	_7	; 2,3
 	bvs	_6	; 2,3
-	bne	_5	; 2,3
 	lda	$fd81	; 4
  IFD BRKuser
 	beq	dummy_irq
@@ -67,6 +67,11 @@ irq::
 	bcs	_2	; 2,3
 	lsr		; 2
 	bcs	_3	; 2,3
+_5:
+	lda	#$20	; 2
+	sta	$fd80	; 4
+	jmp	(irq_vecs+5*2) ;6
+_4:
 	jmp	(irq_vecs+4*2) ; 6
 _3:
 	lda	#$08
@@ -84,10 +89,6 @@ _0:
 	lda	#$1
 	sta	$fd80
 	jmp	(irq_vecs+0*2)
-_5:
-	lda	#$20
-	sta	$fd80
-	jmp	(irq_vecs+5*2)
 _6:
 	lda	#$40
 	sta	$fd80
