@@ -3,7 +3,7 @@ DEBUG		set 1
 _1000HZ_TIMER   set 7
 
 * Macros
-	include <macros/hardware.asm>
+	include <includes/hardware.inc>
 
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -95,9 +95,9 @@ Start::         sei
 .loop02           phx
                   lda adresse
                   jsr EE_Read
-	
+
                   lda I2Cword
-                  jsr PrintHex       
+                  jsr PrintHex
                   lda I2Cword+1
                   jsr PrintHex
 
@@ -132,7 +132,7 @@ Start::         sei
                 lda temp+1
                 jsr PrintHex
                 jmp .loop00
-                
+
 hallo           dc.b "TEST-EERPOM : A - clear / B - fill",0
 checktxt        dc.b "Checksum:",0
 
@@ -170,7 +170,7 @@ PrintHex::      phx
 ***************
 digits          db "0123456789ABCDEF"
 
-                
+
 
 * INCLUDES
                 include <includes/1000Hz.inc>
@@ -181,9 +181,7 @@ digits          db "0123456789ABCDEF"
                 include <includes/irq.inc>
                 include <includes/font2.hlp>
                 include <includes/key.inc>
-                include <includes/eeprom8.inc>
+                include <includes/eeprom.inc>
                 include <includes/savegame.inc>
 
 pal             STANDARD_PAL
-
-
