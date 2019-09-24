@@ -117,7 +117,7 @@ ATTEN_B	EQU $FD41
 ATTEN_C	EQU $FD42
 ATTEN_D	EQU $FD43
 ; B7..B4 attenuation left ear (0 silent ..15/16 volume)
-; B3..B0       "     right ear
+; B3..B0      -''-   right ear
 
 MPAN	EQU $FD44
 ; B7..B4 left ear

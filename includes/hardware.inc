@@ -99,6 +99,113 @@ CART1           EQU $FCB3
 ***************
 * Mikey
 ***************
+; timer/counter
+TIMER0	EQU $FD00
+TIMER1	EQU $FD04
+TIMER2	EQU $FD08
+TIMER3	EQU $FD0C
+TIMER4	EQU $FD10
+TIMER5	EQU $FD14
+TIMER6	EQU $FD18
+TIMER7	EQU $FD1C
+
+
+HCOUNTER	EQU TIMER0
+VCOUNTER	EQU TIMER2
+SERIALRATE	EQU TIMER4
+
+; for every timer
+TIM_BAKUP	EQU 0	; backup-value (count+1)
+TIM_CNTRL1	EQU 1	; timer-control register
+TIM_CNT	EQU 2	; current counter
+TIM_CNTRL2	EQU 3	; dynamic control
+
+; TIM_CNTRL1
+TIM_IRQ	EQU %10000000	; enable interrupt (not TIMER4 !)
+TIM_RESETDONE	EQU %01000000	; reset timer done
+TIM_MAGMODE	EQU %00100000	; nonsense in Lynx !!
+TIM_RELOAD	EQU %00010000	; enable reload
+TIM_COUNT	EQU %00001000	; enable counter
+TIM_LINK	EQU %00000111
+; link timers (0->2->4 / 1->3->5->7->Aud0->Aud1->Aud2->Aud3->1
+TIM_64us	EQU %00000110
+TIM_32us	EQU %00000101
+TIM_16us	EQU %00000100
+TIM_8us	EQU %00000011
+TIM_4us	EQU %00000010
+TIM_2us	EQU %00000001
+TIM_1us	EQU %00000000
+
+;TIM_CNTRL2 (read-only)
+; B7..B4 unused
+TIM_DONE	EQU %00001000	; set if timer's done; reset with TIM_RESETDONE
+TIM_LAST	EQU %00000100	; last clock (??)
+TIM_BORROWIN	EQU %00000010
+TIM_BORROWOUT	EQU %00000001
+
+; Audio registers
+
+AUDIO_A	EQU $FD20
+AUDIO_B	EQU $FD28
+AUDIO_C	EQU $FD30
+AUDIO_D	EQU $FD38
+
+VOLUME_CNTRL	EQU 0
+FEEDBACK_ENABLE EQU 1	; enables 11/10/5..0
+OUTPUT_VALUE	EQU 2
+SHIFTER_L	EQU 3
+AUD_BAKUP	EQU 4
+AUD_CNTRL1	EQU 5
+AUD_COUNT	EQU 6
+AUD_CNTRL2	EQU 7
+
+; AUD_CNTRL1
+FEEDBACK_7	EQU %10000000
+AUD_RESETDONE	EQU %01000000
+AUD_INTEGRATE	EQU %00100000
+AUD_RELOAD	EQU %00010000
+AUD_CNTEN	EQU %00001000
+AUD_LINK	EQU %00000111
+; link timers (0->2->4 / 1->3->5->7->Aud0->Aud1->Aud2->Aud3->1
+AUD_64us	EQU %00000110
+AUD_32us	EQU %00000101
+AUD_16us	EQU %00000100
+AUD_8us	EQU %00000011
+AUD_4us	EQU %00000010
+AUD_2us	EQU %00000001
+AUD_1us	EQU %00000000
+
+; AUD_CNTRL2 (read only)
+; B7..B4	; shifter bits 11..8
+; B3	; who knows
+; B2	; last clock state (0->1 causes count)
+; B1	; borrow in (1 causes count)
+; B0	; borrow out (count EQU 0 and borrow in)
+
+ATTEN_A	EQU $FD40
+ATTEN_B	EQU $FD41
+ATTEN_C	EQU $FD42
+ATTEN_D	EQU $FD43
+; B7..B4 attenuation left ear (0 silent ..15/16 volume)
+; B3..B0      -''-   right ear
+
+MPAN	EQU $FD44
+; B7..B4 left ear
+; B3..B0 right ear
+; B7/B3 EQU Audio D
+; a 1 enables attenuation for channel and side
+
+
+MSTEREO	EQU $FD50	; a 1 disables audio connection
+AUD_D_LEFT	EQU %10000000
+AUD_C_LEFT	EQU %01000000
+AUD_B_LEFT	EQU %00100000
+AUD_A_LEFT	EQU %00010000
+AUD_D_RIGHT	EQU %00001000
+AUD_C_RIGHT	EQU %00000100
+AUD_B_RIGHT	EQU %00000010
+AUD_A_RIGHT	EQU %00000001
+
 VOLUME_A        equ $fd20
 FEEDBACK_A      equ $fd21
 OUTPUTVAL_A     equ $fd22
