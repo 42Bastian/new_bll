@@ -84,7 +84,7 @@ _2:
 _1:
 	lda	#$2
 	sta	$fd80
-	jmp	(irq_vecs+2*2)
+	jmp	(irq_vecs+1*2)
 _0:
 	lda	#$1
 	sta	$fd80
