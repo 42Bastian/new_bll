@@ -112,7 +112,7 @@ EE_Erase::      pha
 ****************
 * write word at address A
 ****************
-EE_Write::      pha                                                             ; save adress
+EE_Write::      pha             ; save adress
                 lda #EE_C_EWEN  ; EWEN
                 jsr EE_Send9Bit
                 pla
