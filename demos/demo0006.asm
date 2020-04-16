@@ -36,7 +36,7 @@ NEWPOLYGON      equ 1
 max_punkte      equ 62
 
 
-                include <macros\hardware.asm>
+		include <includes/hardware.inc>
 ****************
                 MACRO DoSWITCH
                 dec SWITCHFlag
