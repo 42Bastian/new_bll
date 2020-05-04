@@ -2,10 +2,7 @@ DOUBLEBUFFER    set 1          ; 1 = double-buffering
 
 ;>BRKuser         set 1         ; define if you want to use debugger
 
-
-
-Baudrate        set 9600
-
+Baudrate        set 62500
 
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -18,8 +15,6 @@ Baudrate        set 9600
 ;
 ; essential variables
 ;
-
-
                 include <vardefs/debug.var>
                 include <vardefs/irq.var>
                 include <vardefs/serial.var>
@@ -205,6 +200,4 @@ pal             STANDARD_PAL
 ;
 ; 4-quadrant-sprite => action-point is in the middle
 ;
-
 sprite_data     ibytes "sprite.spr"
-

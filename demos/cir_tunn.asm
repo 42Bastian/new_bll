@@ -1,13 +1,11 @@
-
 Baudrate        set 62500
-
 
 USE_CIRCLE      equ 1
 
 IRQ_SWITCHBUF_USR  set 1
 
 
-	include <macros/hardware.asm>
+	include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -127,7 +125,7 @@ Start::         sei
                 sta SPRSYS      ; AKKU benutzen
 
                 ldx #$ff
-                txs 
+                txs
 
                 SETRGB pal
                 FRAMERATE 60
@@ -300,7 +298,7 @@ kreis::         tay
                 MOVEB {circle_y,x},y1
                 lda circle_r,x
                 tax
-                tya 
+                tya
                 jmp circle
 
 
@@ -446,7 +444,7 @@ box2::          lda circle_color,x
                 SUBWABC last_r,last_y,y3
                 pla
                 jsr triangle
-                
+
                 MOVE mytemp,last_x
                 MOVE mytemp1,last_y
                 MOVE mytemp2,last_r
@@ -584,13 +582,13 @@ inc temp+1
 MyVBL::         jsr Keyboard
                 IRQ_SWITCHBUF
                 END_IRQ
-                
+
 
 MyHBL           inc $fda0
                 END_IRQ
 ****************
 * Sinus-Tabelle
-* 8Bit Nachkomma
+* 8Bit Fixpoint
 ****************
                 align 2
 SinTab.Lo       ibytes <bin/sintab_8.o>

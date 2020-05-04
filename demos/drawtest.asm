@@ -1,4 +1,3 @@
-
 Baudrate	set 62500
 
 IRQ_SWITCHBUF_USR set 1
@@ -8,8 +7,8 @@ USE_CIRCLE	set 1
 
 _1000HZ_TIMER	set 7
 
+	include <includes/hardware.inc>
 * Macros
-	include <macros/hardware.asm>
 	include <macros/help.mac>
 	include <macros/if_while.mac>
 	include <macros/font.mac>
@@ -108,7 +107,7 @@ Start::		sei
 		sta SPRSYS	; AKKU benutzen
 
 		ldx #$ff
-		txs		
+		txs
 
 		FRAMERATE 60
 *
@@ -347,7 +346,7 @@ Pattern::	 stz x1
 		stz x1+1
 		stz y1
 		stz y1+1
-		
+
 		ldx #159
 .loop0		stx x2
 		stz y2
@@ -362,14 +361,14 @@ Pattern::	 stz x1
 		and #7
 		clc
 		adc #7
-		
+
 		jsr DrawLine
 		plx
 		dex
 		cpx #$ff
 		bne .loop0
 		bra .wait
-		
+
 		ldy #101
 .loop1		stz x1
 		sty y1
@@ -390,7 +389,7 @@ Pattern::	 stz x1
 		jsr PrintChar
 .wait		bra .wait
 
-		
+
 
 
 ************************************

@@ -2,7 +2,7 @@ BlockSize       set 1024
 NEWHEAD         set 1
 
 ;* Macros
-	include <macros/hardware.asm>
+   include <includes/hardware.inc>
    include <macros/help.mac>
    include <macros/if_while.mac>
    include <macros/font.mac>
@@ -55,14 +55,14 @@ frequenz        equ v8195
    SETIRQ 2,VBL
    jsr InitSample
    SCRBASE screen0
-   
+
                 stz volume
                 clc
                 lda volume
                 adc #2
 ;               jsr StartSample
 ;               jsr init_sound
-                cli   
+                cli
                 CLS #0
                 WINDOW win1
 .loop           lda $fcb0
@@ -82,7 +82,7 @@ no_launch       bit #$80
                 bit #$40
                 bne down
                 bra .loop
-                
+
 down            dec volume
                 bpl .loop
                 lda #6
@@ -164,11 +164,11 @@ stx $fda1
                 END_IRQ
 
 tabelle         DC.B 128,-64,-32,-16,-8,-4,-2,-1,0,1,2,4,8,16,32,64
-                
-reinit_play     
+
+reinit_play
                 lda #$80
                 trb $fd05
-                
+
                 END_IRQ
                 phy
                 lda #2

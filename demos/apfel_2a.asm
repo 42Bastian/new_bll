@@ -1,6 +1,6 @@
 ; Manderbrot
 ; created : autumn '92
-; changes for the new DevKit : 11.04.94
+; changes for the new DevKit : 11.04.94/May 2020
 ;
 ; last modified
 ; 25.04.96      BS              included NEWKEY
@@ -11,7 +11,7 @@
 Baudrate        set 62500
 _1000HZ_TIMER   equ 7
 
-                include <macros/hardware.asm>
+                include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -78,7 +78,7 @@ irq_vectors     ds 16
  END_MEM
 
                 run LOMEM
-                
+
                 CLEAR_MEM
                 CLEAR_ZP
                 INITMIKEY
@@ -118,7 +118,7 @@ APFEL::         LDA #100
 
                 stz PlotMODE
                 stz PlotMode2
-                
+
                 LDA #$FF        ; set color to grey
                 LDX #$F
                 SEC
@@ -168,7 +168,7 @@ APFEL2          LDAY box
                 STA LOX
 WAIT_IT0        lda #$d
                 sta $fd92
-                
+
                 JSR DRAW_CROSS
                 phx
 WAIT_IT         jsr ReadKey
@@ -184,7 +184,7 @@ WAIT_IT         jsr ReadKey
                 tya
                 jsr PrintDezA
 
-                lda CurrentButton               
+                lda CurrentButton
                 BIT #_OPT2      ; Option 2 ?
                 BEQ NO_2        ; no =>
                 JSR ROL_COLOR   ; RO-RO
@@ -209,7 +209,7 @@ NO_A            BIT #_FIREB
 NO_B            lda CurrentCursor
                 BIT LOX
                 BMI MOVE_CROSS
-                
+
                 BIT #_LEFT|_UP
                 BEQ *+5
                 JSR SMALL_CROSS
@@ -217,7 +217,7 @@ NO_B            lda CurrentCursor
                 BEQ WAIT_IT0
                 JSR WIDE_CROSS
                 BRA WAIT_IT0
-                
+
 WIDE_CROSS::    CPX #101
                 BEQ .exit
                 CPY #101
@@ -273,7 +273,7 @@ SET_LO          LDA LOX         ; first point set ?
                 LDA #$FF
                 STA LOX         ; clear flag
                 RTS
-                
+
 SET_LO2         JSR DRAW_CROSS
                 STX LOX
                 CPX #101
@@ -341,10 +341,10 @@ COMPUTE::       LDA LOX
                 LDA IMAX+1
                 ADC MATHE_A+1
                 STA IMAX+1
-                
+
                 lda Width
                 STA MATHE_C     ; new Delta
-                LDA DELTA       
+                LDA DELTA
                 STA MATHE_E
                 LDA DELTA+1
                 STA MATHE_E+1   ; width*Delta
@@ -446,7 +446,7 @@ ITER            LDA MAX_ITER
                 STA COUNTER
 
                 MOVE I0,I       ; I = I0
-                MOVE R0,R       ; R = R0        
+                MOVE R0,R       ; R = R0
 
 LOOP_ITER       LDA R
                 STA MATHE_C
@@ -534,7 +534,7 @@ CONT_ITER       LDA R
                 TXA
                 ADC R0+1
                 STA R+1         ; R=R2-I2+R0
-;*              
+;*
                 LDA MATHE_A+3   ; get R*I
                 STA DUMMY+3
                 lda MATHE_A+2
@@ -584,7 +584,7 @@ LOOPX_DC        JSR Plot
 Plot::          PHA
                 PHX
                 PHY             ; save parameters
-                
+
                 PHA             ; save color
                 phx             ; X
 
@@ -606,7 +606,7 @@ Plot::          PHA
                 STZ $FC55       ; start it
                 WAITSUZY
                 MOVE MATHE_AKKU,TempPtr
-                
+
                 pla             ; X
                 lsr
                 tay
@@ -744,7 +744,7 @@ PrintDezA::
 .ok             adc #"0"
                 jsr PrintChar
 .cont1          pla
-                jsr PrintChar   
+                jsr PrintChar
                 pla
                 ply
                 plx
@@ -792,8 +792,8 @@ plot::          phx
                 pla
                 ply
                 plx
-                rts             
-                
+                rts
+
 * INCLUDES
                 include <includes/1000Hz.inc>
                 include <includes/serial.inc>
@@ -803,4 +803,3 @@ plot::          phx
                 include <includes/irq.inc>
                 include <includes/font2.hlp>
                 include <includes/newkey.inc>
-

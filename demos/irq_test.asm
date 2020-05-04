@@ -9,8 +9,8 @@
 * 22.06.98      BS              slight modifications
 
 
-                
-	include <macros/hardware.asm>
+
+	include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -22,7 +22,7 @@
                 include <vardefs/irq.var>
                 include <vardefs/mikey.var>
                 include <vardefs/suzy.var>
-                
+
 ****************
 
  BEGIN_ZP
@@ -30,8 +30,10 @@ irq_vectors     ds 16
 _10             ds 2
 sema            ds 1
  END_ZP
-
-                run $400+SCREEN.LEN
+ BEGIN_MEM
+screem	DS SCREEN.LEN
+ END_MEM
+                run LOMEM
                 START_UP
                 CLEAR_ZP
                 ldx #$ff
@@ -135,5 +137,5 @@ VBL::           lda _10
                 stz $fdbf
                 stz $fdaf
                 END_IRQ
-                
+
                 include <includes\irq.inc>

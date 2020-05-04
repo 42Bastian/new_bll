@@ -1,10 +1,6 @@
 DOUBLEBUFFER    set 1          ; 1 = double-buffering
 
-
-
-
-Baudrate        set 9600
-
+Baudrate        set 62500
 
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -13,8 +9,6 @@ Baudrate        set 9600
 ;
 ; essential variables
 ;
-
-
                 include <vardefs/mikey.var>
                 include <vardefs/suzy.var>
 
@@ -47,7 +41,7 @@ screen1         ds SCREEN.LEN
 
                 run LOMEM
 
-Start::         
+Start::
 		START_UP
                 CLEAR_MEM
                 CLEAR_ZP +STACK
@@ -155,8 +149,6 @@ cls_color       dc.b 00
 
 cls_data        dc.b 2,$10,0
 
-
-
                 include <includes/draw_spr.inc>
 
 pal             STANDARD_PAL
@@ -166,4 +158,3 @@ pal             STANDARD_PAL
 ;
 
 sprite_data     ibytes "sprite.spr"
-

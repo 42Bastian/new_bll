@@ -9,7 +9,7 @@
 ****************
 
 BRKuser         set 1
-Baudrate        set 9600
+Baudrate        set 62500
 
 
                 include <macros/help.mac>
@@ -45,4 +45,3 @@ Start
                 bra .1
 
                 include <includes/debug.inc>
-

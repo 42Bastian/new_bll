@@ -1,7 +1,6 @@
-                
 Baudrate        set 62500
 
-	include <macros/hardware.asm>
+	include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -208,7 +207,7 @@ Collide::       lda addx,x
                 clc
                 adc x_pos,x
                 sta x_pos,x
-                
+
                 lda addy,x
                 eor #$ff
                 inc
@@ -217,7 +216,7 @@ Collide::       lda addx,x
                 adc y_pos,x
                 sta y_pos,x
                 rts
-                
+
 
 Reflect::       dec
                 bne ._y
@@ -230,7 +229,7 @@ Reflect::       dec
                 adc x_pos,x
                 sta x_pos,x
                 rts
-                
+
 ._y             lda addy,x
                 eor #$ff
                 inc
@@ -239,7 +238,7 @@ Reflect::       dec
                 adc y_pos,x
                 sta y_pos,x
                 rts
-                
+
 Plot::          clc
                 lda y_pos,x
                 adc #15
@@ -266,7 +265,7 @@ PltData         db 3,$11,$10
                 db 3,$12,$10
                 db 3,$11,$10
                 db 0
-                
+
                 db 0
 Rahmen          db $c2,$90,$01  ; rechts/links
                 dw rechts,data
@@ -312,5 +311,5 @@ cls_data        dc.b 2,$10,0
                 include <includes/font.inc>
                 include <includes/draw_spr.inc>
                 include <includes/font2.hlp>
-                
+
 pal             STANDARD_PAL

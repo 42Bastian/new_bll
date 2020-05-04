@@ -1,10 +1,6 @@
-
 ;>BRKuser         set 1         ; define if you want to use debugger
 
-
-
-Baudrate        set 9600
-
+Baudrate        set 62500
 
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -17,8 +13,6 @@ Baudrate        set 9600
 ;
 ; essential variables
 ;
-
-
                 include <vardefs/debug.var>
                 include <vardefs/irq.var>
                 include <vardefs/serial.var>
@@ -26,7 +20,6 @@ Baudrate        set 9600
                 include <vardefs/mikey.var>
                 include <vardefs/suzy.var>
                 include <vardefs/font.var>
-
 ;
 ; local MACROs
 ;
@@ -353,4 +346,3 @@ pal             STANDARD_PAL
 ;
 
 sprite_data     ibytes "sprite.spr"
-

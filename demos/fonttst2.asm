@@ -1,8 +1,4 @@
-
-
-
-
-		include <macros/hardware.asm>
+		include <includes/hardware.inc>
 
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -58,13 +54,13 @@ cls::           pha
 
 
 test DEFTEXT text,textpuff,SMALLFNT2,NO_FLIP,NORMAL_SIZE,NORMAL_SIZE,15
-text            db "ABCDEFGHIJKLMNOPQRSTUVWXYZéôö",255
-                db "abcdefghijklmnopqrstuvwxyzÑîÅ",255
+text            db "ABCDEFGHIJKLMNOPQRSTUVWXYZ",255
+                db "abcdefghijklmnopqrstuvwxyz",255
                 db "1234567890!",34,"$%&/()=",255
                 db "?'`#^[]{}~|_-:.;,<>",255
                 db "Bastian Schick",255
                 db "Brunnengasse 7 6*4+(19-4/2)=4x",0
-                
+
 
 test2 DEFTEXT text2,textpuff,SMALLFNT2,NO_FLIP,NORMAL_SIZE,NORMAL_SIZE,14
 text2           db "Chaneil an t-adhar os cion",13
@@ -77,5 +73,5 @@ text2           db "Chaneil an t-adhar os cion",13
                 include <includes/font2.hlp>
                 include <includes/draw_spr.inc>
 
-pal             STANDARD_PAL    
+pal             STANDARD_PAL
 textpuff        equ *

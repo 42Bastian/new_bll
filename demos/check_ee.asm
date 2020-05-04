@@ -12,7 +12,7 @@ DEBUG		equ 1
 _1000HZ_TIMER   equ 7
 
 
-	include <macros/hardware.asm>
+	include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>

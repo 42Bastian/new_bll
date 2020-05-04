@@ -1,12 +1,8 @@
-
 ;>BRKuser         set 1         ; define if you want to use debugger
 
+Baudrate        set 62500
 
-
-Baudrate        set 9600
-
-
-	include <macros/hardware.asm>
+	include <includes/hardware.inc>
 
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -94,7 +90,7 @@ irq_vectors     ds 16
 
                 INITKEY $f0,0   ; repeat for cursors, not buttons
 
-                INITFONT BIGFNT,0,15
+                INITFONT SMALLFNT,0,15
                 SET_MINMAX 0,0,160,102
 
                 SETIRQ 0,HBL
@@ -400,4 +396,3 @@ pal             STANDARD_PAL
 ;
 
 sprite_data     ibytes "sprite.spr"
-

@@ -1,25 +1,17 @@
 DOUBLEBUFFER    set 1          ; 1 = double-buffering
 
-
-
-
-Baudrate        set 9600
-
+Baudrate        set 62500
 
                 include <macros/help.mac>
                 include <macros/if_while.mac>
                 include <macros/mikey.mac>
                 include <macros/suzy.mac>
-
                 include <macros/font.mac>
 ;
 ; essential variables
 ;
-
-
                 include <vardefs/mikey.var>
                 include <vardefs/suzy.var>
-
                 include <vardefs/font.var>
 
 ;
@@ -61,7 +53,6 @@ Start::         START_UP
                 INITFONT SMALLFNT,2,15
                 SET_MINMAX 0,0,160,102
 
-
 IF DOUBLEBUFFER
                 SCRBASE screen0,screen1
 ELSE
@@ -78,7 +69,6 @@ ENDIF
                 lda #40
                 sta x
                 sta y
-
 ;
 ; main-loop
 ;
@@ -183,4 +173,3 @@ pal             STANDARD_PAL
 ;
 
 sprite_data     ibytes "sprite.spr"
-
