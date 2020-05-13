@@ -222,13 +222,13 @@ RSAKey: .byte   $35,$B5,$A3,$94,$28,$06,$D8,$A2
 MikeyInitOffset:	// $FFCC
         .byte   $79,$90,$92,$95,$94,$93,$09,$08
         .byte   $BF,$AF,$B0,$A0
-MikeyInitData:		// $ffd8
+MikeyInitData:		// $FFD8
         .byte   $01,$00,$0D,$20,$00,$29,$1F,$68
         .byte   $3E,$0E,$00,$00,$18,$9E
 
-SuzyInitOffset:		// $FEE6
+SuzyInitOffset:		// $FFE6
         .byte   $91,$11,$10,$09,$08,$06,$04,$90,$92
-SuzyInitData:		// $FEEF
+SuzyInitData:		// $FFEF
         .byte   $01,$50,$82,$20,$00,$00,$00,$01,00
 
         .byte 	$00
