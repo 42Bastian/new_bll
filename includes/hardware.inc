@@ -12,23 +12,25 @@ MATHE_AKKU      EQU $FC6C
 MATHE_R         EQU $FC6C
 
 * Atari-definitions for co-pro registers
-MATHD           equ $fc52
-MATHC           equ $fc53
-MATHB           equ $fc54
-MATHA           equ $fc55
-MATHP           equ $fc56
-MATHN           equ $fc57
-MATHH           equ $fc60
-MATHG           equ $fc61
-MATHF           equ $fc62
-MATHE           equ $fc63
-MATHM           equ $fc6c
-MATHL           equ $fc6d
-MATHK           equ $fc6e
-MATHJ           equ $fc6f
+MATHD           EQU $FC52
+MATHC           EQU $FC53
+MATHB           EQU $FC54
+MATHA           EQU $FC55
+MATHP           EQU $FC56
+MATHN           EQU $FC57
+MATHH           EQU $FC60
+MATHG           EQU $FC61
+MATHF           EQU $FC62
+MATHE           EQU $FC63
+MATHM           EQU $FC6c
+MATHL           EQU $FC6d
+MATHK           EQU $FC6e
+MATHJ           EQU $FC6f
 
+SCBNEXT         EQU $FC10
 
 SUZY_BUS_ENABLE EQU $FC90       ; 0 disables Suzy
+SPRGO           EQU $FC91
 SPRSYS          EQU $FC92
 
 * Initialised to %00100100
@@ -206,51 +208,53 @@ AUD_C_RIGHT	EQU %00000100
 AUD_B_RIGHT	EQU %00000010
 AUD_A_RIGHT	EQU %00000001
 
-VOLUME_A        equ $fd20
-FEEDBACK_A      equ $fd21
-OUTPUTVAL_A     equ $fd22
-SHIFT_A         equ $fd23
-FREQ_A          equ $fd24
-CONTRL_A        equ $fd25
-COUNTER_A       equ $fd26
-OTHER_A         equ $fd27
+VOLUME_A        EQU $FD20
+FEEDBACK_A      EQU $FD21
+OUTPUTVAL_A     EQU $FD22
+SHIFT_A         EQU $FD23
+FREQ_A          EQU $FD24
+CONTRL_A        EQU $FD25
+COUNTER_A       EQU $FD26
+OTHER_A         EQU $FD27
 
-VOLUME_B        equ $fd28
-FEEDBACK_B      equ $fd29
-OUTPUTVAL_B     equ $fd2a
-SHIFT_B         equ $fd2b
-FREQ_B          equ $fd2c
-CONTRL_B        equ $fd2d
-COUNTER_B       equ $fd2e
-OTHER_B         equ $fd2f
+VOLUME_B        EQU $FD28
+FEEDBACK_B      EQU $FD29
+OUTPUTVAL_B     EQU $FD2a
+SHIFT_B         EQU $FD2b
+FREQ_B          EQU $FD2c
+CONTRL_B        EQU $FD2d
+COUNTER_B       EQU $FD2e
+OTHER_B         EQU $FD2f
 
-VOLUME_C        equ $fd30
-FEEDBACK_C      equ $fd31
-OUTPUTVAL_C     equ $fd32
-SHIFT_C         equ $fd33
-FREQ_C          equ $fd34
-CONTRL_C        equ $fd35
-COUNTER_C       equ $fd36
-OTHER_C         equ $fd37
+VOLUME_C        EQU $FD30
+FEEDBACK_C      EQU $FD31
+OUTPUTVAL_C     EQU $FD32
+SHIFT_C         EQU $FD33
+FREQ_C          EQU $FD34
+CONTRL_C        EQU $FD35
+COUNTER_C       EQU $FD36
+OTHER_C         EQU $FD37
 
-VOLUME_D        equ $fd38
-FEEDBACK_D      equ $fd39
-OUTPUTVAL_D     equ $fd3a
-SHIFT_D         equ $fd3b
-FREQ_D          equ $fd3c
-CONTRL_D        equ $fd3d
-COUNTER_D       equ $fd3e
-OTHER_D         equ $fd3f
+VOLUME_D        EQU $FD38
+FEEDBACK_D      EQU $FD39
+OUTPUTVAL_D     EQU $FD3a
+SHIFT_D         EQU $FD3b
+FREQ_D          EQU $FD3c
+CONTRL_D        EQU $FD3d
+COUNTER_D       EQU $FD3e
+OTHER_D         EQU $FD3f
 
 
-BALANCE_A       equ $fd40
-BALANCE_B       equ $fd41
-BALANCE_C       equ $fd42
-BALANCE_D       equ $fd43
+BALANCE_A       EQU $FD40
+BALANCE_B       EQU $FD41
+BALANCE_C       EQU $FD42
+BALANCE_D       EQU $FD43
 
-PANING          equ $fd44
+PANING          EQU $FD44
 
-STEREO_CNTRL    equ $fd50
+STEREO_CNTRL    EQU $FD50
 
-VIDEODMA        equ $fd92
+SDONEACK        EQU $FD90
+CPUSLEEP        EQU $FD91
+VIDEODMA        EQU $FD92
 ***************
