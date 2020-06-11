@@ -31,6 +31,7 @@ IFD BRKuser
 ENDIF
 	plp
 	rts
+ IFD NEW_IRQ_HANDLER
 ;---------------
 ;- Interrupt-Handler
 ;---------------
@@ -57,7 +58,7 @@ irq::
 	bvs	_6	; 2,3
 	lda	$fd81	; 4
  IFD BRKuser
-	beq	dummy_irq
+	beq	brk_handler
  ENDIF
 	lsr		; 2
 	bcs	_0	; 2,3
@@ -102,19 +103,21 @@ dummy_irq
 	END_IRQ
 
  IFD BRKuser
+brk_handler:
 	phx
 	tsx
 	lda $103,x    ; p-register
 	bit #$10      ; break ??
 	beq dummy_irq
-	and #$ef
-	sta $103,x
+;;->	and #$ef
+;;->	sta $103,x
 	plx
 	pla
 	jmp (BRKvec)
  ENDIF
 	END
-
+ ELSE
+ ENDIF
 ;---------------
 ;- Interrupt-Handler
 ;---------------
@@ -127,23 +130,14 @@ dummy_irq
 ; Timer 5 => 17+4+2+5*(3+2)+2+14 = 64
 ; Timer 6 => 17+4+2+6*(3+2)+2+14 = 69
 ; Timer 7 => 17+4+2+7*(3+2)+2+14 = 74
-
 irq::
         phx				; 3
         pha				; 3
- IFD BRKuser
-        lda $103,x    ; p-register
-        bit #$10      ; break ??
-        beq .no_break
-        and #$ef
-        sta $103,x
-        pla
-        plx
-        jmp (BRKvec)
-.no_break
- ENDIF
         ldx #0				; 2
         lda $fd81			; 4
+ IFD BRKuser
+	beq .break
+ ENDIF
         bit #$10	; SERIAL IRQ?	; 2
         beq .1				; 2,3
         jmp (irq_vecs+8)		; 6
@@ -158,9 +152,21 @@ irq::
         lda mask,x			; 4
         sta $fd80			; 4
         jmp (irq_vecs,x)		; 6
-
+ IFD BRKuser
+.break
+	tsx
+        lda $103,x    ; p-register
+        bit #$10      ; break ??
+        beq dummy_irq
+;;->        and #$ef
+;;->        sta $103,x
+        pla
+        plx
+        jmp (BRKvec)
+ ENDIF
 mask
 	dc.w $01,$02,$04,$08,$10,$20,$40,$80
 
 dummy_irq
 	END_IRQ
+	 END

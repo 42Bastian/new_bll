@@ -1,8 +1,10 @@
+; -*-asm-*-
 	MACRO INITIRQ
 irq_vecs	equ \0
 	jsr InitIRQ
 	ENDM
 
+ IFND NEW_IRQ_HANDLER
 	MACRO IRQ
 irq::	cld
 	phx
@@ -44,9 +46,13 @@ end_irq	pla
 	plx
 	rti
 	ENDM
+ ENDIF
 
 	MACRO END_IRQ
 	pla
+ IFND NEW_IRQ_HANDLER
+	plx
+ ENDIF
 	rti
 	ENDM
 
