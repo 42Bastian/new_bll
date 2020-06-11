@@ -7,8 +7,9 @@
 * modified :
 * 06.05.96      BS              translation to English
 * 22.06.98      BS              slight modifications
+* 11.06.20      BS              switch for new IRQ handler added
 
-
+NEW_IRQ_HANDLER EQU 1
 
 	include <includes/hardware.inc>
 * macros
@@ -46,7 +47,6 @@ screem	DS SCREEN.LEN
                 FRAMERATE 60
 * set IRQ-vectors and enable IRQs
                 SETIRQ 0,HBL
-;>                SETIRQ 1,NHBL
                 SETIRQ 2,VBL
                 SETIRQ 3,_1000Hz
 * init 1000Hz-Counter
@@ -97,7 +97,11 @@ screem	DS SCREEN.LEN
 ****************
 * interrupt routines
 ****************
-_1000Hz::       lda #$ff
+_1000Hz::
+ IFD NEW_IRQ_HANDLER
+		phx
+ ENDIF
+		lda #$ff
                 tsb sema
                 bne .exit
                 cli
@@ -110,7 +114,11 @@ _1000Hz::       lda #$ff
                 dex
                 bpl .l
                 stz sema
-.exit           END_IRQ
+.exit
+ IFD NEW_IRQ_HANDLER
+		plx
+ ENDIF
+		END_IRQ
 
 HBL:
                 inc $fdbf

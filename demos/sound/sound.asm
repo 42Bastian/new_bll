@@ -8,11 +8,11 @@
 
 DEBUG		set 1
 BRKuser         set 1
-Baudrate        set 9600
+Baudrate        set 62500
 
 SND_TIMER       set 7
 
-                include <macros/hardware.asm>            ; get hardware-names
+                include <includes/hardware.inc>        ; get hardware-names
 ****************
 * macros
                 include <macros/help.mac>
@@ -77,10 +77,10 @@ Main::
                 ldx #0
                 jsr SndStartSound
 
-	
+
 .loop           stz CurrX
                 stz CurrY
-	
+
                 stz CurrX
                 lda #20
                 sta CurrY
@@ -150,7 +150,7 @@ VBL::           lda #$ff
                 _ENDIF
                 stz $fdb0
                 END_IRQ
-                
+
 HBL::
                 dec $fdb0
                 END_IRQ
@@ -194,7 +194,7 @@ shotenv2        dc.b 1,1,4,-15
 ufoenv1            dc.b 1,2,20,-2,20,2
 gnurbsh1:       dc.b 0,1,20,-10
 gnurbsh2        dc.b 1,1,1,-20
-	
+
 ShotSnd:
 ;-->        DEFVOL 15,explenv1
 ;-->        DEFFRQ 15,explenv2
@@ -257,4 +257,3 @@ UfoSnd
                 PLAY 50,1000
                 STOP
                 dc.b 0
-

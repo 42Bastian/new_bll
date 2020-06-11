@@ -6,7 +6,7 @@
 * date          changes
 * 04.05.96      NEWKEY included
 *
-
+NEW_IRQ_HANDLER	EQU 1
 DEBUG		set 1
 Baudrate        set 62500
 
@@ -462,6 +462,7 @@ endif
 ENDIF
 ****************
 VBL::
+		phx
 if 1
                 ldx winkel_add
                 clc
@@ -479,11 +480,14 @@ if 1
 endif
                 jsr Keyboard
                 IRQ_SWITCHBUF
+		plx
                 END_IRQ
 
-HBL::           ldx $fd0a
+HBL::		phx
+		ldx $fd0a
                 lda HBLTable,x
                 sta $fdb0
+		plx
                 END_IRQ
 
 

@@ -1,6 +1,5 @@
 
 	Run $2400
-	path "f:\lynx\lynx_asm\"
 
 	ibytes "kingtut.pal"
 CLS	db $01,$90,$00
@@ -52,4 +51,3 @@ ENDIF
 KINGTUT1024	db $C1,$18,$00
 	dw KINGTUT1,kingtut
 	dw 80,52,0,0
-

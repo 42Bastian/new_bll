@@ -8,11 +8,11 @@
 
 BRKuser         set 1
 Baudrate        set 62500
-
+DEBUG	set 1			; if defined BLL loader is included
 _1000HZ_TIMER   set 7
 
-                
-	include <macros/hardware.asm>
+
+	include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -107,7 +107,7 @@ Start::         START_UP             ; Start-Label needed for reStart
                 _ENDIF
 
                 jsr Fire
-;>                jsr FireBall
+;;->                jsr FireBall
                 bra .loop
 Hallo: dc.b "HOT!",0
 ****************
@@ -443,7 +443,7 @@ InitLSRtab::     ldx #0
 VBL::           jsr Keyboard                    ; read buttons
                 stz $fda0
                 END_IRQ
-                
+
 HBL::           inc $fda0
                 END_IRQ
 ****************
@@ -460,4 +460,3 @@ HBL::           inc $fda0
 
 ;>pal             DP 000,040,003,005,006,007,008,009,00A,00B,00C,109,30b,60D,90E,F0F
 pal             DP 000,040,003,005,006,007,008,009,00A,00B,00C,00D,10E,30D,70E,F0F
-

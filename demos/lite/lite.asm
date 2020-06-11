@@ -8,11 +8,11 @@
 
 BRKuser         set 1
 Baudrate        set 62500
-
+DEBUG	set 1			; if defined BLL loader is included
 _1000HZ_TIMER   set 7
 
-                
-	include <macros/hardware.asm>
+
+	include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -255,12 +255,7 @@ maske_y         dc.w 51
                 dc.w $100,$100
                 dc.b $08,$80
 
-
-
-
 maske_data      ibytes "maske.spr"
-
-
 
 titelSCB        dc.b $b0,$10,$20
                 dc.w invadersSCB,titeldata
@@ -276,10 +271,6 @@ invadersSCB::   dc.b $c4,$10,$20
                 dc.b $03,$33,$33,$33,$33,$33
 
 invaders::      ibytes "spr/invaders.spr"
-
-
-
-
 
 ****************
 Readkey::
@@ -347,7 +338,7 @@ Keyboard::
 
 VBL:: stz $fda0
                 END_IRQ
-                
+
 HBL::          inc $fda0
                 END_IRQ
 ****************
@@ -363,4 +354,3 @@ HBL::          inc $fda0
 
 pal     ;   0  1   2   3   4   5   6  7    8   9   10  11 12  13  14  15
       DP 000,000,000,000,000,001,002,003, 003,001,003,005,007,009,00B,00D,
-

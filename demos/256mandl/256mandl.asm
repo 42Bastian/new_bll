@@ -12,7 +12,7 @@ BRKuser         set 1
 DBUFuser        set 0
 DEBUG		set 1
 
-                
+
                 macro fmove
                 MOVE \0,\1
                 MOVE \0+2,\1+2
@@ -62,7 +62,7 @@ DEBUG		set 1
 	bmi	.\_0
 	endm
 
-                include <macros/hardware.asm>
+                include <includes/hardware.inc>
 *
 * macros
 *
@@ -73,7 +73,7 @@ DEBUG		set 1
                 include <macros/suzy.mac>
                 include <macros/irq.mac>
                 include <macros/debug.mac>
-                
+
 * variables
  BEGIN_MEM
                 ALIGN 4
@@ -240,7 +240,7 @@ APFEL2
                 SET_XY 52*2+8*4,49
                 stz seconds
                 stz minutes
-                JSR APFEL_MAIN  ; Apfelm„nnchen zeichnen
+                JSR APFEL_MAIN  ; draw
                 lda minutes
                 jsr PrintHex
                 lda #":"
@@ -265,7 +265,7 @@ WAIT_IT
                 jsr PrintChar
                 tya
                 jsr PrintDezA
-                lda Button      
+                lda Button
                 BIT #OPTION_2   ; Option 2 ?
                 BEQ NO_2        ; nein =>
                 rts
@@ -293,7 +293,7 @@ NO_A            BIT #BUTTON_B
 NO_B            lda Cursor
                 BIT LOX
                 BMI MOVE_CROSS
-                
+
                 BIT #LEFT+UP
                 BEQ *+5
                 JSR SMALL_CROSS
@@ -301,7 +301,7 @@ NO_B            lda Cursor
                 BEQ WAIT_IT0
                 JSR WIDE_CROSS
                 BRA WAIT_IT0
-                
+
 WIDE_CROSS::
                 CPX #101
                 BEQ .exit
@@ -359,7 +359,7 @@ SET_LO
                 LDA #$FF
                 STA LOX
                 RTS
-                
+
 SET_LO2         JSR DRAW_CROSS
                 STX LOX
                 CPX #101
@@ -378,7 +378,7 @@ COMPUTE::
                 Beq SET_LO2
                 TXA
                 SEC
-                SBC LOX         ; auf Quadrat berprfen
+                SBC LOX
                 BNE .cont
                 LDA #1
                 RTS
@@ -391,8 +391,8 @@ COMPUTE::
                 TAY
                 SEC
                 SBC LOY
-.ok             sta Width       ; Breite bzw. H”he merken
-                TXA             ; Wert fr links unten neu berechnen
+.ok             sta Width       ; save width
+                TXA             ; value left re-calc
                 SEC
                 SBC #101
                 EOR #$FF
@@ -410,7 +410,7 @@ COMPUTE::
                 fadd f0,RMAX
 
                 ply
-                TYA             ; Wert fr links unten neu berechnen
+                TYA             ; value left-down re-calc
                 SEC
                 SBC #101
                 EOR #$FF
@@ -441,7 +441,7 @@ COMPUTE::
                 WAITSUZY
                 fmove $fc52,DELTA
 
-                lda DELTA       ; eigentlich /102 !
+                lda DELTA
                 ora DELTA+1
                 ora DELTA+2
                 ora DELTA+3
@@ -531,7 +531,7 @@ END_ITER        LDA #0
                 RTS
 ****************
 * Draw cross   *
-*****************************   
+*****************************
 DRAW_CROSS      PHA
                 PHX
                 PHY             ; Mittelpunktskoordinaten retten
@@ -604,7 +604,7 @@ PrintDezA::     phx
 .ok             adc #"0"
                 jsr PrintChar
 .cont1          pla
-                jsr PrintChar   
+                jsr PrintChar
                 pla
                 ply
                 plx
@@ -1066,4 +1066,3 @@ cls_data        dc.b 2,0
 pal2           DP 000,020,040,060,080,0A0,0C0,0f0,fff,002,004,006,008,00a,00c,00f
 pal            DP 000,020,040,060,080,0A0,0C0,0f0,fff,002,004,006,008,00a,00c,00f
 ;>pal            DP 000,040,080,0c0,0f0,004,008,00c,00F,400,800,c00,f00,444,888,ddd
-

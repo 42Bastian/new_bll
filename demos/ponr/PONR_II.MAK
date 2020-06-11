@@ -1,1 +1,4 @@
-f:\lynx\lynx_asm\ponr\ponr_ii
+#INTERNAL
+#TROYAN
+PONR_II.O
+KINGTUT.O

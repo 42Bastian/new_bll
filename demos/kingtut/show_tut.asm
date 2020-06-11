@@ -1,54 +1,42 @@
-
 Baudrate        set 62500       ; define baudrate for serial.inc
-
+DEBUG		set 1		; if defined BLL loader is included
 BRKuser         set 1           ; if defined BRK #x support is enabled
 
-
-                path "e:\bll\"                  ; global path
-                
-                path "macros"
-                isyms "hardware.sym"            ; get hardware-names
-* macros
-                include "help.mac"              ; helping macros
-                include "if_while.mac"          ; well, guess ..
-                include "mikey.mac"             ; Mikey-stuff
-                include "suzy.mac"              ; Suzy-stuff
-
-                include "font.mac"
-                include "irq.mac"
-                include "newkey.mac"
-                include "debug.mac"
-* variables
-                path "..\vardefs\"
-                include "debug.var"             ; NOTE ! Must be the very first !!!!
-                include "help.var"              ; temp. registers
-                include "mikey.var"             ; shadow-vars of Mikey
-                include "suzy.var"              ; and Suzy-registers
-                include "serial.var"
-                include "font.var"
-                include "irq.var"
-                include "newkey.var"
-*
-* local MACROs
-*
-                MACRO CLS
-                lda \0
-                jsr cls
-                ENDM
+                include <includes\hardware.inc>     ; get hardware-names
+* Macros
+                include <macros/help.mac>
+                include <macros/if_while.mac>
+                include <macros/font.mac>
+                include <macros/window.mac>
+                include <macros/mikey.mac>
+                include <macros/suzy.mac>
+                include <macros/irq.mac>
+                include <macros/debug.mac>
+                include <macros/newkey.mac>
+* Variablen
+                include <vardefs/debug.var>
+                include <vardefs/help.var>
+                include <vardefs/font.var>
+                include <vardefs/window.var>
+                include <vardefs/mikey.var>
+                include <vardefs/suzy.var>
+                include <vardefs/irq.var>
+                include <vardefs/serial.var>
+                include <vardefs/newkey.var>
 
 *
 * vars only for this program
 *
 
-BEGIN_ZP
+ BEGIN_ZP
 
-END_ZP
+ END_ZP
 
-BEGIN_MEM
+ BEGIN_MEM
                 ALIGN 4
 screen0         ds SCREEN.LEN
 irq_vektoren    ds 16
-END_MEM
+ END_MEM
                 run  LOMEM                      ; code directly after variables
 
 Start::                                         ; Start-Label needed for reStart
@@ -86,7 +74,7 @@ Start::                                         ; Start-Label needed for reStart
 VBL::           jsr Keyboard                    ; read buttons
                 stz $fda0
                 END_IRQ
-                
+
 HBL::           inc $fda0
                 END_IRQ
 ****************
@@ -112,15 +100,15 @@ cls_data        dc.b 2,$10,0
 
 ****************
 * INCLUDES
-                path "..\includes\"
-                include "debug.inc"
-                include "serial.inc"
-                include "font.inc"
-                include "irq.inc"
-                include "font2.hlp"
-                include "newkey.inc"
-                include "hexdez.inc"
-                include "draw_spr.inc"
+
+                include <includes\debug.inc>
+                include <includes\serial.inc>
+                include <includes\font.inc>
+                include <includes\irq.inc>
+                include <includes\font2.hlp>
+                include <includes\newkey.inc>
+                include <includes\hexdez.inc>
+                include <includes\draw_spr.inc>
 
 kingtutSCB      db $c1,$10,0
                 dw 0
@@ -133,5 +121,3 @@ kingtutSCB      db $c1,$10,0
                 path
 pal             ibytes "kingtut.pal"
 kingtut         ibytes "kingtut.pic"
-
-

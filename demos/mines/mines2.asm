@@ -11,10 +11,10 @@
 ****************************************************************
 * TABsize = 8
 
-TEST            set 1
-
-                
-		include <macros/hardware.asm>
+TEST            set 0
+DEBUG	set 1			; if defined BLL loader is included
+Baudrate        set 62500
+		include <includes/hardware.inc>
 * Macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -33,7 +33,7 @@ TEST            set 1
                 include <vardefs/suzy.var>
                 include <vardefs/irq.var>
                 include <vardefs/serial.var>
-                
+
  BEGIN_ZP
 x_pos           ds 1                            ; current tank position
 y_pos           ds 1
@@ -125,10 +125,10 @@ restart VSYNC
                 lda #CLOCK
                 ldx #6
                 jsr Sprite2
-                
+
                 SET_XY 110-6,2
                 PRINT "SCORE:",,1
-                
+
                 SET_XY 10,92
                 lda #9
                 sta FG_Color
@@ -200,7 +200,7 @@ again
                 lda #TANK                       ; get tank sprite
                 jsr Sprite
 * see if at flag
-                lda x_pos                       
+                lda x_pos
                 cmp #15
                 bne .loop
                 lda y_pos
@@ -274,7 +274,7 @@ InitArrays::
 .loop01   sta bombs,x
                   inx
                 bne .loop01
-                
+
                 lda bombs_init
                 sta temp
 .loop1          jsr Random
@@ -286,12 +286,12 @@ InitArrays::
                 bne .ok
                 txa
                 beq .loop1
-                
+
 .ok             cpy #7
                 bne .ok1
                 cpx #15
                 beq .loop1
-.ok1            
+.ok1
 
                 if 0
                   phx
@@ -371,7 +371,7 @@ CountBombs::
                 rts
 
 *
-* reveal location of all bombs 
+* reveal location of all bombs
 *
 ShowBombs::
                 ldx #127
@@ -489,7 +489,7 @@ Move::
                 sta y_pos_alt
                 sty y_pos
 
-* see if on a bomb              
+* see if on a bomb
                 tya
                 asl
                 asl
@@ -499,7 +499,7 @@ Move::
                 adc x_pos
                 tax
                 lda bombs,x
-                
+
                 beq .ok
                 dec boom        ; reduce bomb count
                 lda #$ff        ; set hit bomb flag
@@ -526,9 +526,9 @@ Shoot::
                 pha
                 lda shots
                 beq .exit
-                
+
                 dec shots
-                
+
                 lda y_pos
                 asl
                 asl
@@ -552,7 +552,7 @@ Shoot::
                 ply
                 plx
                 rts
-                
+
 ****************
 PrintMinutes::
                 SET_XY 72,2
@@ -570,7 +570,7 @@ PrintMinutes::
                 jsr PrintChar
                 lda #":"
                 jmp PrintChar
-                
+
 PrintSecondes::
                 SET_XY 72+12,2
                 lda seconds
@@ -585,7 +585,7 @@ PrintSecondes::
                 and #$f
                 ora #"0"
                 jmp PrintChar
-                
+
 PrintScore::
                 SET_XY 110+33-6,2
                 lda score+1
@@ -673,8 +673,8 @@ PrintDez::
                 ply
                 plx
                 rts
-                
-                
+
+
                 if 1
 PrintHex::
                 phx
@@ -725,9 +725,9 @@ VBLint::
 .exit1          cld
                 jsr PrintSecondes
 .exit           END_IRQ
-                                                
+
                 include "draw.inc"
-                
+
 * INCLUDES
                 include <includes/serial.inc>
                 include <includes/debug.inc>
@@ -740,4 +740,3 @@ VBLint::
 * Color Palette
 
 pal DP 000,000,600,D00,077,770,707,777,333,00F,0F0,F00,0FF,FF0,F0F,FFF
-

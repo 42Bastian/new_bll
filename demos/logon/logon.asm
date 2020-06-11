@@ -8,7 +8,7 @@
 
 
 ;>BRKuser         set 1
-
+DEBUG	set 1			; if defined BLL loader is included
 Baudrate        set 62500
 
 MAX_PLAYERS     equ 2
@@ -20,7 +20,7 @@ IRQ_SWITCHBUF_USR set 1
 
 
 
-		include <macros/hardware.asm>
+		include <includes/hardware.inc>
 
 *
 * macros
@@ -709,7 +709,7 @@ InitRandom::    phx
 .2              adc $fd0a
                 dex
                 bne .2
-                lsr             
+                lsr
                 adc last_random
                 sta last_random
                 beq .1
@@ -736,7 +736,7 @@ VBL::           IRQ_SWITCHBUF
                 stz VBLsema
 .99              stz $fdb0
                 END_IRQ
-                
+
 HBL::           inc $fdb0
                 END_IRQ
 

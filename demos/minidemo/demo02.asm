@@ -1,5 +1,5 @@
 DOUBLEBUFFER    set 1          ; 1 = double-buffering
-
+DEBUG	set 1			; if defined BLL loader is included
 Baudrate        set 62500
 
                 include <macros/help.mac>

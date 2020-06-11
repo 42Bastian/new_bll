@@ -1,5 +1,5 @@
 DOUBLEBUFFER    set 1          ; 1 = double-buffering
-
+DEBUG	set 1			; if defined BLL loader is included
 ;>BRKuser         set 1         ; define if you want to use debugger
 
 Baudrate        set 62500

@@ -11,7 +11,7 @@ Baudrate        set 62500
 BRKuser          set 1
 DEBUG		set 1
 
-                include <macros/hardware.asm>
+                include <includes/hardware.inc>
 *
 * macros
 *
@@ -22,7 +22,7 @@ DEBUG		set 1
                 include <macros/suzy.mac>
                 include <macros/irq.mac>
                 include <macros/debug.mac>
-                
+
 * variables
                 include <vardefs/help.var>
                 include <vardefs/font.var>
@@ -322,7 +322,7 @@ myIRQ::
 
 
 
-                
+
 HBL::
                 phx
                 phy

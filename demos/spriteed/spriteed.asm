@@ -5,12 +5,12 @@
 *
 ****************
 
-                
+
 BRKuser         set 1
 Baudrate        set 62500
 _1000HZ_TIMER   set 7
 
-                include <macros/hardware.asm>
+                include <includes/hardware.inc>
 *
 * macros
 *
@@ -483,7 +483,7 @@ VBL::           ldx #4
                 lda #RedY+1
                 sta HBLcount
                 END_IRQ
-                
+
 *
 * Keyboard-Timer
 *
@@ -796,12 +796,6 @@ blue_size       dc.w $100
 
 color2          dc.b 2,%11110000
                 dc.b 0
-
-
-
-
-
-
 *
 * Menu
 *
@@ -814,4 +808,3 @@ menu            ibytes "spriteed.spr"
 
 *
 pal             STANDARD_PAL
-

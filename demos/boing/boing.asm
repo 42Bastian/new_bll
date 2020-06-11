@@ -4,7 +4,7 @@ Baudrate        set 62500
 BRKuser         set 1
 DEBUG		set 1
 
-	include <include/hardware.inc>
+	include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -191,8 +191,7 @@ xx::
 	bra .00
 .dd
 	dec $fd50
-xk
-	.dd1
+.dd1
 	bra .dd1
 ;
 ; main-loop

@@ -1,4 +1,5 @@
 ;>BRKuser         set 1         ; define if you want to use debugger
+DEBUG	set 1			; if defined BLL loader is included
 
 Baudrate        set 62500
 

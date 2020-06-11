@@ -3,7 +3,7 @@ Baudrate        set 62500
 USE_CIRCLE      equ 1
 
 IRQ_SWITCHBUF_USR  set 1
-
+DEBUG	set 1			; if defined BLL loader is included
 
 	include <includes/hardware.inc>
 * macros
