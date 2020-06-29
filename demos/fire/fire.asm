@@ -8,11 +8,11 @@
 
 BRKuser         set 1
 Baudrate        set 62500
-DEBUG	set 1			; if defined BLL loader is included
+DEBUG   set 1                   ; if defined BLL loader is included
 _1000HZ_TIMER   set 7
 
 
-	include <includes/hardware.inc>
+                include <includes/hardware.inc>
 * macros
                 include <macros/help.mac>
                 include <macros/if_while.mac>
@@ -72,7 +72,7 @@ Start::         START_UP             ; Start-Label needed for reStart
                 INITIRQ irq_vektoren
                 INITBRK
                 INITKEY ,_FIREA|_FIREB          ; repeat for A & B
-                INITFONT BIGFNT,0,15
+                INITFONT BIGFNT,0,13
                 SET_MINMAX 0,0,160,102
                 jsr InitComLynx
                 SETIRQ 2,VBL
@@ -94,8 +94,8 @@ Start::         START_UP             ; Start-Label needed for reStart
                 jsr InitLSRtab
 
 ;                jsr InitScreen
-
-                SET_XY 20,80
+;;->.loop
+                SET_XY 20,90
                 PRINT Hallo
 .loop
                 jsr ReadKey
@@ -107,47 +107,10 @@ Start::         START_UP             ; Start-Label needed for reStart
                 _ENDIF
 
                 jsr Fire
-;;->                jsr FireBall
                 bra .loop
-Hallo: dc.b "HOT!",0
-****************
-FireBall::
-                jsr Random
-                and #$7f
-                clc
-                adc ScreenBase
-                sta ptr1
-                jsr Random
-                and #$0f
-                adc #$10
-                adc ScreenBase+1
-                sta ptr1+1
-                jsr Random
-                lsr
-                and #1
-                _IFNE
-                  lda #$ff
-                _ENDIF
 
-                sta (ptr1)
-                ldy #1
-                sta (ptr1),y
-                iny
-                sta (ptr1),y
-                ldy #80
-                sta (ptr1),y
-                iny
-                sta (ptr1),y
-                iny
-                sta (ptr1),y
-                ldy #160
-                sta (ptr1),y
-                iny
-                sta (ptr1),y
-                iny
-                sta (ptr1),y
-                rts
-****************
+Hallo:          dc.b "HOT!",0
+
 Fire::
                 jsr FillLine0
 
@@ -177,7 +140,6 @@ Fire::
 *
                 lda #25
                 sta temp
-
 .loop
 
                 ldy #39
@@ -196,8 +158,6 @@ Fire::
                   dex
                   dey
                 bpl .0
-
-
 *
 * left border
 *
@@ -214,21 +174,6 @@ Fire::
 *
 * 158 pixels
 *
-;>s       set 1
-;>                REPT 78
-;>                  clc
-;>                  lda line1-1+s
-;>                  adc line1+s
-;>                  adc line1+1+s
-;>                  adc line2-1+s
-;>                  adc line2+s
-;>                  adc line2+1+s
-;>                  tay
-;>                  lda nexttab,y
-;>                  sta image+s
-;>s       set s+1
-;>                ENDR
-
                 ldx #78
 .1                clc
                   lda line1-1,x
@@ -270,7 +215,6 @@ Fire::
                 inc image3_y
                 inc image4_y
                 inc image4_y
-
 *
 * shift lines
 *
@@ -283,13 +227,6 @@ s       set 0
 s       set s+1
                 ENDR
 
-;>                ldy #79
-;>.3                lda line1,y
-;>                  sta line2,y
-;>                  lda line0,y
-;>                  sta line1,y
-;>                  dey
-;>                bpl .3
 *
 *
 *
@@ -306,7 +243,7 @@ s       set s+1
                 jmp .loop
 .9              rts
 
-highnibble:     dc.b 0,$10,$20,$30,$40,$50,$60,$70,$80,$90,$A0,$B0,$C0,$D0,$E0,$F0
+highnibble:   dc.b 0,$10,$20,$30,$40,$50,$60,$70,$80,$90,$A0,$B0,$C0,$D0,$E0,$F0
 
 image_scb       dc.b $c0,$90,$0
                 dc.w image2_scb,image-1
@@ -355,11 +292,6 @@ FillLine0::
                 dex
                 dex
                 bpl .1
-;>        stz line1+80
-;>        stz line1+82
-;>        stz line1+83
-;>        stz line1+85
-;>        stz line1+84
 .9                rts
 *****************
 * InitNextTab
@@ -458,5 +390,5 @@ HBL::           inc $fda0
                 include <includes/random2.inc>
                 include <includes/draw_spr.inc>
 
-;>pal             DP 000,040,003,005,006,007,008,009,00A,00B,00C,109,30b,60D,90E,F0F
-pal             DP 000,040,003,005,006,007,008,009,00A,00B,00C,00D,10E,30D,70E,F0F
+//->pal        DP 000,040,003,005,006,007,008,009,00A,00B,00C,109,30b,60D,90E,F0F
+pal        DP 000,040,003,005,006,007,008,009,00A,00B,00C,00D,10E,30D,70E,F0F
