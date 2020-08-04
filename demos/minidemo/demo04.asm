@@ -3,6 +3,7 @@ DEBUG	set 1			; if defined BLL loader is included
 
 Baudrate        set 62500
 
+		include <includes/hardware.inc>
                 include <macros/help.mac>
                 include <macros/if_while.mac>
                 include <macros/mikey.mac>
