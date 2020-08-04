@@ -533,3 +533,16 @@ lbned           set -lbned
                 jmp \0
                 ENDIF
                 ENDM
+
+                MACRO lbpl
+lbpld           set *-\0
+                IF lbpld<0
+lbpld           set -lbpld
+                ENDIF
+                IF lbpld<124
+                bpl \0
+                ELSE
+                bmi *+5
+                jmp \0
+                ENDIF
+                ENDM
