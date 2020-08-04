@@ -27,7 +27,10 @@ MATHL           EQU $FC6d
 MATHK           EQU $FC6e
 MATHJ           EQU $FC6f
 
+VIDBAS		EQU $FC08
+COLLBAS		EQU $FC0A
 SCBNEXT         EQU $FC10
+COLLOFF		EQU $FC24
 
 SUZY_BUS_ENABLE EQU $FC90       ; 0 disables Suzy
 SPRGO           EQU $FC91
