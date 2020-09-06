@@ -105,14 +105,14 @@ triangle::
 		sbc y1
 
 		sta MATHE_B
-		stz MATHE_B+1
+//->		stz MATHE_B+1		; high-byte cleared by HW
 
 		_IFNE
 		  inc
 		_ENDIF
 		sta .tri_scb_ysize+1
 		stz MATHE_A
-		stz MATHE_A+1
+//->		stz MATHE_A+1		; high-byte cleared by HW
 		sec
 		lda x2
 		sbc x1
@@ -153,9 +153,9 @@ triangle::
 		lda y3
 		sbc y1
 		sta MATHE_B
-		stz MATHE_B+1
+//->		stz MATHE_B+1		; high-byte cleared by HW
 		stz MATHE_A
-		stz MATHE_A+1
+//->		stz MATHE_A+1		; high-byte cleared by HW
 		sec
 		lda x3
 		sbc x1
@@ -196,11 +196,11 @@ triangle::
 		lda y3
 		sbc y2
 		sta MATHE_B
-		stz MATHE_B+1
+//->		stz MATHE_B+1		; high-byte cleared by HW
 
 		sta .tri_scb2_ysize+1
 		stz MATHE_A
-		stz MATHE_A+1
+//->		stz MATHE_A+1		; high-byte cleared by HW
 		sec
 		lda x3
 		sbc x2
@@ -240,8 +240,12 @@ triangle::
 		MOVE y1,.tri_scb_y
 		MOVE x3,.tri_scb2_x
 		MOVE y3,.tri_scb2_y
-		MOVEI $180,.tri_scb_xsize
-		MOVEI $180,.tri_scb2_xsize
+		lda #$80
+		sta .tri_scb_xsize
+		sta .tri_scb2_xsize
+		lda #1
+		sta .tri_scb_xsize+1
+		sta .tri_scb2_xsize+1
 ****************
 		MOVE tiltAC,temp
 		CMPWS tiltAC,tiltAB
@@ -265,14 +269,10 @@ triangle::
 		sbc tiltBC+1
 		sta .tri_scb2_tilt+1
 ****************
-;>		  MOVE ScreenBase,$fc08
-
 		lda .tri_scb_ysize+1
+		cmp #1
 		_IFNE
-		  lda #<.tri_scb
-		  sta $fc10
-		  lda #>.tri_scb
-		  sta $fc11
+		  MOVEI .tri_scb, $fc10
 
 		  lda #1
 		  STA $FC91
@@ -291,10 +291,7 @@ triangle::
 
 		lda .tri_scb2_ysize+1
 		_IFNE
-		  lda #<.tri_scb2
-		  sta $fc10
-		  lda #>.tri_scb2
-		  sta $fc11
+		  MOVEI .tri_scb2, $fc10
 
 		  lda #1
 		  STA $FC91
