@@ -2,83 +2,71 @@
 *******************
 * PLOT X,Y,A
 *******************
-Plot::	stx PLOTx
-	sty PLOTy
-	sta PLOTcolor
-	MOVEI PLOTSCB,$fc10
+Plot::	stx .PLOTx
+	sty .PLOTy
+	sta .PLOTcolor
+	MOVEI .PLOTSCB,$fc10
+	jmp _DrawSprite
 
-	stz $fd90
-	lda #1
-	STA $FC91
-.WAIT	STZ $FD91
-	lda $fc92
-	lsr
-	bcs .WAIT
-	STZ $FD90
-	rts
-
-PLOTSCB	db $c0,$90,00
+.PLOTSCB db $c0,$90,00
 	dw 0
 	dw .PLOTdata
-PLOTx	dw 0
-PLOTy	dw 0
+.PLOTx	dw 0
+.PLOTy	dw 0
 	dw $100,$100
-PLOTcolor
+.PLOTcolor
 	db $00
 .PLOTdata
 	db 2,$10,0
 *******************
+* DrawLine x1,y1,x2,x2
+* Color A
+* 8 bit coordinates only
+*******************
 DrawLine::
 	sta .dl_scb_color
-	stz .dl_scb_xsize
-	stz .dl_scb_ysize
-	stz .dl_scb_stretch
-	stz .dl_scb_stretch+1
-	sec
-	lda x2
-	sbc x1
-	lda x2+1
-	sbc x1+1
-	bpl .ok
-	  SWAP x2,x1
-	  SWAP y2,y1
-.ok	lda #%11000000
-	sta .dl_scb
+	lda x1
+	cmp x2
+	_IFCS
+	  ldx x2
+	  sta x2
+	  stx x1
+	  lda y1
+	  ldx y2
+	  sta y2
+	  stx y1
+	_ENDIF
+
+	lda x1
+	sta .dl_scb_x
+	lda y1
+	sta .dl_scb_y
+
+	ldx #%11000000
 	sec
 	lda y2
 	sbc y1
-	sta y2
-	lda y2+1
-	sbc y1+1
-	sta y2+1
-	bpl .ok1
-	  sec
-	  lda #0
-	  sbc y2
-	  sta y2
-	  lda #0
-	  sbc y2+1
-	  sta y2+1
-	  lda #%11010000
-	  sta .dl_scb
-.ok1	MOVE x1,.dl_scb_x
-	MOVE y1,.dl_scb_y
+	_IFLT
+	  eor #$ff
+	  inc
+	  ldx #%11010000
+	_ENDIF
 
-	lda y2
+	stx .dl_scb
 	inc
 	sta .dl_scb_ysize+1
 	sta MATHE_B
-	stz MATHE_B+1
+//->	stz MATHE_B+1
 
 	stz MATHE_A
+	stz MATHE_A+2
 	sec
 	lda x2
 	sbc x1
 	inc
-	sta MATHE_A+2
-	stz MATHE_A+3
+	sta MATHE_A+3
 	WAITSUZY
-	MOVE MATHE_D+1,.dl_scb_tilt
+	MOVE MATHE_D+2,.dl_scb_tilt
 	_IFEQ
 	  lda #1
 	  sta .dl_scb_xsize+1
@@ -91,7 +79,7 @@ DrawLine::
 	_ENDIF
 
 	MOVEI .dl_scb,$fc10
-
+_DrawSprite:
 	stz $fd90
 	lda #1
 
@@ -158,10 +146,10 @@ circle::
 	CMPW y2,x2
 	beq .exit
 
-._1	inc x2
-	bne ._2
+	inc x2
+	_IFEQ
 	  inc x2+1
-._2
+	_ENDIF
 	clc
 	lda deltaE
 	adc #2
@@ -220,15 +208,7 @@ circle_points
 	MOVE ._4y,._8y		; -y,-x
 
 	MOVEI CIRCLESCB,$fc10
-	stz $fd90
-	lda #1
-	STA $FC91
-.WAIT	STZ $FD91
-	lda $fc92
-	lsr
-	bcs .WAIT
-	STZ $FD90
-	rts
+	jmp _DrawSprite
 
 CIRCLESCB
 	db $c0,$90,00
