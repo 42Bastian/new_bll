@@ -6,9 +6,10 @@ Plot::	stx .PLOTx
 	sty .PLOTy
 	sta .PLOTcolor
 	MOVEI .PLOTSCB,$fc10
-	jmp _DrawSprite
+	jmp draw_DrawSprite
 
-.PLOTSCB db $c0,$90,00
+.PLOTSCB
+	db $c0,$90,00
 	dw 0
 	dw .PLOTdata
 .PLOTx	dw 0
@@ -19,43 +20,41 @@ Plot::	stx .PLOTx
 .PLOTdata
 	db 2,$10,0
 *******************
-* DrawLine x1,y1,x2,x2
-* Color A
-* 8 bit coordinates only
-*******************
 DrawLine::
 	sta .dl_scb_color
-	lda x1
-	cmp x2
-	_IFCS
-	  ldx x2
-	  sta x2
-	  stx x1
-	  lda y1
-	  ldx y2
-	  sta y2
-	  stx y1
+
+	sec
+	lda x2
+	sbc x1
+	lda x2+1
+	sbc x1+1
+	_IFMI
+	  SWAP x2,x1
+	  SWAP y2,y1
 	_ENDIF
 
-	lda x1
-	sta .dl_scb_x
-	lda y1
-	sta .dl_scb_y
+	MOVE x1,.dl_scb_x
+	MOVE y1,.dl_scb_y
 
 	ldx #%11000000
 	sec
 	lda y2
 	sbc y1
-	_IFLT
+	tay
+	lda y2+1
+	sbc y1+1
+	_IFMI
+	  tya
 	  eor #$ff
 	  inc
+	  tay
 	  ldx #%11010000
 	_ENDIF
 
 	stx .dl_scb
-	inc
-	sta .dl_scb_ysize+1
-	sta MATHE_B
+	iny
+	sty .dl_scb_ysize+1
+	sty MATHE_B
 //->	stz MATHE_B+1
 
 	stz MATHE_A
@@ -79,7 +78,7 @@ DrawLine::
 	_ENDIF
 
 	MOVEI .dl_scb,$fc10
-_DrawSprite:
+draw_DrawSprite:
 	stz $fd90
 	lda #1
 
@@ -146,10 +145,10 @@ circle::
 	CMPW y2,x2
 	beq .exit
 
-	inc x2
-	_IFEQ
+._1	inc x2
+	bne ._2
 	  inc x2+1
-	_ENDIF
+._2
 	clc
 	lda deltaE
 	adc #2
@@ -208,7 +207,7 @@ circle_points
 	MOVE ._4y,._8y		; -y,-x
 
 	MOVEI CIRCLESCB,$fc10
-	jmp _DrawSprite
+	jmp draw_DrawSprite
 
 CIRCLESCB
 	db $c0,$90,00
