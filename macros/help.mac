@@ -546,3 +546,8 @@ lbpld           set -lbpld
                 jmp \0
                 ENDIF
                 ENDM
+
+                MACRO HANDY_BRKPT
+                cpx     $5aa5
+                dc.b $ec,0,0    ; CPX $0000
+                ENDM
