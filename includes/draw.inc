@@ -90,7 +90,6 @@ DrawLine::
 	  sta .dl_scb_xsize+1
 	_ENDIF
 
-;>	  MOVE ScreenBase,$fc08
 	MOVEI .dl_scb,$fc10
 
 	stz $fd90
@@ -103,16 +102,16 @@ DrawLine::
 	STZ $FD90
 	rts
 
-.dl_scb	      dc.b $d0,$80|$30,0
-	       dc.w 0,.dlimage
-.dl_scb_x     dc.w 0
-.dl_scb_y     dc.w 0
-.dl_scb_xsize dc.w $100
-.dl_scb_ysize dc.w $100
+.dl_scb	        dc.b $d0,$80|$30,0
+	        dc.w 0,.dlimage
+.dl_scb_x       dc.w 0
+.dl_scb_y       dc.w 0
+.dl_scb_xsize   dc.w $100
+.dl_scb_ysize   dc.w $100
 .dl_scb_stretch dc.w 0
-.dl_scb_tilt  dc.w 0
-.dl_scb_color dc.b $e
-.dlimage       dc.b 2,$10,0
+.dl_scb_tilt    dc.w 0
+.dl_scb_color   dc.b $e
+.dlimage        dc.b 2,$10,0
 
 *******************
 IFD USE_CIRCLE
@@ -130,53 +129,50 @@ circle::
 	stz x2+1
 	stx y2
 	stz y2+1
-;>	  MOVE ScreenBase,$fc08
 
-	sec
-	lda #1
-	sbc y2
-	sta temp
-	lda #0
-	sbc #0
-	sta temp+1
-	lda #3
-	sta deltaE
-	stz deltaE+1
-	lda y2
+	txa
 	eor #$ff
-	inc
-	sta deltaSE
-	asl deltaSE
+	sta temp
+
+	inc			; A = -R
+	asl
+	tay
 	lda #$ff
+	sta temp+1		; temp = 1-R
+
 	rol
-	sta deltaSE+1
 	tax
 	clc
-	lda #5
-	adc deltaSE
+	tya
+	adc #5
 	sta deltaSE
 	txa
 	adc #0
-	sta deltaSE+1
+	sta deltaSE+1		; deltaSE = -2R+5
+
+	lda #3
+	sta deltaE
+	stz deltaE+1		; deltaE = 3
 
 .while	jsr circle_points
 	CMPW y2,x2
 	beq .exit
-	blt ._1
-.exit	rts
+
 ._1	inc x2
 	bne ._2
 	  inc x2+1
-._2	lda temp+1
+._2
+	clc
+	lda deltaE
+	adc #2
+	sta deltaE
+	_IFCS
+	  inc deltaE+1
+	_ENDIF
+
+	lda temp+1
 	bpl ._3
 	  ADDW deltaE,temp
-	  clc
-	  lda deltaE
-	  adc #2
-	  sta deltaE
-	  _IFCS
-	    inc deltaE+1
-	  _ENDIF
 	  clc
 	  lda deltaSE
 	  adc #2
@@ -186,27 +182,17 @@ circle::
 	bra .while
 ._3	ADDW deltaSE,temp
 	clc
-	lda deltaE
-	adc #2
-	sta deltaE
-	_IFCS
-	  inc deltaE+1
-	_ENDIF
-	clc
 	lda deltaSE
 	adc #4
 	sta deltaSE
 	_IFCS
 	  inc deltaSE+1
 	_ENDIF
-	sec
-	lda y2
-	sbc #1
-	sta y2
-	bcs .while
-	  dec y2+1
+	dec y2
+	bne .while
+	dec y2+1
 	bra .while
-
+.exit	rts
 
 circle_points
 	ADDWABC x1,x2,._1x
