@@ -17,7 +17,9 @@ Polygon::       sta .pcolor
                   MOVE x2,bx
                   MOVE y2,by
                   lda .pcolor
+                  phy
                   jsr DrawLine
+                  ply
                   MOVE bx,x1
                   MOVE by,y1
                 bra .loop
@@ -25,6 +27,9 @@ Polygon::       sta .pcolor
                 MOVE ay,y2
                 iny
                 lda .pcolor
-                jmp DrawLine
+		phy
+                jsr DrawLine
+	        ply
+	        rts
 .pcolor         ds 1
 ****************
