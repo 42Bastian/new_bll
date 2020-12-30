@@ -1,0 +1,97 @@
+FADERATE	SET 40
+
+	MACRO FADE_OUT
+	lda #$f
+	sta .\mcount+1
+	bra .\mloop1
+.\mcount	ds 2
+
+.\mloop1	ldx #$f
+.\mloop2	  lda $fda0,x
+	  beq .\mcont01
+	  dec $fda0,x
+	  bmi .\mcont2
+.\mcont01	  lda $fdb0,x
+	  tay
+	  and #$f
+	  beq .\mcont02
+	  dec
+	  bmi .\mcont2
+.\mcont02	  sta .\mcount
+	  tya
+	  and #$f0
+	  beq .\mcont03
+	  sec
+	  sbc #$10
+	  bcc .\mcont2
+.\mcont03	  ora .\mcount
+	  sta $fdb0,x
+	  bra .\mcont3
+.\mcont2	  stz $fda0,x
+	  stz $fdb0,x
+.\mcont3	  dex
+	bpl .\mloop2
+	ldy #FADERATE
+.\mwait	lda $fd0a
+	bne .\mwait
+	dey
+	bne .\mwait
+	dec .\mcount+1
+	bne .\mloop1
+	ENDM
+
+	MACRO FADE_IN
+	IFVAR \0
+	lda #$f
+	sta .\mcount+1
+	bra .\mloop1
+.\mcount	ds 2
+.\fihelp	ds 1
+.\mloop1	ldx #$f
+.\mloop2	  lda \0,x
+	  beq .\mcont1
+	    cmp $fda0,x
+	    beq .\mcont3
+	      inc $fda0,x
+.\mcont1	  lda $fdb0,x
+	  tay
+	  and #$f
+	  sta .\mcount
+	  lda \0+$10,x
+	  and #$f
+	  beq .\mcont2
+	    cmp .\mcount
+	    beq .\mcont3
+	      inc .\mcount
+.\mcont2	  tya
+	  and #$f0
+	  sta .\fihelp
+	  lda \0+$10,x
+	  and #$f0
+	  beq .\mcont4a
+	   cmp .\fihelp
+	     beq .\mcont3
+	       lda .\fihelp
+	       clc
+	       adc #$10
+.\mcont4a	  ora .\mcount
+	  sta $fdb0,x
+	  bra .\mcont4
+.\mcont3	  lda \0,x
+	  sta $fda0,x
+	  lda \0+$10,x
+	  sta $fdb0,x
+.\mcont4	  dex
+	bpl .\mloop2
+	ldy #FADERATE
+.\mwait	lda $fd0a
+	bne .\mwait
+	dey
+	bne .\mwait
+	dec .\mcount+1
+	bne .\mloop1
+	ELSE
+	  ECHO "FADE_IN :Farbtabelle fehlt !!"
+	ENDIF
+	ENDM
+
