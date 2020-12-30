@@ -6,27 +6,27 @@
 * created : 11.05.95
 * last modified :
 *
-* 16.02.96	leaner (thanks to Harry)
-* 12.03.96	test for busy after write and erase (well, Harry ;)) )
-* 11.01.99	new EEPROMs need DO to be set to 0 command write!
+* 16.02.96      leaner (thanks to Harry)
+* 12.03.96      test for busy after write and erase (well, Harry ;)) )
+* 11.01.99      new EEPROMs need DO to be set to 0 command write!
 * 22.04.04      Version for 8 bit organized EEPROMS
 *
 *
 *
 * (c) 1995 Bastian Schick
-* CS	= A7 (18)
-* CLK	= A1 (11)
+* CS    = A7 (18)
+* CLK   = A1 (11)
 * DI/DO = AUDIN (32)
 *
 *And now how to contact the EEPROM :
 *
 *CARD
-*PORT	    	    ----\/----	    93C46(SMD too)
+*PORT               ----\/----      93C46(SMD too)
 *(18)  A7   --------| CS     |- +5V
 *(11)  A1   --------| CLK    |- NC
-*		+---| DI     |- NC
+*               +---| DI     |- NC
 *(32) AUDIN ----+---| DO     |- GND
-*	    	    ----------
+*                   ----------
 *
 ****************
 
