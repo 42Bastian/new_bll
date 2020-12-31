@@ -5,31 +5,30 @@
 ;*
 ;* created : 30.12.2020
 ;*
-;* CLK   = A1 (11)
-;* DI/DO = AUDIN (32)
-;*
 ;* How to contact the EEPROM :
 ;*
-;*                -----\/-----     24AAXXX
-;*   GND  --------| A0   VCC |- +5V
-;*   GND  --------| A1   WP  |- GND
-;*   GND  --------| A2   SCL |- A1    (11)
+;*                   24AAXXX
+;*                -----\/-----
+;*   GND  --------| A0   VCC |- +5V   (31)
+;*   GND  --------| A1   WP  |- GND   (1)
+;*   GND  --------| A2   SCL |- A0    (17) (or A1 (11) )
 ;*   GND  --------| VSS  SDA |- AUDIN (32)
 ;*                ------------
 ;*
 ;****************
 ;* Based on eeprom64k.s from Karri and Nop90
 ;****************
+;* For EEPROMs of different size: Write new page functions.
 
  IFND ee24aaxxx_tmp
 	echo "Need ee24aaxxx_tmp ZP variable"
  ENDIF
 
  IFND pageBuffer
-	echo "Need 'pageBuffer'"
+	echo "Need a 'pageBuffer'"
  ENDIF
 
-CLOCK_ON_A1	EQU 1		; undefine if clock is on A0
+//->CLOCK_ON_A1	EQU 1		; define if clock is on A1
 
 CHIP_IS_24AA512 EQU 1
 ; ------------------------------------------------------------------------
@@ -113,8 +112,10 @@ EE24AAXXX_C_READ       EQU $a1
 	IO_SETINPUT	;releasing channel after the clock -> data line pulled up
  ENDM
 
-; ------------------------------------------------------------------------
-; EEPROM IO functions
+;;; ----------------------------------------
+;;; Internal: Set the 16bit address
+;;; IN:  X:A - Address
+;;; OUT: C == 1 => no ACK
 
 ee24aaxxx_setAddr_Exit1:
 	pla
@@ -123,52 +124,57 @@ ee24aaxxx_setAddr_Exit:
 
 ee24aaxxx_setAddr:
 	pha
-	phx
 	lda	#EE24AAXXX_C_WRITE
 	jsr	ee24aaxxx_put8
-	pla
 	bcs	ee24aaxxx_setAddr_Exit1
-
+	txa
 	jsr	ee24aaxxx_put8
 	pla
 	bcs	ee24aaxxx_setAddr_Exit
 	;; fall thru
 
-ee24aaxxx_put8::		;data in A
-	IO_SETOUTPUT
-	ldx	#8
-.loop
-	ldy	#$0b
-	rol
-	bcc	.zero
-	ldy	#$1b
-.zero
-	sty	IODAT
+;;; ----------------------------------------
+;;; Internal: Write 8 bits
+;;; IN:  A
+;;; OUT: C == 1 => No ACK
 
+ee24aaxxx_put8::
+	IO_SETOUTPUT
+
+	REPT	8
+	ldy	#$1b
+	rol
+	bcs	.\zero
+	ldy	#$b
+.\zero
+	sty	IODAT
 	IO_CHANGECLOCK  ;clock high
 	IO_CHANGECLOCK  ;clock low
-	dex
-	bne	.loop
+	ENDR
 
 	IO_SETINPUT	;release the channel
 	EE24AAXXX_CHECKACK
 	rts		; C == 1 => no ACK
 
+;;; ----------------------------------------
+;;; Internal: Read 8 bits
+;;; IN:  A - == 0 => no ACK
+;;; OUT: A - data
+
 ee24aaxxx_get8::
 	IO_SETINPUT
-	pha
-	ldx	#8
-.loop
+	tax
+
+	REPT 8
 	IO_CHANGECLOCK  ;clock high
 	lda	IODAT
 	IO_CHANGECLOCK  ;clock low
 	and	#$10
 	adc	#$f0
 	rol	ee24aaxxx_tmp
-	dex
-	bne	.loop
+	ENDR
 
-	pla
+	txa
 	beq   .noack		; if A == 0 => no ACK
 	IO_SETOUTPUT
 	ldy   #$0b		; Low => ACK
@@ -225,7 +231,7 @@ ee24aaxxx_readNext::
 ;;; ee24aaxxx_write
 ;;; IN:  X:A - Address
 ;;;      Y   - Data
-;;; OUT: C = 0 => error
+;;; OUT: C = 1 => error
 ;;; ----------------------------------------------------------------------
 ee24aaxxx_write::
 	phy
@@ -236,6 +242,18 @@ ee24aaxxx_write::
 	bcs	.error
 	jsr	ee24aaxxx_put8
 .error
+	EE24AAXXX_STOP
+	rts
+
+;;; ----------------------------------------------------------------------
+;;; ee24aaxxx_check
+;;; IN:  ---
+;;; OUT: C = 1 => busy
+;;; ----------------------------------------------------------------------
+ee24aaxxx_check::
+	EE24AAXXX_INIT
+	EE24AAXXX_START
+	jsr	ee24aaxxx_setAddr
 	EE24AAXXX_STOP
 	rts
 
@@ -266,7 +284,7 @@ ee24aa512_readPage::
 	sta	pageBuffer,y
 	iny
 	bpl	.1
-	sec
+	clc
 .error
 	EE24AAXXX_STOP
 	rts
@@ -275,7 +293,7 @@ ee24aa512_readPage::
 ;;; ee24aa512_writePage(unsigned int page)
 ;;; IN:  X:A - Page (0..$1ff)
 ;;;      pageBuffer
-;;; OUT: C = 0 => error
+;;; OUT: C = 1 => error
 ;;; ----------------------------------------------------------------------
 ee24aa512_writePage::
 	jsr	ee24aa512_page2Addr
@@ -283,15 +301,14 @@ ee24aa512_writePage::
 	EE24AAXXX_START
 	jsr	ee24aaxxx_setAddr
 	bcs	.error
-	ldy	#0
+	ldx	#0
 .1
-	phy
-	lda	pageBuffer,y
+	lda	pageBuffer,x
 	jsr	ee24aaxxx_put8
 	bcs	.error
-	ply
-	iny
+	inx
 	bpl	.1
+	clc
 .error
 	EE24AAXXX_STOP
 	rts

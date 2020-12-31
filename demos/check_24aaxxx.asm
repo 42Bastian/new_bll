@@ -1,9 +1,8 @@
 ***************
-* RAW.ASM
-* simple body of a Lynx-program
+* check_24aaxxx.asm
+* Test program for 24AAxxx EEPROMs
 *
-* created : 24.04.96
-* changed : May 2020
+* created : 30.12.2020
 ****************
 
 
@@ -88,6 +87,56 @@ Start::				; Start-Label needed for reStart
 	LDAY hallo
 	jsr print
 
+	;; ---------------------
+	;;  Read/write benchmark
+ IF 0 = 1
+	ldy	#0
+	lda	#$42
+.l0	sta	pageBuffer,y
+	iny
+	bpl	.l0
+
+	sei
+	stz	_1000Hz
+	stz	_1000Hz+1
+	stz	_1000Hz+2
+	cli
+	stz	page
+	stz	page+1
+.bench
+
+	lda	page
+	ldx	page+1
+	jsr	ee24aa512_writePage
+.wait
+	jsr	ee24aaxxx_check
+	bcs	.wait
+
+	inc	page
+	bne	.bench
+	inc	page+1
+	lda	page+1
+	cmp	#2
+	bne	.bench
+
+	sei
+	lda	_1000Hz
+	pha
+	lda	_1000Hz+1
+	pha
+	lda	_1000Hz+2
+	pha
+	cli
+	SET_XY	0,90
+	pla
+	jsr	PrintHex
+	pla
+	jsr	PrintHex
+	pla
+	jsr	PrintHex
+ ENDIF
+	;;  ---------------------
+
 	lda #0
 	sta page
 	lda #0
@@ -101,7 +150,6 @@ Start::				; Start-Label needed for reStart
 
 	jsr	dumpPage
 .loop
-//->	VSYNC
 	jsr ReadKey		; test for key-press
 				; and do actions (PAUSE,FLIP,RESTART)
 	lda Cursor
@@ -126,13 +174,14 @@ Start::				; Start-Label needed for reStart
 	lda	page+1
 	cmp	#2
 	_IFEQ
-	  dec page+1
-	  dec page
+	  stz page+1
+	  stz page
 	_ENDIF
 	cmp	#$ff
 	_IFEQ
-	  stz page
-	  stz page+1
+	  sta page
+	  lda #1
+	  sta page+1
 	_ENDIF
 
 	bra .loop0
