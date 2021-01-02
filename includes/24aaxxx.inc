@@ -158,12 +158,10 @@ ee24aaxxx_put8::
 
 ;;; ----------------------------------------
 ;;; Internal: Read 8 bits
-;;; IN:  A - == 0 => no ACK
 ;;; OUT: A - data
 
 ee24aaxxx_get8::
 	IO_SETINPUT
-	tax
 
 	REPT 8
 	IO_CHANGECLOCK  ;clock high
@@ -174,8 +172,6 @@ ee24aaxxx_get8::
 	rol	ee24aaxxx_tmp
 	ENDR
 
-	txa
-	beq   .noack		; if A == 0 => no ACK
 	IO_SETOUTPUT
 	ldy   #$0b		; Low => ACK
 	sty   IODAT
@@ -275,20 +271,45 @@ ee24aa512_readPage::
 	lda	#EE24AAXXX_C_READ
 	jsr	ee24aaxxx_put8
 	bcs	.error
-	ldy	#0
-.1	phy
-	tya
-	eor	#$7f
+	ldx	#0
+.1
 	jsr	ee24aaxxx_get8
-	ply
-	sta	pageBuffer,y
-	iny
+	sta	pageBuffer,x
+	inx
 	bpl	.1
 	clc
 .error
 	EE24AAXXX_STOP
 	rts
 
+;;; ----------------------------------------------------------------------
+;;; ee24aa512_readDoublePage(unsigned int page)
+;;; Read two adjacent pages
+;;; IN:  X:A - Page (0..$1ff)
+;;; OUT: pageBuffer contains data
+;;;      C = 0 => error
+;;; ----------------------------------------------------------------------
+ee24aa512_readDoublePage::
+	jsr	ee24aa512_page2Addr
+	EE24AAXXX_INIT
+	EE24AAXXX_START
+	jsr	ee24aaxxx_setAddr
+	bcs	.error
+
+	EE24AAXXX_START
+	lda	#EE24AAXXX_C_READ
+	jsr	ee24aaxxx_put8
+	bcs	.error
+	ldx	#0
+.1
+	jsr	ee24aaxxx_get8
+	sta	pageBuffer,x
+	inx
+	bne	.1
+	clc
+.error
+	EE24AAXXX_STOP
+	rts
 ;;; ----------------------------------------------------------------------
 ;;; ee24aa512_writePage(unsigned int page)
 ;;; IN:  X:A - Page (0..$1ff)
