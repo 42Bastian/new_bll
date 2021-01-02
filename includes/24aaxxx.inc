@@ -181,6 +181,21 @@ ee24aaxxx_get8::
 	lda	ee24aaxxx_tmp
 	rts
 
+ee24aaxxx_get8NoAck::
+	IO_SETINPUT
+
+	REPT 8
+	IO_CHANGECLOCK  ;clock high
+	lda	IODAT
+	IO_CHANGECLOCK  ;clock low
+	and	#$10
+	adc	#$f0
+	rol	ee24aaxxx_tmp
+	ENDR
+
+	lda	ee24aaxxx_tmp
+	rts
+
  IFD CHIP_IS_24AA512
 ;;; ----------------------------------------------------------------------
 ;;; ee24aa512_page2Addr
@@ -210,8 +225,7 @@ eeread_cont:
 	lda	#EE24AAXXX_C_READ
 	jsr	ee24aaxxx_put8
 	bcs	.error
-	lda	#0   ; Flag: No ACK after read
-	jsr	ee24aaxxx_get8
+	jsr	ee24aaxxx_get8NoAck
 .error
 	EE24AAXXX_STOP
 	rts
@@ -271,12 +285,14 @@ ee24aa512_readPage::
 	lda	#EE24AAXXX_C_READ
 	jsr	ee24aaxxx_put8
 	bcs	.error
-	ldx	#0
+	ldx	#1
 .1
 	jsr	ee24aaxxx_get8
-	sta	pageBuffer,x
+	sta	pageBuffer-1,x
 	inx
 	bpl	.1
+	jsr	ee24aaxxx_get8NoAck
+	sta	pageBuffer+127
 	clc
 .error
 	EE24AAXXX_STOP
@@ -300,12 +316,15 @@ ee24aa512_readDoublePage::
 	lda	#EE24AAXXX_C_READ
 	jsr	ee24aaxxx_put8
 	bcs	.error
-	ldx	#0
+	ldx	#1
 .1
 	jsr	ee24aaxxx_get8
-	sta	pageBuffer,x
+	sta	pageBuffer-1,x
 	inx
 	bne	.1
+	jsr	ee24aaxxx_get8NoAck
+	sta	pageBuffer+255
+
 	clc
 .error
 	EE24AAXXX_STOP
