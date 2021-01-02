@@ -238,6 +238,37 @@ ee24aaxxx_readNext::
 	bra   eeread_cont
 
 ;;; ----------------------------------------------------------------------
+;;; ee24aaxxx_readBytes
+;;; IN:  X:A - Address
+;;;      Y   - number of bytes (1..255)
+;;; OUT: A - data if C = 0
+;;; ----------------------------------------------------------------------
+ee24aaxxx_readBytes::
+	sty	.cpxpatch+1
+	EE24AAXXX_INIT
+	EE24AAXXX_START
+	jsr	ee24aaxxx_setAddr
+	bcs	.error
+
+	EE24AAXXX_START
+	lda	#EE24AAXXX_C_READ
+	jsr	ee24aaxxx_put8
+	bcs	.error
+	ldx	#1
+.loop
+	jsr	ee24aaxxx_get8
+	sta	pageBuffer-1,x
+	inx
+.cpxpatch:
+	cpx	#0
+	bne	.loop
+	jsr	ee24aaxxx_get8NoAck
+	sta	pageBuffer-1,x
+.error
+	EE24AAXXX_STOP
+	rts
+
+;;; ----------------------------------------------------------------------
 ;;; ee24aaxxx_write
 ;;; IN:  X:A - Address
 ;;;      Y   - Data
