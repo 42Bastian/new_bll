@@ -12,7 +12,7 @@ screen0	 equ $2000
 
 	run	$100-1
 Start::
-	dc.b size
+	dc.b size		; needed for 1st stage
 	ldx	#12-1
 .sloop
 	  ldy	SUZY_addr,x
@@ -35,7 +35,6 @@ wait:
 	jsr	read_byte
 	cmp	#'P'
 	bne	wait
-	jmp	Loader
 
 load_len	equ $0
 load_ptr	equ $2
@@ -46,10 +45,10 @@ Loader::
 	ldy #4
 .loop0	  jsr read_byte
 	  sta load_len-1,y
-	  sta load_len2-1,y
+	  sta load_len2-1,y	; mirror for call
 	  dey
-	bne .loop0	; get destination and length
-	tax	; lowbyte of length
+	bne .loop0		; get destination and length
+	tax			; lowbyte of length
 
 .loop1	inx
 	bne .1
