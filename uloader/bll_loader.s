@@ -28,7 +28,7 @@ RUN_ADDR	EQU $f4
 	lda	HEADER_ORG+3
 	sta	DEST
 	sta	RUN_ADDR
-	ldx	#$c0		; stack beload loader code
+	ldx	#$c0		; stack below loader code
 	txs
 	ldy	#b9-b0-1+2+1
 copy_loader:
