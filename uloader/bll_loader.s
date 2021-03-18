@@ -7,16 +7,15 @@
 ; Addresses
 RCART_0		EQU $fcb2	; cart data register
 BLOCKNR		EQU 0		; zeroed by ROM
-PAGECNT		EQU $1ff
-HEADER		EQU $e0
-HEADER2		EQU $f0
-LENGTH		EQU HEADER+6
-DEST		EQU HEADER+4
-RUN_ADDR	EQU HEADER2+4
+
+LENGTH		EQU $f0
+DEST		EQU $f2
+RUN_ADDR	EQU $f4
 
 	RUN    $01ff
 
-	dc.b	1
+	dc.b	1		; page count for uLoader
+
 	lda	HEADER_ORG+4
 	eor	#$ff
 	sta	LENGTH+1
@@ -29,7 +28,7 @@ RUN_ADDR	EQU HEADER2+4
 	lda	HEADER_ORG+3
 	sta	DEST
 	sta	RUN_ADDR
-	ldx	#$c0
+	ldx	#$c0		; stack beload loader code
 	txs
 	ldy	#b9-b0-1+2+1
 copy_loader:
@@ -37,7 +36,7 @@ copy_loader:
 	sta	$1C0,y
 	dey
 	bne	copy_loader
-	ldx	#3		; already 1 page bytes loaded from 1st block!
+	ldx	#3		; already 1 page loaded from 1st block!
 	bra	$1C0+(b2-b0+1)	; bra b2
 
 	; From here copied onto stack
@@ -51,7 +50,7 @@ b1:
 	ldx	#4		; 4 pages per block
 b2:
 	lda	RCART_0
-	sta	(DEST)		; first byte goes to $1ff (PAGECNT)
+	sta	(DEST)
 	inc	DEST
 	bne	b3
 	inc	DEST+1
@@ -67,10 +66,10 @@ b4
 	bra	b0
 
 b9:
-	; program is here at $200!
-endofbl:
 
-size	set endofbl-$1ff
+size	set b9-$1ff
+	;; skip but leave space for BLL header
 	ds	256-size-10-52
+
 HEADER_ORG:
 	echo "Size %Dsize"
