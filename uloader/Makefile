@@ -1,12 +1,14 @@
 all: ml.lnx
 
-ml.lyx: ml_enc.bin demo.bin
-	cat ml_enc.bin demo.bin >$@
+ml.lyx: ml.enc demo.bin
+	cat ml.enc demo.bin >$@
+
 
 ml.lnx: ml.lyx
+	bzcat allff.lyx.bz2 >> $<
 	make_lnx $< -b0 256K -o $@
 
-ml_enc.bin: ml.bin
+ml.enc: ml.bin
 	lynxenc $< $@
 
 ml.bin: micro_loader.s
