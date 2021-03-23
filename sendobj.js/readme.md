@@ -12,6 +12,6 @@ to load dependencies.
 
 ## Usage
 
-`node [-b <baudrate>] [-p port] filename`
+`node sendobj.js [-b <baudrate>] [-p port] filename`
 
 Default values are COM7 and 62500Bd
