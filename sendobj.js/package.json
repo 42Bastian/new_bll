@@ -1,0 +1,19 @@
+{
+    "name": "sendobj",
+    "version": "1.0.0",
+    "description": "BLL sendobj",
+    "main": "sendobj.js",
+    "scripts": {
+        "start": "node . ",
+        "install": "npm rebuild"
+    },
+    "keywords": [
+        "BLL",
+        "sendobj"
+    ],
+    "author": "42Bastian",
+    "license": "CC0-1.0",
+    "dependencies": {
+        "serialport": "^9.0.6"
+    }
+}
