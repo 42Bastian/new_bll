@@ -266,7 +266,6 @@ BRKserver::
 	stx SaveX
 	sty SaveY
 	pla
-	and #$EF	; be sure brk-flag is always cleared
 	sta SaveP
 	ply
 	sty SavePC
