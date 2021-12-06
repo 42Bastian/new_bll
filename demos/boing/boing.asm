@@ -38,7 +38,7 @@ DEBUG		set 1
                 jsr cls
                 ENDM
 
-max_ball        equ 20-1
+max_ball        equ 3-1
 
  BEGIN_ZP
 count           ds 2
@@ -142,57 +142,6 @@ xx::
                  sta color,x
                  dex
                 bpl .loop_init
-;;;
-;;; sound
-;;;
-	lda #64
-	sta $fd20
-	lda #$a9
-	sta $fd21
-	sta $fd22
-
-	lda #25
-	sta $fd24
-	lda #$1d
-	sta $fd25
-;;;
-	lda #64
-	sta $fd30
-	lda #$a9
-	sta $fd31
-	sta $fd32
-
-	lda #20
-	sta $fd34
-	lda #$1d
-	sta $fd35
-;;;
-	stz $fd44
-.00
-	stz $fd50
-	ldx #0
-	ldy #7
-.0	dex
-	bne .0
-	dey
-	bne .0
-
-	dec $fd30
-	beq .dd
-	inc $fd20
-
-	ldx #0
-	ldy #30
-.1	dex
-	bne .1
-	dey
-	bne .1
-
-	bra .00
-.dd
-	dec $fd50
-.dd1
-	bra .dd1
 ;
 ; main-loop
 ;

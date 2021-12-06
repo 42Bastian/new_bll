@@ -1,4 +1,5 @@
 Baudrate        set 62500
+DEBUG		set 1
 
 	include <includes/hardware.inc>
 * macros
@@ -34,7 +35,7 @@ Baudrate        set 62500
                 jsr cls
                 ENDM
 
-max_ball        equ 10-1
+max_ball        equ 2-1
 
  BEGIN_ZP
 count           ds 2
@@ -110,15 +111,22 @@ Start::
                  lda $fd02
                  and #2
                  dec
+	lda	#1
                  sta addx,x
                  lda $fd02
                  and #2
                  dec
+	lda	#1
                  sta addy,x
                  lda #1
                  sta color,x
                  dex
                 bpl .loop_init
+
+	lda #20
+	sta	x_pos
+	lda #30
+	sta	x_pos+1
 ;
 ; main-loop
 ;
@@ -150,7 +158,10 @@ Start::
 
                 bra .cont
 
-.wall           jsr Reflect
+.wall
+	stz	addy,x
+	stz	addx,x
+//->		jsr Reflect
                 sed
                 lda wcount
                 adc #1
@@ -191,10 +202,11 @@ Start::
                 bpl .loop_add
                 lda $fcb0
                 beq .no_flip
- MOVEI coll,$fd94
-.l lda $fcb0
-cmp #1
-bne .l
+
+		MOVEI coll,$fd94
+.l 		lda $fcb0
+		cmp #1
+		bne .l
 ;>                VSYNC
 ;>                FLIP
 .no_flip        jmp .loop
@@ -255,15 +267,17 @@ Plot::          clc
 
 
 col             db 0
-PltSCB          db $C4,$90,$03
+PltSCB          db $C6,$90,$03
                 dw 0,PltData
 PltSCBx         dw 0
 PltSCBy         dw 0
                 dw $100,$100
-PltColor        db $0A,$DB
-PltData         db 3,$11,$10
-                db 3,$12,$10
-                db 3,$11,$10
+PltColor        db $0A,$De
+PltData		db 5,$03,$33,$33,0
+		db 5,$03,$11,$13,0
+                db 5,$03,$12,$13,0
+                db 5,$03,$11,$13,0
+		db 5,$03,$33,$33,0
                 db 0
 
                 db 0
