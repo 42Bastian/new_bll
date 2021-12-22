@@ -10,6 +10,13 @@ Baudrate EQU 62500
 ;;; ROM sets this address
 screen0	 equ $2000
 
+	MACRO READ_BYTE
+.\w
+	bit $fd8c
+	bvc .\w
+	lda $fd8d
+	ENDM
+
 	run	$100-1
 Start::
 	dc.b size		; needed for 1st stage
@@ -28,11 +35,19 @@ Start::
 	  sta   $fd00,y
 	  dex
 	bpl	.mloop
+
+	lda	$fcb0
+	bne	.noturbo
+	  dec	$fda0
+	  lda	#%00010000
+          sta	$FD9C      ; MTEST0: UARTturbo
+.noturbo
+
 wait:
-	jsr	read_byte
+	READ_BYTE
 	cmp	#0x81
 	bne	wait
-	jsr	read_byte
+	READ_BYTE
 	cmp	#'P'
 	bne	wait
 
@@ -43,7 +58,7 @@ load_ptr2	equ $6
 
 Loader::
 	ldy #4
-.loop0	  jsr read_byte
+.loop0	  READ_BYTE
 	  sta load_len-1,y
 	  sta load_len2-1,y	; mirror for call
 	  dey
@@ -56,19 +71,13 @@ Loader::
 	bne .1
 	jmp (load_ptr)
 
-.1	jsr read_byte
+.1	READ_BYTE
 	sta (load_ptr2),y
 	sta $fdb0
 	iny
 	bne .loop1
 	inc load_ptr2+1
 	bra .loop1
-
-read_byte
-	bit $fd8c
-	bvc read_byte
-	lda $fd8d
-	rts
 ;;;------------------------------
 	;; Writing low-byte in SUZY space clears highbyte!
 _SDONEACK EQU SDONEACK-$fd00
