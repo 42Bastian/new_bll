@@ -10,6 +10,7 @@
 
 Baudrate        set 62500
 _1000HZ_TIMER   equ 7
+DEBUG		set 1
 
                 include <includes/hardware.inc>
 * macros
