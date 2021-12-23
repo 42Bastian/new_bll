@@ -60,10 +60,16 @@ load_len	equ $0
 load_ptr	equ $2
 load_ptr2	equ $4
 
+	MACRO READ_BYTE
+.\w
+	bit $fd8c
+	bvc .\w
+	lda $fd8d
+	ENDM
 
 Loader::
 	ldy #4
-.loop0	  jsr read_byte
+.loop0	  READ_BYTE
 	  sta load_len-1,y
 	  dey
 	bne .loop0	; get destination and length
@@ -80,7 +86,7 @@ Loader::
 	bne .1
 	jmp (load_ptr)
 
-.1	jsr read_byte
+.1	READ_BYTE
 	sta (load_ptr2),y
 	sta $fda0
 	iny
@@ -88,18 +94,11 @@ Loader::
 	inc load_ptr2+1
 	bra .loop1
 
-
-read_byte
-	bit $fd8c
-	bvc read_byte
-	lda $fd8d
-	rts
-
 LoaderE	equ *
 
 LoaderLen	equ LoaderE-Loader
 
-	echo "%DLoaderLen"
+	echo "Loader size:%DLoaderLen"
 	RUN _Loader+LoaderLen
 ***************
 * Debug-Handler
