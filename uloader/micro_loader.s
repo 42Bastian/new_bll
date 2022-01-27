@@ -16,8 +16,8 @@ PAGECNT		EQU $1ff
 	RUN    $0200
 
 	; Copy loader onto stack
-	; SP = 3 after ROM, so push 3 bytes plus
-	ldx	#(b9+1)-b0+3
+	txs			; x = 0 after ROM
+	ldx	#(b9+1)-b0
 cpy:
 	stz	$fda0,x		; clear colors
 	lda	b0,x		; copy loader
@@ -48,7 +48,7 @@ DST
 
 	dec	PAGECNT
 	bne	b0
-	dc.b 	$a2		; opcode "LDX"
+	dc.b	$a2		; opcode "LDX"
 	; PAGECNT will be here, zero after loading => LDX #0
 b9:
 	; program is here at $200!
