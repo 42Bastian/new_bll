@@ -14,6 +14,7 @@
     "author": "42Bastian",
     "license": "CC0-1.0",
     "dependencies": {
-        "serialport": "^9.0.6"
+        "serialport": "^9.0.6",
+        "simple-get": ">=4.0.1"
     }
 }
