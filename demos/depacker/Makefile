@@ -8,7 +8,7 @@ $(_256).o: $(_256).asm
 %.bin: %.asm
 	lyxass -d -D LNX=1 -o  $@ $<
 
-$(_256).o: unlz4.asm
+$(_256).o: unlz4.asm unzx0.asm
 
 .PHONY: send
 send: $(_256).o

@@ -6,6 +6,8 @@
 * changed : May 2020
 ****************
 
+LZ4	EQU 0
+ZX0	EQU 1
 
 Baudrate	set 62500	; define baudrate for serial.inc
 
@@ -84,9 +86,17 @@ Start::				; Start-Label needed for reStart
 
 	stz	_1000Hz
 	stz	_1000Hz+1
+ IF LZ4 = 1
 	MOVEI	packed+8,src
 	MOVEI	voyager_data,dst
 	LDAY	packed_e-packed-8
+ ENDIF
+ IF ZX0 = 1
+	MOVEI	packed,src
+	MOVEI	voyager_data,dst
+ ENDIF
+	HANDY_BRKPT
+
 	jsr	depacker
 	lda	_1000Hz
 	pha
@@ -137,17 +147,27 @@ voyagerSCB:
 	include <includes/draw_spr.inc>
 ;;; ----------------------------------------
 depacker:
+ IF LZ4 = 1
 	include "unlz4.asm"
-	rts
+ ENDIF
+ IF ZX0 = 1
+	include "unzx0.asm"
+ ENDIF
 depacker_e:
 End:
 
 packed:
+ IF LZ4 = 1
 	ibytes	"startrek_voyager.spr.lz4"
 //->	ibytes	"empty.spr.lz4"
+ ENDIF
+ IF ZX0 = 1
+	ibytes	"startrek_voyager.spr.zx0"
+ ENDIF
+
 //->	ibytes	"startrek_voyager.spr"
 packed_e:
 
 size	set depacker_e - depacker
 
-	echo "Size:%dsize"
+	echo "Depacker size:%dsize"
