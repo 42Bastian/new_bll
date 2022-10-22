@@ -17,6 +17,6 @@ Speed for 7K sprite (RAM to RAM): 155ms
 
 ## unzx0
 
-Unpacker size: 195 bytes
+Unpacker size: 185 bytes
 
-Speed for 7K sprite (RAM to RAM): 284ms
+Speed for 7K sprite (RAM to RAM): 277ms

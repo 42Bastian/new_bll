@@ -27,29 +27,24 @@ unzx0::
 	bcc	.old_offset
 .new_off
 	jsr	zx0_elias
-
-	txa
-	bne	.0
-	iny
-	beq	.99
-.0
-	stz	zx0_offset
+	lda	zx0_value+1
+	bne	.99		; > 255 => EOF
 	lsr	zx0_value
-	ror	zx0_offset
+	ror
+	tax
 	jsr	zx0_getbyte
 	lsr
-	php
+	php			; save C
 	sta	zx0_value+1
 	sec
-	lda	zx0_offset
+	txa
 	sbc	zx0_value+1
 	sta	zx0_offset
 	lda	zx0_value
-	bcs	.2
-	dec
-.2
+	adc	#$ff
 	sta	zx0_offset+1
 	plp
+
 	ldx	#$fe		; min count = 2
 	ldy	#$ff
 	bcs	.off
@@ -58,7 +53,7 @@ unzx0::
 	stz	zx0_value+1
 	sta	zx0_value
 	jsr	zx0_elias_pre
-	dex
+	dex			; matchlen + 1
 	bne	.off
 	dey
 	bra	.off
@@ -100,15 +95,12 @@ zx0_elias_pre
 	rol	zx0_value+1
 	bra	.el
 .done
-	lda	zx0_value
-	eor	#$ff
+	lda	#0
+	sbc	zx0_value
 	tax
-	lda	zx0_value+1
-	eor	#$ff
+	lda	#0
+	sbc	zx0_value+1
 	tay
-	inx
-	bne	.99
-	iny
 .99	rts
 
 zx0_getbit::
