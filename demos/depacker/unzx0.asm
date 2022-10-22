@@ -104,12 +104,11 @@ zx0_elias_pre
 .99	rts
 
 zx0_getbit::
-	dec	zx0_bc
-	bpl	.1
+	lsr	zx0_bc
+	bne	.1
 	jsr	zx0_getbyte
 	sta	zx0_stor
-	lda	#7
-	sta	zx0_bc
+	dec	zx0_bc
 .1
 	asl	zx0_stor
 	rts

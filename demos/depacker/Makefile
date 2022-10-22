@@ -12,7 +12,8 @@ $(_256).o: unlz4.asm unzx0.asm
 
 .PHONY: send
 send: $(_256).o
-	sendobj -b 62500 -p com7 $<
+	sendobj -b 1000000 -p com7 $<
+#	sendobj -b 62500 -p com7 $<
 
 .PHONY: lnx
 lnx: $(_256).bin

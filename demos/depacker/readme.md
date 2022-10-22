@@ -13,10 +13,10 @@ Pack with `lz4 -l` and skip first 8 bytes.
 
 Unpacker size: 154 bytes
 
-Speed for 7K sprite (RAM to RAM): 155ms
+Speed for 7K sprite (RAM to RAM): 150ms
 
 ## unzx0
 
-Unpacker size: 185 bytes
+Unpacker size: 183 bytes
 
-Speed for 7K sprite (RAM to RAM): 277ms
+Speed for 7K sprite (RAM to RAM): 270ms
