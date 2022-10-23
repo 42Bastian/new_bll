@@ -2,9 +2,11 @@
 * depacker.asm
 * Depacker test
 ****************
+ASTEROIDS	EQU 0
 
+RAW		EQU 1
 LZ4		EQU 0
-LZ4_fast	EQU 1
+LZ4_fast	EQU 0
 ZX0		EQU 0
 ZX0_fast	EQU 0
 TP		EQU 0
@@ -52,6 +54,7 @@ voyager_data	equ $8000
  BEGIN_ZP
 src		ds 2
 dst		ds 2
+tmp		ds 2
 packer_zp	ds 12
  END_ZP
 
@@ -90,6 +93,25 @@ Start::				; Start-Label needed for reStart
 
 	stz	_1000Hz
 	stz	_1000Hz+1
+ IF RAW = 1
+	MOVEI	packed,src
+	MOVEI	voyager_data,dst
+	ldx	#<(-(packed_e-packed))
+	lda	#>(-(packed_e-packed))
+	sta	tmp
+	ldy	#0
+.cpy	lda	(src),y
+	sta	(dst),y
+	iny
+	bne	.1
+	inc	dst+1
+	inc	src+1
+.1
+	inx
+	bne	.cpy
+	inc	tmp
+	bne	.cpy
+ ENDIF
  IF LZ4 + LZ4_fast > 0
 	MOVEI	packed+8,src
 	MOVEI	voyager_data,dst
@@ -107,7 +129,6 @@ Start::				; Start-Label needed for reStart
 	LDAY	packed_e-packed
 	jsr	untp
  ENDIF
-	HANDY_BRKPT
 
 	lda	_1000Hz
 	pha
@@ -145,7 +166,11 @@ voyagerSCB:
 	dc.w 0,0		; X,Y
 	dc.w $100,$100	; size_x,size_y
 
+ IF ASTEROIDS = 1
+	include "voyager_asteroids.pal"
+ ELSE
 	include "startrek_voyager.pal"
+ ENDIF
 ****************
 * INCLUDES
 	include <includes/1000Hz.inc>
@@ -178,21 +203,39 @@ End:
 
 packed:
  IF LZ4 + LZ4_fast > 0
+ IF ASTEROIDS = 1
+	ibytes	"voyager_asteroids.spr.lz4"
+ ELSE
 	ibytes	"startrek_voyager.spr.lz4"
+ ENDIF
 //->	ibytes	"empty.spr.lz4"
  ENDIF
  IF ZX0 + ZX0_fast > 0
+ IF ASTEROIDS = 1
+	ibytes	"voyager_asteroids.spr.zx0"
+ ELSE
 	ibytes	"startrek_voyager.spr.zx0"
+ ENDIF
 //->	ibytes	"empty.spr.zx0"
  ENDIF
  IF TP = 1
+ IF ASTEROIDS = 1
+	ibytes	"voyager_asteroids.pck"
+ ELSE
 	ibytes	"startrek_voyager.pck"
+ ENDIF
 //->	ibytes	"empty.spr.zx0"
  ENDIF
-
-//->	ibytes	"startrek_voyager.spr"
+ IF RAW = 1
+ IF ASTEROIDS = 1
+	ibytes	"voyager_asteroids.spr"
+ ELSE
+	ibytes	"startrek_voyager.spr"
+ ENDIF
+ ENDIF
 packed_e:
 
-size	set depacker_e - depacker
-
+size		set depacker_e - depacker
+packed_size	set packed_e - packed
 	echo "Depacker size:%dsize"
+	echo "Packed data size:%dpacked_size"
