@@ -1,13 +1,13 @@
 ***************
-* RAW.ASM
-* simple body of a Lynx-program
-*
-* created : 24.04.96
-* changed : May 2020
+* depacker.asm
+* Depacker test
 ****************
 
-LZ4	EQU 0
-ZX0	EQU 1
+LZ4		EQU 0
+LZ4_fast	EQU 1
+ZX0		EQU 0
+ZX0_fast	EQU 0
+TP		EQU 0
 
 Baudrate	set 62500	; define baudrate for serial.inc
 
@@ -84,20 +84,31 @@ Start::				; Start-Label needed for reStart
 
 	SET_MINMAX 0,0,160,102	; screen-dim. for FONT.INC
 
+	lda	_1000Hz		; sync on interrupt
+.wait	cmp	_1000Hz
+	beq	.wait
+
 	stz	_1000Hz
 	stz	_1000Hz+1
- IF LZ4 = 1
+ IF LZ4 + LZ4_fast > 0
 	MOVEI	packed+8,src
 	MOVEI	voyager_data,dst
 	LDAY	packed_e-packed-8
+	jsr	unlz4
  ENDIF
- IF ZX0 = 1
+ IF ZX0 + ZX0_fast > 0
 	MOVEI	packed,src
 	MOVEI	voyager_data,dst
+	jsr	unzx0
+ ENDIF
+ IF TP = 1
+	MOVEI	packed,src
+	MOVEI	voyager_data,dst
+	LDAY	packed_e-packed
+	jsr	untp
  ENDIF
 	HANDY_BRKPT
 
-	jsr	depacker
 	lda	_1000Hz
 	pha
 	lda	_1000Hz+1
@@ -150,19 +161,33 @@ depacker:
  IF LZ4 = 1
 	include "unlz4.asm"
  ENDIF
+ IF LZ4_fast = 1
+	include "unlz4_fast.asm"
+ ENDIF
  IF ZX0 = 1
 	include "unzx0.asm"
+ ENDIF
+ IF ZX0_fast = 1
+	include "unzx0_fast.asm"
+ ENDIF
+ IF TP = 1
+	include "untp.asm"
  ENDIF
 depacker_e:
 End:
 
 packed:
- IF LZ4 = 1
+ IF LZ4 + LZ4_fast > 0
 	ibytes	"startrek_voyager.spr.lz4"
 //->	ibytes	"empty.spr.lz4"
  ENDIF
- IF ZX0 = 1
+ IF ZX0 + ZX0_fast > 0
 	ibytes	"startrek_voyager.spr.zx0"
+//->	ibytes	"empty.spr.zx0"
+ ENDIF
+ IF TP = 1
+	ibytes	"startrek_voyager.pck"
+//->	ibytes	"empty.spr.zx0"
  ENDIF
 
 //->	ibytes	"startrek_voyager.spr"
