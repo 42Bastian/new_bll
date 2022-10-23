@@ -1,44 +1,42 @@
 # Collection of depackers
 
-The example picture courtesy of Daniel Korican:
+The example [picture](startrek_voyager.bmp) courtesy of Daniel Korican:
 https://brainbox78.artstation.com/
 
 The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
-* empty.spr is an sprite of all $ff
+* File sizes (in bytes)
 
-## [unlz4](unlz4.asm)
+| Original | lz4 -12 | zx0 -c | Turbopacker |
+| :-:      | :-:     | :-:    | :-:         |
+| 7381     | 3959    | 3074   | 3741        |
+
+* Depacker sizes (in bytes)
+
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  |
+| :-:   | :-:        | :-: | :-:      | :-: |
+| 154   | 160        | 183 | 195      | 115 |
+
+* Depack speed (in ms) (memory to memory)
+
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | memcpy |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: |
+| 150   | 103        | 270 | 225      | 159 | 53  |
+
+## unlz4/unlz4_fast
 
 Pack with `lz4 -l` and skip first 8 bytes.
 
-Unpacker size: 154 bytes
+Packer: https://github.com/lz4/lz4
 
-Speed for 7K sprite (RAM to RAM): 150ms
+## unzx0/unzx0_fast
 
-## [unlz4_fast](unlz4_fast.asm)
+Pack with `zx0 -c`
 
-Pack with `lz4 -l` and skip first 8 bytes.
+Packer: https://github.com/einar-saukas/ZX0
 
-Unpacker size: 160 bytes
+## untp
 
-Speed for 7K sprite (RAM to RAM): 103ms
+Pack with: `tp +d` to pack without header.
 
-## [unzx0](unzx0.asm)
-
-Unpacker size: 183 bytes
-
-Speed for 7K sprite (RAM to RAM): 270ms
-
-## [unzx0_fast](unzx0_fast.asm)
-
-Unpacker size: 195 bytes
-
-Speed for 7K sprite (RAM to RAM): 225ms
-
-## [untp](untp.asm)
-
-Pack with: `tp -d` to pack without header.
-
-Unpacker size: 115 bytes
-
-Speed for 7K sprite (RAM to RAM): 159ms
+Packer: https://github.com/42Bastian/tp
