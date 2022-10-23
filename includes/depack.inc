@@ -16,28 +16,28 @@ run $1000
 ENDIF
 
 ***************
-* geTPackte Datei lesen
-* Anzahl (ungepackt) in laenge
+* read TP packed file
+* Size of the unpacked file is store in <laenge>
 ***************
 ReadPackedBytes::
-	jsr ReadByte	; 1. Byte holen
+	jsr ReadByte	; get 1st Byte
 	tax
-	bne .packed	; <>0 => Datei ist gepackt
-	ldx laenge	; ansonsten Länge nach Y:X
+	bne .packed	; <>0 => file packed
+	ldx laenge	; else get size into Y:X
 	ldy laenge+1
-	jmp ReadBytes	; und lesen
+	jmp ReadBytes	; and read all
 
-.packed	stz count	; Bit-Zähler löschen
-.loop0	asl count	; nächstes Bit
-	bne .loop1	; nicht letztes =>
-	jsr ReadByte	; nächstes PackByte
-	sta byte	; und merken
-	dec count	; Bit-Zähler init
+.packed	stz count	; clear bit counter
+.loop0	asl count	; get next bit
+	bne .loop1	; not last bit =>
+	jsr ReadByte	; get next byte
+	sta byte	; and save
+	dec count	; re-init bit counter
 .loop1	asl byte	; PackByte <<
-	bcs .cont0	; C=1 => Sequenz
+	bcs .cont0	; C=1 => match
 ;---------------
-	jsr ReadByte	; ansonsten nächstes Byte holen
-	sta (DestPtr)	; und speichern
+	jsr ReadByte	; get literal byte
+	sta (DestPtr)
 	inc DestPtr
 	bne .cont3
 	inc DestPtr+1
@@ -47,13 +47,13 @@ ReadPackedBytes::
 	bne .loop0
 	rts
 ;---------------
-.cont0	jsr ReadByte	; Zähler und Offset für Sequenz
-	tay	; holen,merken
-	REPT 4	; und
-	  lsr	; ausrichten
+.cont0	jsr ReadByte	; counter and offset
+	tay	; save
+	REPT 4
+	  lsr
 	ENDR
-	tax
-	jsr ReadByte	; low-Byte des Offsets (0..$FFF)
+	tax		; save
+	jsr ReadByte	; offset low-Byte
 	clc
 	sbc DestPtr
 	eor #$ff
