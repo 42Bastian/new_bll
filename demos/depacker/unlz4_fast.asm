@@ -4,6 +4,8 @@
 ;;; dst
 ;;; A:Y packed length
 
+LZ4_MAX_LEN_256 EQU 0
+
 lz4_src_e	equ packer_zp
 lz4_tmp		equ lz4_src_e+2
 lz4_ptr		equ lz4_tmp+1
@@ -25,24 +27,37 @@ unlz4::
 	beq	.match
 	jsr	lz4_getlen
 .litloop
-	jsr	lz4_getbyte
-	sta	(dst)
-	inc	dst
-	bne	.9
-	inc	dst+1
-.9
+	lda	(src),y
+	sta	(dst),y
+	iny
+ IF LZ4_MAX_LEN_256 = 0
+	beq	.incptrlit
+.21
+ ENDIF
 	inx
 	bne	.litloop
-	iny
+	inc	lz4_tmp
 	bne	.litloop
 
+	clc
+	tya
+	adc	dst
+	sta	dst
+	bcc	.9
+	inc	dst+1
+.9
+	clc
+	tya
+	adc	src
+	sta	src
+	bcc	.91
+	inc	src+1
+.91
+	cmp	lz4_src_e
+	bne	.match
 	lda	src+1
 	cmp	lz4_src_e+1
-	bne	.match
-	lda	src
-	cmp	lz4_src_e
 	beq	._rts
-
 .match
 	clc
 	jsr	lz4_getbyte
@@ -63,18 +78,16 @@ unlz4::
 	sbc	#4
 	tax
 	bcs	.1
-	dey
+	dec	lz4_tmp
 .1
-	sty	lz4_tmp
-	ldy	#0
 .matchloop
 	lda	(lz4_ptr),y
 	sta	(dst),y
 	iny
-	bne	.2
-	inc	lz4_ptr+1
-	inc	dst+1
+ IF LZ4_MAX_LEN_256 = 0
+	beq	.incptr
 .2
+ ENDIF
 	inx
 	bne	.matchloop
 	inc	lz4_tmp
@@ -87,33 +100,57 @@ unlz4::
 	inc	dst+1
 	bra	.token
 
+ IF LZ4_MAX_LEN_256 = 0
+.incptr
+	inc	lz4_ptr+1
+	inc	dst+1
+	bra	.2
+.incptrlit
+	inc	src+1
+	inc	dst+1
+	bra	.21
+ ENDIF
+
+ ENDIF
+
 lz4_getlen
 	ldy	#$ff
 	cmp	#15
 	bne	.noext
-.loop
 	sta	lz4_tmp
+.loop
 	jsr	lz4_getbyte
-	tax
+ IF LZ4_MAX_LEN_256 = 0
+	cmp	#$ff
+	beq	.33
+ ENDIF
 	clc
 	adc	lz4_tmp
 	bcc	.3
 	dey
 .3
-	inx
-	beq	.loop
 .noext
 	eor	#$ff
 	tax
 	inx
-	bne	._rts
+	bne	.4
 	iny
+.4
+	sty	lz4_tmp
+	ldy	#0
 ._rts
 	rts
-
+ IF LZ4_MAX_LEN_256 = 0
+.33
+	dec	lz4_tmp
+	dey
+	bra	.loop
+ ENDIF
 lz4_getbyte::
 	lda	(src)
 	inc	src
-	bne	.9
+	beq	.9
+	rts
+.9
 	inc	src+1
-.9	rts
+	rts
