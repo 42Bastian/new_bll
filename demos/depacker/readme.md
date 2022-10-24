@@ -15,13 +15,13 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 | unlz4 | unlz4 fast | zx0 | zx0 fast | tp  |
 | :-:   | :-:        | :-: | :-:      | :-: |
-| 154   | 190        | 183 | 195      | 116 |
+| 154   | 190        | 183 | 231/319  | 110 |
 
 * Depack speed (in ms) (memory to memory)
 
 | unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | memcpy |
 | :-:   | :-:        | :-: | :-:      | :-: | :-: |
-| 150   | 84         | 270 | 225      | 113 | 53  |
+| 150   | 84         | 270 | 211/183  | 113 | 53  |
 
 ## unlz4/unlz4_fast
 
@@ -29,11 +29,15 @@ Pack with `lz4 -l` and skip first 8 bytes.
 
 Packer: https://github.com/lz4/lz4
 
+Speed improvement if match/literal length <= 255.
+
 ## unzx0/unzx0_fast
 
 Pack with `zx0 -c`
 
 Packer: https://github.com/einar-saukas/ZX0
+
+Speed improvemnt in `zx0_fast` with inlining bit reading.
 
 ## untp
 

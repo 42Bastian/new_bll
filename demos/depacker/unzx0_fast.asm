@@ -3,11 +3,29 @@
 ;;; src
 ;;; dst
 
+GETBIT_INLINE	EQU 1
+
 zx0_value	equ packer_zp
 zx0_bc		equ zx0_value+2
 zx0_ptr		equ zx0_bc+1
 zx0_offset	equ zx0_ptr+2
 zx0_stor	equ zx0_offset+2
+
+ MACRO GETBIT
+ IF GETBIT_INLINE
+	lsr	zx0_bc
+	bne	.\_1
+	lda	(src)
+	inc	src
+	bne	.\_2
+	inc	src+1
+.\_2	sta	zx0_stor
+	dec	zx0_bc
+.\_1	asl	zx0_stor
+ ELSE
+	jsr	zx0_getbit
+ ENDIF
+ ENDM
 
 unzx0::
 	stz	zx0_offset+1
@@ -26,12 +44,12 @@ unzx0::
 	bne	.litcpy
 	iny
 	bne	.litcpy
-	jsr	zx0_getbit
+	GETBIT
 	bcc	.old_offset
 .new_off
-	jsr	zx0_elias
+	jsr	zx0_getoff
 	lda	zx0_value+1
-	bne	.99		; > 255 => EOF
+	bne	._rts		; > 255 => EOF
 	lsr	zx0_value
 	ror
 	tax
@@ -60,7 +78,9 @@ unzx0::
 	bne	.off
 	dey
 	bra	.off
-
+ IF GETBIT_INLINE = 1
+._rts:	rts
+ ENDIF
 .old_offset
 	jsr	zx0_elias
 .off
@@ -89,40 +109,73 @@ unzx0::
 	tya
 	adc	dst
 	sta	dst
-	bcc	.4
-	inc	dst+1
-.4
-	jsr	zx0_getbit
+	bcs	.4
+	GETBIT
 	bcs	.new_off
 	jmp	.literal
+.4
+	inc	dst+1
+	GETBIT
+ IF GETBIT_INLINE = 1
+	bcs	._new_off
+	jmp	.literal
+._new_off
+	jmp	.new_off
+ ELSE
+	bcs	.new_off
+	jmp	.literal
+ ENDIF
 
-
+ IF GETBIT_INLINE = 0
 zx0_getbit
 	lsr	zx0_bc
-	bne	.1
-	jsr	zx0_getbyte
-	sta	zx0_stor
-	dec	zx0_bc
-.1
+	beq	.1
 	asl	zx0_stor
-.99	rts
+._rts	rts
 
-zx0_getbyte::
+.1
 	lda	(src)
 	inc	src
-	bne	.9
+	bne	.91
 	inc	src+1
-.9	rts
+.91
+	asl
+	sta	zx0_stor
+	dec	zx0_bc
+	rts
+ ENDIF
 
-zx0_elias
+zx0_getbyte
+	lda	(src)
+	inc	src
+	beq	.9a
+	rts
+.9a
+	inc	src+1
+.99
+	rts
+
+zx0_getoff
 	stz	zx0_value+1
 	lda	#1
 	sta	zx0_value
 .el
-	jsr	zx0_getbit
+	GETBIT
+	bcs	.99
+	GETBIT
+	rol	zx0_value
+	rol	zx0_value+1
+	bra	.el
+
+zx0_elias::
+	stz	zx0_value+1
+	lda	#1
+	sta	zx0_value
+.el
+	GETBIT
 	bcs	.done
 zx0_elias_pre
-	jsr	zx0_getbit
+	GETBIT
 	rol	zx0_value
 	rol	zx0_value+1
 	bra	.el
