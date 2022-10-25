@@ -153,16 +153,14 @@ shortcut:
 ;   y is untouched
 ; -------------------------------------------------------------------
 get_bit:
-	lda	#0
 	lsr	zp_bitbuf
-	beq	nextbyte1
-	rol
-	rts
+	bne	.havebit
 nextbyte1
 	jsr	get_crunched_byte
 	sec
 	ror
 	sta	zp_bitbuf
+.havebit
 	lda	#0
 	rol
 	rts
