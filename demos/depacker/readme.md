@@ -15,7 +15,7 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 | unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo |
 | :-:   | :-:        | :-: | :-:      | :-: | :-: |
-| 154   | 190        | 183 | 231/319  | 110 | 267 |
+| 154   | 190        | 183 | 231/319  | 110 | 270 |
 
 * Depack speed (in ms) (memory to memory)
 
