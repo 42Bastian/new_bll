@@ -1,0 +1,29 @@
+; -------------------------------------------------------------------
+; begin of exo decruncher
+; -------------------------------------------------------------------
+
+    BEGIN_ZP
+zp_len_lo  ds   1 ; TODO unclear if more bytes??
+
+zp_src_lo  ds  1
+zp_src_hi  ds  1
+
+zp_bits_hi ds  1
+
+zp_bitbuf  ds  3
+zp_dest_lo ds  1	; dest addr lo
+zp_dest_hi ds  1	; dest addr hi
+
+    END_ZP
+
+    BEGIN_MEM
+; -------------------------------------------------------------------
+; this 156 byte table area may be relocated. It may also be clobbered
+; by other data between decrunches.
+; -------------------------------------------------------------------
+decrunch_table ds  156
+    END_MEM
+
+; -------------------------------------------------------------------
+; end of decruncher
+; -------------------------------------------------------------------

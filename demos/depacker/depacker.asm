@@ -4,12 +4,13 @@
 ****************
 ASTEROIDS	EQU 0
 
-RAW		EQU 1
+RAW		EQU 0
 LZ4		EQU 0
 LZ4_fast	EQU 0
 ZX0		EQU 0
 ZX0_fast	EQU 0
 TP		EQU 0
+EXO		EQU 1
 
 Baudrate	set 62500	; define baudrate for serial.inc
 
@@ -38,6 +39,9 @@ DEBUG	set 1			; if defined BLL loader is included
 	include <vardefs/font.var>
 	include <vardefs/irq.var>
 	include <vardefs/1000Hz.var>
+ IF EXO = 1
+	include "krilldecr.var"
+ ENDIF
 *
 * local MACROs
 *
@@ -129,7 +133,19 @@ Start::				; Start-Label needed for reStart
 	LDAY	packed_e-packed
 	jsr	untp
  ENDIF
-
+	HANDY_BRKPT
+ IF EXO = 1
+;;; exomizer.exe level -P0 -f infile -o outfile.exo
+	MOVEI	packed,src
+	MOVEI	(voyager_data+2),zp_dest_lo
+	jsr	decrunch
+	;; Exomizer does skip the first two bytes when packing!
+	;; So either add two dummy bytes to the file to be packed
+	;; or - as here - write those by hand.
+	lda	#$52
+	sta	voyager_data
+	stz	voyager_data+1
+ ENDIF
 	lda	_1000Hz
 	pha
 	lda	_1000Hz+1
@@ -198,8 +214,19 @@ depacker:
  IF TP = 1
 	include "untp.asm"
  ENDIF
+ IF EXO = 1
+	include "krilldecr.inc"
+get_crunched_byte::
+	php
+	lda	(src)
+	inc	src
+	bne	.99
+	inc	src+1
+.99
+	plp
+	rts
+ ENDIF
 depacker_e:
-End:
 
 packed:
  IF LZ4 + LZ4_fast > 0
@@ -218,14 +245,24 @@ packed:
  ENDIF
 //->	ibytes	"empty.spr.zx0"
  ENDIF
+
  IF TP = 1
  IF ASTEROIDS = 1
 	ibytes	"voyager_asteroids.pck"
  ELSE
 	ibytes	"startrek_voyager.pck"
  ENDIF
-//->	ibytes	"empty.spr.zx0"
+//->	ibytes	"empty.pck"
  ENDIF
+
+ IF EXO = 1
+ IF ASTEROIDS = 1
+	ibytes	"voyager_asteroids.spr.exo"
+ ELSE
+	ibytes	"startrek_voyager.spr.exo"
+ ENDIF
+ ENDIF
+
  IF RAW = 1
  IF ASTEROIDS = 1
 	ibytes	"voyager_asteroids.spr"

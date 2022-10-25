@@ -7,21 +7,21 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 * File sizes (in bytes)
 
-| Original | lz4 -12 | zx0 -c | Turbopacker |
-| :-:      | :-:     | :-:    | :-:         |
-| 7381     | 3959    | 3074   | 3741        |
+| Original | lz4 -12 | zx0 -c | Turbopacker | Exomizer |
+| :-:      | :-:     | :-:    | :-:         | :-:      |
+| 7381     | 3959    | 3074   | 3741        | 2927     |
 
 * Depacker sizes (in bytes)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  |
-| :-:   | :-:        | :-: | :-:      | :-: |
-| 154   | 190        | 183 | 231/319  | 110 |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: |
+| 154   | 190        | 183 | 231/319  | 110 | 249 |
 
 * Depack speed (in ms) (memory to memory)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | memcpy |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: |
-| 150   | 84         | 270 | 211/183  | 113 | 53  |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | memcpy |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-: |
+| 150   | 84         | 270 | 211/183  | 113 | 356 | 53  |
 
 ## unlz4/unlz4_fast
 
@@ -44,3 +44,13 @@ Speed improvemnt in `zx0_fast` with inlining bit reading.
 Pack with: `tp +d` to pack without header.
 
 Packer: https://github.com/42Bastian/tp
+
+## Exomizer
+
+Pack with `exomizer.exe level -P0 -f infile -o outfile.exo`
+
+*Note*: First two bytes are skipped (!?), so either add two dummy bytes before the packed data, or write those directly to the destination.
+
+Depacker from: https://github.com/bspruck/exolynx
+
+Packer: https://bitbucket.org/magli143/exomizer/src/master/
