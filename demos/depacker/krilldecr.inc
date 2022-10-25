@@ -1,3 +1,4 @@
+;;; -*-asm-*-
 ; This source code is altered and is not the original version found on
 ; the Exomizer homepage.
 
@@ -135,10 +136,10 @@ shortcut:
 	iny
 	cpy #52
 	bne nextone
-	beq begin
+	bra begin
 
 ; -------------------------------------------------------------------
-; get bits (29 bytes)
+; get bits (33 bytes)
 ;
 ; args:
 ;   x = number of bits to get
@@ -151,15 +152,41 @@ shortcut:
 ; notes:
 ;   y is untouched
 ; -------------------------------------------------------------------
+get_bit:
+	lda	#0
+	lsr	zp_bitbuf
+	beq	nextbyte1
+	rol
+	rts
+nextbyte1
+	jsr	get_crunched_byte
+	sec
+	ror
+	sta	zp_bitbuf
+	lda	#0
+	rol
+	rts
+
+get_bits_16:
+	ldx #$10
 get_bits:
 	lda #$00
-	sta zp_bits_hi
+	stz zp_bits_hi
 	cpx #$01
-	bcc bits_done
+	bcc eof
 bits_next:
 	lsr zp_bitbuf
-	bne ok
-	pha
+	beq nextbyte
+new_bits
+	rol
+	rol zp_bits_hi
+	dex
+	bne bits_next
+eof:
+	rts
+
+nextbyte:
+	sta	.smc+1
 IF FORWARD_DECRUNCHING = 0
 literal_get_byte:
 	jsr get_crunched_byte
@@ -170,66 +197,57 @@ ELSE
 ENDIF
 	ror
 	sta zp_bitbuf
-	pla
-ok:
-	rol
-	rol zp_bits_hi
-	dex
-	bne bits_next
-bits_done:
-	rts
+.smc	lda #tmp
+	bra new_bits
 
 IF FORWARD_DECRUNCHING
-
 ; -------------------------------------------------------------------
 ; literal sequence handling
 ;
 literal_start:
-	ldx #$10    ; these 16 bits
-	jsr get_bits; tell the length of the sequence
+;;->	ldx #$10    ; these 16 bits
+	jsr get_bits_16; tell the length of the sequence
 	ldx zp_bits_hi
-literal_start1: ; if literal byte, a = 1, zp_bits_hi = 0
+literal_start1: ; if literal byte, a = 1, x = 0, zp_bits_hi = 0
 	sta zp_len_lo
-	dc.b $2c   ; skip next instruction
-
 ; -------------------------------------------------------------------
 ; main copy loop
 ; x = length hi
 ; y = length lo
 ;
 copy_start:
-    stx zp_bits_hi
-    ldy #$00
+	ldy #$00
 copy_next:
 ;IFND LITERAL_SEQUENCES_NOT_USED
 	bcs .1
 	jsr get_crunched_byte
-	clc
 	dc.b $2c; skip next instruction
 .1
 ;ENDIF
+copy_nexta:
 	lda (zp_src_lo),y
 	sta (zp_dest_lo),y
-    iny
-    bne .2
-    dex
-	inc zp_dest_hi
-	inc zp_src_hi
-.2   tya
-	eor zp_len_lo
-	bne copy_next
+	iny
+	beq .21
+.2
+	cpy zp_len_lo
+	bne copy_nexta
 	txa
-	bne copy_next
+	bne copy_nexta
 	tya
 	clc
 	adc zp_dest_lo
 	sta zp_dest_lo
 	bcc .3
 	inc zp_dest_hi
+	bra .3
+.21
+	inc zp_dest_hi
+	inc zp_src_hi
+	bra .2
 .3
-
 ELSE
-
+; !FORWARD_DECRUNCHING
 ; -------------------------------------------------------------------
 ; main copy loop
 ; x = length hi
@@ -253,8 +271,7 @@ copy_start:
 	bne copy_next_2
 	txa
 	bne copy_next_hi
-
-ENDIF
+ENDIF ; FORWARD_DECRUNCHING
 
 ; -------------------------------------------------------------------
 ; decruncher entry point, needs calculated tables (21(13) bytes)
@@ -262,16 +279,14 @@ ENDIF
 ;
 begin:
 ;IFND LITERAL_SEQUENCES_NOT_USED
-    inx
-	jsr get_bits
+	jsr get_bit		; single bit
 	tay
 	bne literal_start1; if bit set, get a literal byte
 ;ELSE
 ;	dey
 ;ENDIF
 getgamma:
-	inx
-	jsr bits_next
+	jsr get_bit
 	lsr
 	iny
 	bcc getgamma
@@ -283,28 +298,28 @@ getgamma:
 ;IFND LITERAL_SEQUENCES_NOT_USED
 IF FORWARD_DECRUNCHING
 echo "forward !=0"
-	beq bits_done     ; gamma = 17   : end of file
+	beq eof     ; gamma = 17   : end of file
 	bcs literal_start ; gamma = 18   : literal sequence
 	                  ; gamma = 1..16: sequence
 ELSE
 	bcc sequence_start; gamma = 1..16: sequence
-	beq bits_done     ; gamma = 17   : end of file
+	beq eof     ; gamma = 17   : end of file
 	                  ; gamma = 18   : literal sequence
 ; -------------------------------------------------------------------
 ; literal sequence handling (13(2) bytes)
 ;
-	ldx #$10    ; these 16 bits
-	jsr get_bits; tell the length of the sequence
+;;->	ldx #$10    ; these 16 bits
+	jsr get_bits_16; tell the length of the sequence
 literal_start1: ; if literal byte, a = 1, zp_bits_hi = 0
 	sta zp_len_lo
 	ldx zp_bits_hi
 	ldy #0
-	bcc literal_start; jmp
+	bra literal_start
 
 sequence_start:
 ENDIF
 ;ELSE
-;	bcs bits_done
+;	bcs eof
 ;ENDIF
 ; -------------------------------------------------------------------
 ; calulate length of sequence (zp_len) (11 bytes)
@@ -317,7 +332,8 @@ ENDIF
 ; now do the hibyte of the sequence length calculation (6 bytes)
 	lda zp_bits_hi
 	adc tabl_hi - 1,y	; c = 0 after this.
-	pha
+	sta .smcx+1
+//->	pha
 ; -------------------------------------------------------------------
 ; here we decide what offset table to use (20 bytes)
 ; x is 0 here
@@ -364,9 +380,9 @@ ENDIF
 	inc zp_bits_hi
 IF FORWARD_DECRUNCHING
 skipcarry:
-    sec
-    eor #$ff
-    adc zp_dest_lo
+	sec
+	eor #$ff
+	adc zp_dest_lo
 	sta zp_src_lo
 	lda zp_dest_hi
 	sbc zp_bits_hi
@@ -382,12 +398,11 @@ skipcarry:
 	adc zp_dest_hi
 	sta zp_src_hi
 ENDIF
-
 ; -------------------------------------------------------------------
 ; prepare for copy loop (8(6) bytes)
 ;
-	pla
-	tax
+.smcx	ldx	#0
+//->	plx
 ;IFND LITERAL_SEQUENCES_NOT_USED
 	sec
 IF FORWARD_DECRUNCHING = 0
