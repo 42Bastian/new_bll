@@ -51,7 +51,7 @@ Pack with `exomizer.exe level -P0 -f infile -o outfile.exo`
 
 *Note*: First two bytes are skipped (!?), so either add two dummy bytes before the packed data, or write those directly to the destination.
 
-Depacker from: https://github.com/bspruck/exolynx
+Original depacker from: https://github.com/bspruck/exolynx
 
 Packer: https://bitbucket.org/magli143/exomizer/src/master/
 
