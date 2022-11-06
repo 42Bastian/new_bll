@@ -1,0 +1,14 @@
+; -*-asm-*-
+	BEGIN_ZP
+upkr_state	DS 3
+upkr_value	DS 2
+upkr_ptr	DS 2
+upkr_probs	DS 2
+upkr_offset	DS 2
+upkr_pwm	DS 1
+
+	END_ZP
+
+	BEGIN_MEM
+upkr_probs_array DS 1+255+2*32+2*32
+	END_MEM

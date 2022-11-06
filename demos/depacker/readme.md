@@ -7,21 +7,21 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 * File sizes (in bytes)
 
-| Original | lz4 -12 | zx0 -c | Turbopacker | Exomizer |
-| :-:      | :-:     | :-:    | :-:         | :-:      |
-| 7381     | 3959    | 3074   | 3741        | 2927     |
+| Original | lz4 -12 | zx0 -c | Turbopacker | Exomizer | upkr |
+| :-:      | :-:     | :-:    | :-:         | :-:      | :-:  |
+| 7381     | 3959    | 3074   | 3741        | 2927     | 2778 |
 
 * Depacker sizes (in bytes)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: |
-| 154   | 190        | 183 | 231/319  | 110 | 270 |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | upkr |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:  |
+| 154   | 190        | 183 | 231/319  | 110 | 270 | 352  |
 
 * Depack speed (in ms) (memory to memory)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | memcpy |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-: |
-| 150   | 84         | 270 | 211/183  | 113 | 303 | 53  |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | upkr |memcpy |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:  | :-: |
+| 150   | 84         | 270 | 211/183  | 113 | 303 | 1629 | 53  |
 
 ## unlz4/unlz4_fast
 
@@ -54,3 +54,9 @@ Pack with `exomizer.exe level -P0 -f infile -o outfile.exo`
 Depacker from: https://github.com/bspruck/exolynx
 
 Packer: https://bitbucket.org/magli143/exomizer/src/master/
+
+## upkr
+
+Pack with standard options.
+
+Packer: https://github.com/exoticorn/upkr

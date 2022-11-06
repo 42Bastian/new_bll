@@ -10,7 +10,8 @@ LZ4_fast	EQU 0
 ZX0		EQU 0
 ZX0_fast	EQU 0
 TP		EQU 0
-EXO		EQU 1
+EXO		EQU 0
+UPKR		EQU 1
 
 Baudrate	set 62500	; define baudrate for serial.inc
 
@@ -42,6 +43,9 @@ DEBUG	set 1			; if defined BLL loader is included
  IF EXO = 1
 	include "krilldecr.var"
  ENDIF
+ IF UPKR = 1
+	include "unupkr.var"
+ ENDIF
 *
 * local MACROs
 *
@@ -59,7 +63,10 @@ voyager_data	equ $8000
 src		ds 2
 dst		ds 2
 tmp		ds 2
+ IF EXO = 0 & UPKR = 0
 packer_zp	ds 12
+ ENDIF
+
  END_ZP
 
  BEGIN_MEM
@@ -76,6 +83,9 @@ Start::				; Start-Label needed for reStart
 
 	INITMIKEY
 	INITSUZY
+ IF UPKR
+	;; maybe enable AKKU?
+ ENDIF
 
 	INITIRQ irq_vektoren	; set up interrupt-handler
 
@@ -146,6 +156,11 @@ Start::				; Start-Label needed for reStart
 	sta	voyager_data
 	stz	voyager_data+1
  ENDIF
+ IF UPKR = 1
+	MOVEI	packed,src
+	MOVEI	voyager_data,dst
+	jsr	unupkr
+ ENDIF
 	lda	_1000Hz
 	pha
 	lda	_1000Hz+1
@@ -214,16 +229,18 @@ depacker:
  IF TP = 1
 	include "untp.asm"
  ENDIF
+ IF UPKR = 1
+	include "unupkr.asm"
+ ENDIF
  IF EXO = 1
 	include "krilldecr.inc"
 get_crunched_byte::
-	php
 	lda	(src)
 	inc	src
-	bne	.99
-	inc	src+1
+	beq	.99
+	rts
 .99
-	plp
+	inc	src+1
 	rts
  ENDIF
 depacker_e:
@@ -260,6 +277,15 @@ packed:
 	ibytes	"voyager_asteroids.spr.exo"
  ELSE
 	ibytes	"startrek_voyager.spr.exo"
+ ENDIF
+ ENDIF
+
+ IF UPKR = 1
+ IF ASTEROIDS = 1
+	ibytes	"voyager_asteroids.spr.upk"
+ ELSE
+//->	ibytes	"unupkr.js.upk"
+	ibytes	"startrek_voyager.spr.upk"
  ENDIF
  ENDIF
 
