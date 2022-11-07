@@ -11,7 +11,8 @@ ZX0		EQU 0
 ZX0_fast	EQU 0
 TP		EQU 0
 EXO		EQU 0
-UPKR		EQU 1
+UPKR		EQU 0
+UPKR_255	EQU 1
 
 Baudrate	set 62500	; define baudrate for serial.inc
 
@@ -46,6 +47,9 @@ DEBUG	set 1			; if defined BLL loader is included
  IF UPKR = 1
 	include "unupkr.var"
  ENDIF
+ IF UPKR_255 = 1
+	include "unupkr_255.var"
+ ENDIF
 *
 * local MACROs
 *
@@ -63,7 +67,7 @@ voyager_data	equ $8000
 src		ds 2
 dst		ds 2
 tmp		ds 2
- IF EXO = 0 & UPKR = 0
+ IF EXO = 0 & UPKR = 0 & UPKR_255 = 0
 packer_zp	ds 12
  ENDIF
 
@@ -83,10 +87,6 @@ Start::				; Start-Label needed for reStart
 
 	INITMIKEY
 	INITSUZY
- IF UPKR
-	;; maybe enable AKKU?
- ENDIF
-
 	INITIRQ irq_vektoren	; set up interrupt-handler
 
 	INITFONT LITTLEFNT,RED,WHITE
@@ -156,7 +156,7 @@ Start::				; Start-Label needed for reStart
 	sta	voyager_data
 	stz	voyager_data+1
  ENDIF
- IF UPKR = 1
+ IF UPKR + UPKR_255 > 0
 	MOVEI	packed,src
 	MOVEI	voyager_data,dst
 	jsr	unupkr
@@ -213,6 +213,7 @@ voyagerSCB:
 	include <includes/hexdez.inc>
 	include <includes/draw_spr.inc>
 ;;; ----------------------------------------
+	align	8
 depacker:
  IF LZ4 = 1
 	include "unlz4.asm"
@@ -231,6 +232,9 @@ depacker:
  ENDIF
  IF UPKR = 1
 	include "unupkr.asm"
+ ENDIF
+ IF UPKR_255 = 1
+	include "unupkr_255.asm"
  ENDIF
  IF EXO = 1
 	include "krilldecr.inc"
@@ -285,7 +289,15 @@ packed:
 	ibytes	"voyager_asteroids.spr.upk"
  ELSE
 //->	ibytes	"unupkr.js.upk"
-	ibytes	"startrek_voyager.spr.upk"
+	ibytes	"startrek_voyager.spr.upk2"
+ ENDIF
+ ENDIF
+
+ IF UPKR_255 = 1
+ IF ASTEROIDS = 1
+	ibytes	"voyager_asteroids.spr.upk255"
+ ELSE
+	ibytes	"startrek_voyager.spr.upk255"
  ENDIF
  ENDIF
 
@@ -300,5 +312,5 @@ packed_e:
 
 size		set depacker_e - depacker
 packed_size	set packed_e - packed
-	echo "Depacker size:%dsize"
+	echo "Depacker: %hdepacker size:%dsize"
 	echo "Packed data size:%dpacked_size"
