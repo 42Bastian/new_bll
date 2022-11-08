@@ -1,6 +1,6 @@
 # Collection of depackers
 
-The example [picture](startrek_voyager.bmp) courtesy of Daniel Korican:
+The example [picture](bmp/startrek_voyager.bmp) courtesy of Daniel Korican:
 https://brainbox78.artstation.com/
 
 The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
