@@ -2,7 +2,7 @@
 * depacker.asm
 * Depacker test
 ****************
-ASTEROIDS	EQU 0
+ASTEROIDS	EQU 1
 
 RAW		EQU 0
 LZ4		EQU 0
@@ -11,8 +11,10 @@ ZX0		EQU 0
 ZX0_fast	EQU 0
 TP		EQU 0
 EXO		EQU 0
+EXO42		EQU 1
 UPKR		EQU 0
-UPKR_255	EQU 1
+UPKR_255	EQU 0
+
 
 Baudrate	set 62500	; define baudrate for serial.inc
 
@@ -44,11 +46,23 @@ DEBUG	set 1			; if defined BLL loader is included
  IF EXO = 1
 	include "krilldecr.var"
  ENDIF
+ IF EXO42 = 1
+	include "unexo.var"
+ ENDIF
  IF UPKR = 1
 	include "unupkr.var"
  ENDIF
  IF UPKR_255 = 1
 	include "unupkr_255.var"
+ ENDIF
+ IF TP = 1
+	include "untp.var"
+ ENDIF
+ IF LZ4 + LZ4_fast > 0
+	include "unlz4.var"
+ ENDIF
+ IF ZX0 + ZX0_fast > 0
+	include "unzx0.var"
  ENDIF
 *
 * local MACROs
@@ -67,10 +81,6 @@ voyager_data	equ $8000
 src		ds 2
 dst		ds 2
 tmp		ds 2
- IF EXO = 0 & UPKR = 0 & UPKR_255 = 0
-packer_zp	ds 12
- ENDIF
-
  END_ZP
 
  BEGIN_MEM
@@ -144,6 +154,11 @@ Start::				; Start-Label needed for reStart
 	jsr	untp
  ENDIF
 	HANDY_BRKPT
+ IF EXO42 = 1
+	MOVEI	packed,src
+	MOVEI	voyager_data,dst
+	jsr	decrunch
+ ENDIF
  IF EXO = 1
 ;;; exomizer.exe level -P0 -f infile -o outfile.exo
 	MOVEI	packed,src
@@ -236,6 +251,9 @@ depacker:
  IF UPKR_255 = 1
 	include "unupkr_255.asm"
  ENDIF
+ IF EXO42 = 1
+	include	"unexo.asm"
+ ENDIF
  IF EXO = 1
 	include "krilldecr.inc"
 get_crunched_byte::
@@ -252,52 +270,56 @@ depacker_e:
 packed:
  IF LZ4 + LZ4_fast > 0
  IF ASTEROIDS = 1
-	ibytes	"voyager_asteroids.spr.lz4"
+	ibytes	"packed_data/voyager_asteroids.spr.lz4"
  ELSE
-	ibytes	"startrek_voyager.spr.lz4"
+	ibytes	"packed_data/startrek_voyager.spr.lz4"
  ENDIF
-//->	ibytes	"empty.spr.lz4"
  ENDIF
  IF ZX0 + ZX0_fast > 0
  IF ASTEROIDS = 1
-	ibytes	"voyager_asteroids.spr.zx0"
+	ibytes	"packed_data/voyager_asteroids.spr.zx0"
  ELSE
-	ibytes	"startrek_voyager.spr.zx0"
+	ibytes	"packed_data/startrek_voyager.spr.zx0"
  ENDIF
-//->	ibytes	"empty.spr.zx0"
  ENDIF
 
  IF TP = 1
  IF ASTEROIDS = 1
-	ibytes	"voyager_asteroids.pck"
+	ibytes	"packed_data/voyager_asteroids.pck"
  ELSE
-	ibytes	"startrek_voyager.pck"
+	ibytes	"packed_data/startrek_voyager.pck"
  ENDIF
-//->	ibytes	"empty.pck"
+ ENDIF
+
+ IF EXO42 = 1
+ IF ASTEROIDS = 1
+	ibytes	"packed_data/voyager_asteroids.spr.exoraw"
+ ELSE
+	ibytes	"packed_data/startrek_voyager.spr.exoraw"
+ ENDIF
  ENDIF
 
  IF EXO = 1
  IF ASTEROIDS = 1
-	ibytes	"voyager_asteroids.spr.exo"
+	ibytes	"packed_data/voyager_asteroids.spr.exo"
  ELSE
-	ibytes	"startrek_voyager.spr.exo"
+	ibytes	"packed_data/startrek_voyager.spr.exo"
  ENDIF
  ENDIF
 
  IF UPKR = 1
  IF ASTEROIDS = 1
-	ibytes	"voyager_asteroids.spr.upk"
+	ibytes	"packed_data/voyager_asteroids.spr.upk"
  ELSE
-//->	ibytes	"unupkr.js.upk"
-	ibytes	"startrek_voyager.spr.upk2"
+	ibytes	"packed_data/startrek_voyager.spr.upk"
  ENDIF
  ENDIF
 
  IF UPKR_255 = 1
  IF ASTEROIDS = 1
-	ibytes	"voyager_asteroids.spr.upk255"
+	ibytes	"packed_data/voyager_asteroids.spr.upk255"
  ELSE
-	ibytes	"startrek_voyager.spr.upk255"
+	ibytes	"packed_data/startrek_voyager.spr.upk255"
  ENDIF
  ENDIF
 

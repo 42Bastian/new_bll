@@ -4,10 +4,6 @@
 ;;; dst
 ;;; A:Y packed length
 
-lz4_src_e	equ packer_zp
-lz4_tmp		equ lz4_src_e+2
-lz4_ptr		equ lz4_tmp+1
-
 unlz4::
 	clc
 	adc	src
@@ -16,17 +12,17 @@ unlz4::
 	adc	src+1
 	sta	lz4_src_e+1
 .token
-	jsr	getbyte
+	jsr	lz4_getbyte
 	sta	.smc+1
 	lsr
 	lsr
 	lsr
 	lsr
 	beq	.match
-	jsr	getlen
+	jsr	lz4_getlen
 .litloop
-	jsr	getbyte
-	jsr	storebyte
+	jsr	lz4_getbyte
+	jsr	lz4_storebyte
 	inx
 	bne	.litloop
 	iny
@@ -37,23 +33,21 @@ unlz4::
 	lda	src+1
 	cmp	lz4_src_e+1
 	beq	._rts
-
 .match
-	jsr	getbyte
+	clc
+	jsr	lz4_getbyte
+	sbc	dst
+	eor	#$ff
 	sta	lz4_ptr
-	jsr	getbyte
-	sta	lz4_ptr+1
-	sec
-	lda	dst
-	sbc	lz4_ptr
-	sta	lz4_ptr
-	lda	dst+1
-	sbc	lz4_ptr+1
+
+	jsr	lz4_getbyte
+	sbc	dst+1
+	eor	#$ff
 	sta	lz4_ptr+1
 .smc
 	lda	#10
 	and	#15
-	jsr	getlen
+	jsr	lz4_getlen
 	sec
 	txa
 	sbc	#4
@@ -66,20 +60,20 @@ unlz4::
 	bne	.2
 	inc	lz4_ptr+1
 .2
-	jsr	storebyte
+	jsr	lz4_storebyte
 	inx
 	bne	.matchloop
 	iny
 	bne	.matchloop
 	bra	.token
 
-getlen
+lz4_getlen
 	ldy	#$ff
 	cmp	#15
 	bne	.noext
 .loop
 	sta	lz4_tmp
-	jsr	getbyte
+	jsr	lz4_getbyte
 	tax
 	clc
 	adc	lz4_tmp
@@ -97,18 +91,18 @@ getlen
 ._rts
 	rts
 
-getbyte::
+lz4_getbyte::
 	lda	(src)
 	inc	src
 	bne	.9
 	inc	src+1
 .9	rts
 
-storebyte::
+lz4_storebyte::
 	sta	(dst)
 	inc	dst
 	bne	.9
 	inc	dst+1
 .9	rts
 
-	echo "%hunlz4 %hgetlen"
+	echo "%hunlz4 %hlz4_getlen"

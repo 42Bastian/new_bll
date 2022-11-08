@@ -2,15 +2,19 @@ _256=depacker
 
 $(_256).o: $(_256).asm
 
+ifeq ($(HANDY),1)
+ASFLAGS=-D HANDY=1
+endif
+
 %.o: %.asm
-	lyxass -v $<
+	lyxass -v $(ASFLAGS) $<
 
 %.bin: %.asm
-	lyxass -d -D LNX=1 -o  $@ $<
+	lyxass -d $(ASFLAGS) -D LNX=1 -o  $@ $<
 
 $(_256).o: unlz4.asm unzx0.asm untp.asm unlz4_fast.asm unzx0_fast.asm \
-	krilldecr.inc krilldecr.var
-
+	krilldecr.inc krilldecr.var unupkr.var unupkr.asm\
+	unupkr_255.var unupkr_255.asm unexo.asm unexo.var
 
 .PHONY: send
 send: $(_256).o

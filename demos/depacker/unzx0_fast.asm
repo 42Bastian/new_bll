@@ -5,12 +5,6 @@
 
 GETBIT_INLINE	EQU 1
 
-zx0_value	equ packer_zp
-zx0_bc		equ zx0_value+2
-zx0_ptr		equ zx0_bc+1
-zx0_offset	equ zx0_ptr+2
-zx0_stor	equ zx0_offset+2
-
  MACRO GETBIT
  IF GETBIT_INLINE
 	lsr	zx0_bc

@@ -1,0 +1,9 @@
+; -*-asm-*-
+;;; Variable definitions for TP unpacker
+
+	BEGIN_ZP
+tp_bc		DS 1
+tp_offset	DS 2
+tp_end		DS 2
+tp_token	DS 1
+	END_ZP

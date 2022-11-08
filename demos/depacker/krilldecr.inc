@@ -153,9 +153,9 @@ shortcut:
 ;   y is untouched
 ; -------------------------------------------------------------------
 get_bit:
-	lda	#0
 	lsr	zp_bitbuf
 	beq	nextbyte1
+	lda	#0
 	rol
 	rts
 nextbyte1
@@ -242,6 +242,7 @@ copy_nexta:
 	inc zp_dest_hi
 	bra .3
 .21
+	dex
 	inc zp_dest_hi
 	inc zp_src_hi
 	bra .2

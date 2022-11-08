@@ -1,0 +1,23 @@
+; -*-asm-*-
+;;; Variable definitions for exomizer unpacker
+
+	;; if flag is 1, set exomizer flag in comment for compressing
+NO_LIT_SEQ	EQU 1 		; -c
+NO_OFFSET_REUSE	EQU 1		; -P-32
+NO_1BYTE_SEQ	EQU 0		; -T2
+
+	BEGIN_ZP
+exo_bitbuf	DS 1
+exo_ptr		DS 2
+exo_offset	DS 2
+exo_value	DS 2
+exo_len		DS 2
+ IF NO_OFFSET_REUSE = 0
+exo_reuse	DS 1
+ ENDIF
+	END_ZP
+
+	BEGIN_MEM
+exo_base	DS 52*2
+exo_bits	DS 52
+	END_MEM

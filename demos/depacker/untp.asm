@@ -6,11 +6,6 @@
 
 CPY8		EQU 0
 
-tp_bc		equ packer_zp
-tp_offset	equ tp_bc+1
-tp_end		equ tp_offset+2
-tp_token	equ tp_end+2
-
 untp::
 	stz	tp_bc		; clear bit count
 	eor	#$ff

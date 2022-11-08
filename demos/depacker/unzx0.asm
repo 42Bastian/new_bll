@@ -3,12 +3,6 @@
 ;;; src
 ;;; dst
 
-zx0_value	equ packer_zp
-zx0_bc		equ zx0_value+2
-zx0_ptr		equ zx0_bc+1
-zx0_offset	equ zx0_ptr+2
-zx0_stor	equ zx0_offset+2
-
 unzx0::
 	stz	zx0_offset+1
 	lda	#1
@@ -104,11 +98,12 @@ zx0_elias_pre
 .99	rts
 
 zx0_getbit::
-	lsr	zx0_bc
-	bne	.1
+	dec	zx0_bc
+	bpl	.1
 	jsr	zx0_getbyte
 	sta	zx0_stor
-	dec	zx0_bc
+	lda	#7
+	sta	zx0_bc
 .1
 	asl	zx0_stor
 	rts

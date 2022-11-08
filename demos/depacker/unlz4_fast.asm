@@ -6,10 +6,6 @@
 
 LZ4_MAX_LEN_256 EQU 0
 
-lz4_src_e	equ packer_zp
-lz4_tmp		equ lz4_src_e+2
-lz4_ptr		equ lz4_tmp+1
-
 unlz4::
 	clc
 	adc	src

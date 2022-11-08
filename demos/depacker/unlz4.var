@@ -1,0 +1,8 @@
+; -*-asm-*-
+;;; Variable definitions for LZ4 unpacker
+
+	BEGIN_ZP
+lz4_src_e	DS 2
+lz4_tmp		DS 1
+lz4_ptr		DS 2
+	END_ZP
