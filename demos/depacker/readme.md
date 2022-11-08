@@ -15,7 +15,7 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 | unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr | upkr 255 |
 | :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-:  | :-:  |
-| 154   | 190        | 183 | 231/319  | 110 | 270 | 310     | 352  | 303 |
+| 154   | 190        | 183 | 231/319  | 110 | 270 | 308     | 352  | 303 |
 
 * Depack speed (in ms) (memory to memory)
 
@@ -61,7 +61,7 @@ Original depacker from: https://github.com/bspruck/exolynx
 
 Pack with `exomizer raw -c -P-32 infile -o outfile.exoraw`
 
-See `unexo.var` for the `-P` option.
+See `unexo.var` for the `-P` or `-c` option.
 
 This is clean-room implementation based on unpack.c from the Exomizer repo. No byte skipping!!
 

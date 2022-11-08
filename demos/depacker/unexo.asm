@@ -27,16 +27,19 @@ decrunch::
 	stz	exo_reuse
  ENDIF
 	ldx	#0
+	ldy	#0
 .init1
+	dey
+	bpl	.init2
 	ldy	#15
 	lda	#1
 	sta	exo_ptr
-	stz	exo_ptr+1
+	dec
 .init2
+	sta	exo_ptr+1
+	sta	exo_base+52,x
 	lda	exo_ptr
 	sta	exo_base,x
-	lda	exo_ptr+1
-	sta	exo_base+52,x
 	phy
 	phx
 	lda	#3
@@ -62,15 +65,13 @@ decrunch::
 	sta	exo_ptr
 	lda	exo_offset
 	adc	exo_ptr+1
-	sta	exo_ptr+1
 	ply
 	inx
 	cpx	#52
-	beq	.literal1
-	dey
-	bpl	.init2
-	bra	.init1
+	bne	.init1
+	bra	.literal1	; can be ommitted if eox_read1bit is moved down
 
+	;; Read a single bit
 exo_read1bit:
 	asl	exo_bitbuf
 	beq	.r1b
@@ -146,6 +147,9 @@ exo_read1bit:
 
 	adc	exo_len
 	sta	exo_len
+ IF NO_OFFSET_REUSE = 1
+	tax
+ ENDIF
 	lda	exo_value+1
 	adc	exo_len+1
 	sta	exo_len+1
@@ -159,9 +163,11 @@ exo_read1bit:
 .newoff
  ENDIF
 	lda	#4
-	ldx	exo_len+1
+	ldy	exo_len+1
 	bne	.default
+ IF NO_OFFSET_REUSE = 0
 	ldx	exo_len
+ ENDIF
  IF NO_1BYTE_SEQ = 0
 	dex
 	bne	.no_case1
@@ -264,7 +270,6 @@ exo_read1bit:
 
 exo_readbits:
 	stz	exo_value
-	stz	exo_value+1
 	tax
 	and	#7
 	beq	.byte
@@ -280,6 +285,7 @@ exo_readbits:
 	cpx	#8
 	lda	exo_value	; Z=1 => bit == 0
 	bcs	.byte
+	stz	exo_value+1
 	rts
 .byte
 	sta	exo_value+1
