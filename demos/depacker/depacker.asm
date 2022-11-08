@@ -2,7 +2,7 @@
 * depacker.asm
 * Depacker test
 ****************
-ASTEROIDS	EQU 1
+ASTEROIDS	EQU 0
 
 RAW		EQU 0
 LZ4		EQU 0

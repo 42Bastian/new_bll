@@ -7,21 +7,21 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 * File sizes (in bytes)
 
-| Original | lz4 -12 | zx0 -c | Turbopacker | Exomizer | upkr | upkr 255 |
-| :-:      | :-:     | :-:    | :-:         | :-:      | :-:  | :-:  |
-| 7381     | 3959    | 3074   | 3741        | 2927     | 2778 | 2803 |
+| Original | lz4 -12 | zx0 -c | Turbopacker | Exomizer | Exomizer RAW | upkr | upkr 255 |
+| :-:      | :-:     | :-:    | :-:         | :-:      | :-:          | :-:  | :-:  |
+| 7381     | 3959    | 3074   | 3741        | 2927     | 2924         | 2778 | 2803 |
 
 * Depacker sizes (in bytes)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | upkr | upkr 255 |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:  | :-:  |
-| 154   | 190        | 183 | 231/319  | 110 | 270 | 352  | 303 |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr | upkr 255 |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-:  | :-:  |
+| 154   | 190        | 183 | 231/319  | 110 | 270 | 310     | 352  | 303 |
 
 * Depack speed (in ms) (memory to memory)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | upkr |upkr 255 |memcpy |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:  | :-: | :-: |
-| 150   | 84         | 270 | 211/183  | 113 | 303 | 1629 | 1669  | 53  |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr |upkr 255 |memcpy |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-: | :-: | :-: |
+| 150   | 84         | 270 | 211/183  | 113 | 303 | 280     |1629 | 1669  | 53  |
 
 ## unlz4/unlz4_fast
 
@@ -47,13 +47,23 @@ Packer: https://github.com/42Bastian/tp
 
 ## Exomizer
 
+Packer: https://bitbucket.org/magli143/exomizer/src/master/
+
+### sage's version
+
 Pack with `exomizer.exe level -P0 -f infile -o outfile.exo`
 
 *Note*: First two bytes are skipped (!?), so either add two dummy bytes before the packed data, or write those directly to the destination.
 
 Original depacker from: https://github.com/bspruck/exolynx
 
-Packer: https://bitbucket.org/magli143/exomizer/src/master/
+### RAW unpacker
+
+Pack with `exomizer raw -c -P-32 infile -o outfile.exoraw`
+
+See `unexo.var` for the `-P` option.
+
+This is clean-room implementation based on unpack.c from the Exomizer repo. No byte skipping!!
 
 ## upkr
 
