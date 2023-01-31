@@ -14,11 +14,14 @@
     "author": "42Bastian",
     "license": "CC0-1.0",
     "dependencies": {
-        "serialport": "^9.0.6",
+        "serialport": "^9.2.8",
         "simple-get": ">=4.0.1"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/42Bastian/new_bll/tree/master/sendobj.js"
+    },
+    "devDependencies": {
+        "why-is-node-running": "^2.2.2"
     }
 }
