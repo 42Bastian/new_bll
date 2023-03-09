@@ -36,7 +36,11 @@ b0:
 	lda	BLOCKNR
 	jsr	$fe00		; select block
 b1:
+ IFD _512K
+	ldx	#8
+ ELSE
 	ldx	#4		; 4 pages per block
+ ENDIF
 b2:
 	lda	RCART_0
 DST

@@ -1,7 +1,10 @@
-all: ml.lnx ml.enc bll.enc demo0006.lnx
+all: ml.lnx ml512.enc ml.enc bll.enc demo0006.lnx
 
 %.o: %.s
 	lyxass -o $@ $<
+
+micro_loader512.bin: micro_loader.S
+	lyxass -d -D _512K -o $@ $<
 
 %.bin: %.s
 	lyxass -d -o $@ $<
@@ -14,6 +17,9 @@ ml.lnx: ml.lyx
 	make_lnx $< -b0 256K -o $@
 
 ml.enc: micro_loader.bin
+	lynxenc $< $@
+
+ml512.enc: micro_loader512.bin
 	lynxenc $< $@
 
 bll.enc: ml.enc bll_loader.bin
