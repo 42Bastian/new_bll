@@ -124,8 +124,6 @@
 .\ee
 		endm
 
-
-
 		MACRO CMPWIS	; compare word immediate signed
 		lda \1
 		cmp #<(\0)
@@ -142,17 +140,6 @@
 		_ENDIF
 		ENDM
 
-;>		  MACRO ADDW	  ; b=a+b
-;>		  clc
-;>		  lda \0
-;>		  adc \1
-;>		  sta \1
-;>		  lda \0+1
-;>		  adc \1+1
-;>		  sta \1+1
-;>		  ENDM
-
-
 		MACRO ADDWABC	; c=a+b
 		clc
 		lda \0
@@ -163,7 +150,6 @@
 		sta \2+1
 		ENDM
 
-;/- 30.6.97 42BS -\
 		MACRO ADDW
 		clc
 		lda \0
@@ -200,7 +186,6 @@
 		ENDIF
 		ENDM
 
-;\_______________/
 		MACRO ADDIW
 		clc
 		lda #<(\0)
@@ -236,7 +221,6 @@
 		  sta \1+1
 		ENDIF
 		ENDM
-
 
 		MACRO SUBWABC	; c=b-a
 		sec
@@ -449,6 +433,10 @@ STRUCT_PC@	SET *		; save current PC
 		ldx #>(\0)
 		ENDM
 
+		MACRO LDXY
+		ldx #<(\0)
+		ldy #>(\0)
+		ENDM
 
 		MACRO START_UP
 		sei
