@@ -36,7 +36,11 @@ copy_loader:
 	sta	$1C0,y
 	dey
 	bne	copy_loader
+ IFD _512K
+	ldx	#7		; already 1 page loaded from 1st block!
+ ELSE
 	ldx	#3		; already 1 page loaded from 1st block!
+ ENDIF
 	bra	$1C0+(b2-b0+1)	; bra b2
 
 	; From here copied onto stack
@@ -47,7 +51,11 @@ b0:
 	lda	BLOCKNR
 	jsr	$fe00		; select block
 b1:
+ IFD _512K
+	ldx	#8		; 8 pages per block
+ ELSE
 	ldx	#4		; 4 pages per block
+ ENDIF
 b2:
 	lda	RCART_0
 	sta	(DEST)
