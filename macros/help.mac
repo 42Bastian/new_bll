@@ -9,6 +9,22 @@
 
 ; MOVE is in 68k-mode : src,dst !!
 
+		MACRO SKIP1
+		dc.b $e2		;; NOP with 2 bytes/2 cycles
+		ENDM
+
+		MACRO SKIP2
+		dc.b $DC		;; NOP with 3 bytes/4 cycles
+		ENDM
+
+		MACRO NOP1
+		dc.b $03		;; single-cycle NOP
+		ENDM
+
+		MACRO NOP8		;; 3byte 8 cycle NOP
+		dc.b $5c,$42,$42
+		ENDM
+
 		MACRO SWAP
 		ldx \0
 		lda \1
@@ -78,7 +94,6 @@
 		sty 1+\1
 		ENDM
 
-
 		MACRO CMPW	; compare word
 		lda \1
 		cmp \0
@@ -119,9 +134,8 @@
 		bcc .\yes
 		beq .\yes
 .\no		clc
-		bra .\ee
+		SKIP1
 .\yes		sec
-.\ee
 		endm
 
 		MACRO CMPWIS	; compare word immediate signed
@@ -131,13 +145,14 @@
 		sbc #>(\0)
 		lda \1+1
 		eor #>(\0)
-		_IFMI
-		  _IFCC
-		    sec
-		  _ELSE
-		    clc
-		  _ENDIF
-		_ENDIF
+		bpl .\no
+		bcc .\yes
+		clc
+		SKIP1
+.\yes
+		sec
+		clc
+.\no
 		ENDM
 
 		MACRO ADDWABC	; c=a+b
@@ -538,20 +553,4 @@ lbpld		set -lbpld
 		MACRO HANDY_BRKPT
 		cpx	$5aa5
 		dc.b $ec,0,0	; CPX $0000
-		ENDM
-
-		MACRO SKIP1
-		dc.b $e2		;; NOP with 2 bytes/2 cycles
-		ENDM
-
-		MACRO SKIP2
-		dc.b $DC		;; NOP with 3 bytes/4 cycles
-		ENDM
-
-		MACRO NOP1
-		dc.b $03		;; single-cycle NOP
-		ENDM
-
-		MACRO NOP8		;; 3byte 8 cycle NOP
-		dc.b $5c,$42,$42
 		ENDM
