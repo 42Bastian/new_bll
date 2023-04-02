@@ -1,0 +1,67 @@
+	MACRO initIdTab
+	ldx   #0
+.\l1	txa
+	sta idtab,x
+	inx
+	bne .\l1
+	ENDM
+
+	MACRO tyx
+	ldx   idtab,y
+	ENDM
+
+	MACRO txy
+	ldy   idtab,x
+	ENDM
+
+	MACRO andx
+	and   idtab,x
+	ENDM
+
+	MACRO andy
+	and   idtab,y
+	ENDM
+
+	MACRO orax
+	ora   idtab,x
+	ENDM
+
+	MACRO oray
+	ora   idtab,y
+	ENDM
+
+	MACRO eorx
+	eor   idtab,x
+	ENDM
+
+	MACRO eory
+	eor   idtab,y
+	ENDM
+
+	MACRO adcx
+	adc   idtab,x
+	ENDM
+
+	MACRO adcy
+	adc   idtab,y
+	ENDM
+
+	MACRO sbcx
+	sbc   idtab,x
+	ENDM
+
+	MACRO sbcy
+	sbc   idtab,y
+	ENDM
+
+	MACRO cmpx
+	cmp   idtab,x
+	ENDM
+
+	MACRO cmpy
+	cmp   idtab,y
+	ENDM
+
+	MACRO bitx
+	bit   idtab,x
+	ENDM
