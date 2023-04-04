@@ -6,13 +6,16 @@
 *
 
 ***************
-* Filled Polygon
-* actually only a tri or tetragon
+* Filled tri- or quadrangle
+*
 * IN : A - color
 *      Y - ptr
 ****************
 *
-FPolygon::	sta .fpcolor
+FPolygon::
+		sta .tri_scb_color
+		sta .tri_scb2_color
+
 		phy				; save ptr
 		ldx faces,y
 		MOVE {proj_x,x},x1
@@ -31,8 +34,7 @@ FPolygon::	sta .fpcolor
 		inx
 		beq .exit			; yes =>
 		pha				; save ptr
-		lda .fpcolor			; get color
-		jsr triangle			; draw triangle
+		jsr triangle_			; draw triangle
 		ply
 		ldx faces,y
 		MOVE {proj_x,x},x1
@@ -49,11 +51,9 @@ FPolygon::	sta .fpcolor
 		iny
 .exit		iny
 		phy
-		lda .fpcolor
-		jsr triangle
+		jsr triangle_
 		ply
 		rts
-.fpcolor	ds 1
 ****************
 * Triangle
 * (x1,y1),(x2,y2),(x3,y3)
@@ -76,9 +76,10 @@ FPolygon::	sta .fpcolor
 * two triangles/sprites : 1) ABB' 2) BB'C
 *
 ****************
-triangle::
+triangle
 		sta .tri_scb_color
 		sta .tri_scb2_color
+triangle_
 *
 * sort points
 *
@@ -119,18 +120,19 @@ triangle::
 		tax
 		lda x2+1
 		sbc x1+1
-		bpl .1
-		  iny
-		  pha
+		_IFMI
+		  tay
 		  txa
 		  eor #$ff
 		  tax
-		  pla
+		  tya
+		  ldy #0
 		  eor #$ff
 		  inx
-		  bne .1
-		  inc
-.1
+		  _IFEQ
+		    inc
+		  _ENDIF
+		_ENDIF
 		stx MATHE_A+2
 		sta MATHE_A+3
 		WAITSUZY
@@ -162,18 +164,19 @@ triangle::
 		tax
 		lda x3+1
 		sbc x1+1
-		bpl .2
-		  iny
-		  pha
+		_IFMI
+		  tay
 		  txa
 		  eor #$ff
 		  tax
-		  pla
+		  tya
+		  ldy #0
 		  eor #$ff
 		  inx
-		  bne .2
-		  inc
-.2
+		  _IFEQ
+		    inc
+		  _ENDIF
+		_ENDIF
 		stx MATHE_A+2
 		sta MATHE_A+3
 		WAITSUZY
@@ -207,18 +210,19 @@ triangle::
 		tax
 		lda x3+1
 		sbc x2+1
-		bpl .3
-		  iny
-		  pha
+		_IFMI
+		  tay
 		  txa
 		  eor #$ff
 		  tax
-		  pla
+		  tya
+		  ldy #0
 		  eor #$ff
 		  inx
-		  bne .3
-		  inc
-.3
+		  _IFEQ
+		    inc
+		  _ENDIF
+		_ENDIF
 		stx MATHE_A+2
 		sta MATHE_A+3
 		WAITSUZY
@@ -240,12 +244,6 @@ triangle::
 		MOVE y1,.tri_scb_y
 		MOVE x3,.tri_scb2_x
 		MOVE y3,.tri_scb2_y
-		lda #$80
-		sta .tri_scb_xsize
-		sta .tri_scb2_xsize
-		lda #1
-		sta .tri_scb_xsize+1
-		sta .tri_scb2_xsize+1
 ****************
 		MOVE tiltAC,temp
 		CMPWS tiltAC,tiltAB
@@ -262,52 +260,34 @@ triangle::
 		SUBW temp,tiltBC,.tri_scb2_stretch
 
 		sec
-		lda #0
+		tya
 		sbc tiltBC
 		sta .tri_scb2_tilt
-		lda #0
+		tya
 		sbc tiltBC+1
 		sta .tri_scb2_tilt+1
 ****************
-		lda .tri_scb_ysize+1
-		cmp #1
-		_IFNE
-		  MOVEI .tri_scb, $fc10
-
-		  lda #1
-		  STA $FC91
-		  lda #1
-		  stz $fd90
-.wait		  STZ $FD91
-		  bit $fc92
-		  bne .wait
-		  STZ $FD90
-		_ELSE
-		  lda .tri_scb2_ysize+1
-		  _IFNE
-		    inc .tri_scb2_ysize+1
-		  _ENDIF
+		LDAY .tri_scb
+		ldx .tri_scb_ysize+1
+		_IFEQ
+		  inc .tri_scb2_ysize+1
+		  LDAY .tri_scb2
 		_ENDIF
-
-		lda .tri_scb2_ysize+1
-		_IFNE
-		  MOVEI .tri_scb2, $fc10
-
-		  lda #1
-		  STA $FC91
-		  lda #1
-		  stz $fd90
-.wait1		  STZ $FD91
-		  bit $fc92
-		  bne .wait1
-		  STZ $FD90
-		_ENDIF
+		sta $fc10
+		sty $fc11
+		lda #1
+		STA $FC91
+		stz $fd90
+.wait1		STZ $FD91
+		bit $fc92
+		bne .wait1
+		STZ $FD90
 		rts
 
 **************************************************
 .trieveron1	dc.b 0
 .tri_scb	dc.b $c0,$80|$30,0
-		dc.w 0,.triimage
+		dc.w .tri_scb2,.triimage
 .tri_scb_x	dc.w 0
 .tri_scb_y	dc.w 0
 .tri_scb_xsize	dc.w $100
