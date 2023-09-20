@@ -1,5 +1,13 @@
+OS=$(shell uname)
+ifeq ($(OS),Darwin)
+INC=-I/opt/homebrew/include
+LIB=-L/opt/homebrew/lib
+else
 INC=-I/usr/local/ssl/include
-LIB=-L/usr/local/ssl/lib -lssl -lcrypto
+LIB=-L/usr/local/ssl/lib
+endif
+LIB += -lssl -lcrypto
+
 all: lynxdec lynxenc
 
 lynxdec: lynxdec.c sizes.h keys.h
@@ -11,3 +19,4 @@ lynxenc: lynxenc.c sizes.h keys.h
 clean:
 	rm -rf lynxdec
 	rm -rf lynxenc
+	rm -rf *.dSYM

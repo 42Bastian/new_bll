@@ -4,34 +4,34 @@
  * NOTES:
  *
  * This software is original software written completely by me, but there are
- * pieces of data (e.g. the keys.h and loaders.h files) that I got from the 
+ * pieces of data (e.g. the keys.h and loaders.h files) that I got from the
  * Atari Age Lynx Programming forum and from people in the Lynx community,
  * namely Karri Kaksonen.  Without their help, this would have never been
  * possible.  I was standing on the shoulders of giants.
  *
- * According to the documentation on RSA, the way the public/private 
+ * According to the documentation on RSA, the way the public/private
  * exponents are related is that encryption works like so:
- * 
+ *
  * encrypted = (plaintext ^ private exponent) % public modulus
  *
  * decryption, which we already have working, works like this:
  *
  * plaintext = (encrypted ^ public exponent) % public modulus
  *
- * The keys.h file contains definitions for the Lynx public exponent, 
+ * The keys.h file contains definitions for the Lynx public exponent,
  * private exponent and the public modulus.
  *
  * This app shows how to take an encrypted loader, decrypt it and un-pad
  * it, all using the C and the OpenSSL bignum library for the RSA step.
  *
- * The trick is knowing how to properly frame the encrypted blocks.  
- * Harry's plaintext loader has two sections in it, one that starts at 
- * offset 0 and is 150 bytes long, and another that starts at offset 256 
- * and is 250 bytes long.  
+ * The trick is knowing how to properly frame the encrypted blocks.
+ * Harry's plaintext loader has two sections in it, one that starts at
+ * offset 0 and is 150 bytes long, and another that starts at offset 256
+ * and is 250 bytes long.
  *
  * What I discovered is that the encrypted loader is broken up into frames.
- * Each frame starts with a single byte that specifies how many blocks are 
- * in the frame.  The frames are packed together without any padding between 
+ * Each frame starts with a single byte that specifies how many blocks are
+ * in the frame.  The frames are packed together without any padding between
  * them.  The block count byte has the value 256 - block count.
  *
  * Another thing I discovered was that the unencrypted data is processed in
@@ -40,23 +40,23 @@
  *
  * LICENSE:
  *
- * This software is provided 'as-is', without any express or implied warranty. 
- * In no event will the authors be held liable for any damages arising from the 
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from the
  * use of this software.
  *
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it 
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
  * freely, subject to the following restrictions:
  *
- * 1. The origin of this software must not be misrepresented; you must not 
- * claim that you wrote the original software. If you use this software in a 
- * product, an acknowledgment in the product documentation would be appreciated 
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software in a
+ * product, an acknowledgment in the product documentation would be appreciated
  * but is not required.
- * 
- * 2. Altered source versions must be plainly marked as such, and must not be 
+ *
+ * 2. Altered source versions must be plainly marked as such, and must not be
  * misrepresented as being the original software.
- * 
- * 3. This notice may not be removed or altered from any source distribution. 
+ *
+ * 3. This notice may not be removed or altered from any source distribution.
  */
 
 
@@ -201,7 +201,7 @@ void decrypt_frame(unsigned char * plaintext,
 }
 
 
-/* This function loads an entire encrypted frame by first reading in the block 
+/* This function loads an entire encrypted frame by first reading in the block
  * count followed by that number of blocks of encrypted data. */
 int read_encrypted_frame(FILE * const in,
                           encrypted_frame_t * frame)
@@ -226,7 +226,7 @@ int read_encrypted_frame(FILE * const in,
 }
 
 
-int main (int argc, const char * argv[]) 
+int main (int argc, const char * argv[])
 {
     FILE *in;
     FILE *out;
@@ -277,4 +277,3 @@ int main (int argc, const char * argv[])
 
     return EXIT_SUCCESS;
 }
-
