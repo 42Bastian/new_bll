@@ -1,0 +1,15 @@
+;-*-asm-*-
+; ZP variables for fpolygon8.inc
+  BEGIN_ZP
+px1		ds 1
+px2		ds 1
+px3		ds 1
+py1		ds 1
+py2		ds 1
+py3		ds 1
+ IFND tiltAB
+tiltAB		ds 2
+tiltAC		EQU temp1
+tiltBC		EQU temp2
+ ENDIF
+ END_ZP
