@@ -247,14 +247,14 @@ triangle_
 ****************
 		MOVE tiltAC,temp
 		CMPWS tiltAC,tiltAB
-		_IFLT
+		_IFCC
 		  SWAP tiltAB,tiltAC
 		_ENDIF
 		SUBW tiltAC,tiltAB,.tri_scb_stretch
 		MOVE tiltAC,.tri_scb_tilt
 ****************
 		CMPWS temp,tiltBC
-		_IFLT
+		_IFCC
 		  SWAP temp,tiltBC
 		_ENDIF
 		SUBW temp,tiltBC,.tri_scb2_stretch
