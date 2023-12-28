@@ -4,7 +4,7 @@
 import serial
 import sys
 from time import sleep
-from os.path import exists
+from os.path import exists,dirname
 from struct import *
 
 class LNXheader:
@@ -283,6 +283,8 @@ if  n == 1:
     print("flash_up [-p <device>] [-b baud] [-l] -r file")
     exit(1)
 
+flashcard_o = dirname(sys.argv[0])+'/flashcard.o'
+
 p=1
 while p < n:
     if sys.argv[p] == '-h':
@@ -380,12 +382,12 @@ except:
     exit(1)
 
 try:
-    fd = open('flashcard.o','rb')
+    fd = open(flashcard_o,'rb')
     imhd = fd.read(10)
     flashcode = fd.read()
     fd.close()
 except:
-    print("Error loading flashcard.o")
+    print("Error loading ",flashcard_o)
     exit(1)
 
 initCrcTab()
