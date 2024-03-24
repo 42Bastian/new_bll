@@ -3,19 +3,21 @@
 ;;; src
 ;;; dst
 
-GETBIT_INLINE	EQU 1
+GETBIT_INLINE	EQU 0
 
  MACRO GETBIT
  IF GETBIT_INLINE
-	lsr	zx0_bc
+	asl	zx0_stor
 	bne	.\_1
+	tax
 	lda	(src)
+	sta	zx0_stor
+	txa
+	rol	zx0_stor
 	inc	src
-	bne	.\_2
+	bne	.\_1
 	inc	src+1
-.\_2	sta	zx0_stor
-	dec	zx0_bc
-.\_1	asl	zx0_stor
+.\_1
  ELSE
 	jsr	zx0_getbit
  ENDIF
@@ -25,7 +27,8 @@ unzx0::
 	stz	zx0_offset+1
 	lda	#1
 	sta	zx0_offset
-	stz	zx0_bc
+	lda	#$80
+	sta	zx0_stor
 .literal
 	jsr	zx0_elias
 .litcpy
@@ -44,6 +47,7 @@ unzx0::
 	jsr	zx0_getoff
 	lda	zx0_value+1
 	bne	._rts		; > 255 => EOF
+
 	lsr	zx0_value
 	ror
 	tax
@@ -128,14 +132,19 @@ zx0_getbit
 ._rts	rts
 
 .1
+	tax
 	lda	(src)
-	inc	src
-	bne	.91
-	inc	src+1
-.91
 	asl
 	sta	zx0_stor
+
+	txa
 	dec	zx0_bc
+
+	inc	src
+	beq	.91
+	rts
+.91
+	inc	src+1
 	rts
  ENDIF
 
@@ -152,30 +161,32 @@ zx0_getbyte
 zx0_getoff
 	stz	zx0_value+1
 	lda	#1
-	sta	zx0_value
 .el
 	GETBIT
-	bcs	.99
+	bcs	.100
 	GETBIT
-	rol	zx0_value
+	rol
 	rol	zx0_value+1
 	bra	.el
+.100	sta	zx0_value
+	rts
 
 zx0_elias::
 	stz	zx0_value+1
 	lda	#1
-	sta	zx0_value
-.el
-	GETBIT
-	bcs	.done
+	bra	.el
 zx0_elias_pre
 	GETBIT
-	rol	zx0_value
+	rol
 	rol	zx0_value+1
-	bra	.el
+.el
+	GETBIT
+	bcc	zx0_elias_pre
+
 .done
-	lda	#0
-	sbc	zx0_value
+	sta	zx0_value
+	eor	#$ff
+	adc	#0
 	tax
 	lda	#0
 	sbc	zx0_value+1

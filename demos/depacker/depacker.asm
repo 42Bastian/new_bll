@@ -2,16 +2,20 @@
 * depacker.asm
 * Depacker test
 ****************
-ASTEROIDS	EQU 0
+STARTREK	EQU 0
+ASTEROIDS	EQU 1
+EMPTY		EQU 2
+
+PICTURE		EQU STARTREK
 
 RAW		EQU 0
 LZ4		EQU 0
-LZ4_fast	EQU 0
+LZ4_fast	EQU 1
 ZX0		EQU 0
 ZX0_fast	EQU 0
 TP		EQU 0
 EXO		EQU 0
-EXO42		EQU 1
+EXO42		EQU 0
 UPKR		EQU 0
 UPKR_255	EQU 0
 
@@ -212,7 +216,7 @@ voyagerSCB:
 	dc.w 0,0		; X,Y
 	dc.w $100,$100	; size_x,size_y
 
- IF ASTEROIDS = 1
+ if PICTURE = ASTEROIDS
 	include "voyager_asteroids.pal"
  ELSE
 	include "startrek_voyager.pal"
@@ -269,66 +273,85 @@ depacker_e:
 
 packed:
  IF LZ4 + LZ4_fast > 0
- IF ASTEROIDS = 1
+ SWITCH PICTURE
+ CASE ASTEROIDS
 	ibytes	"packed_data/voyager_asteroids.spr.lz4"
- ELSE
+ CASE EMPTY
+	ibytes "packed_data/empty.spr.lz4"
+ ELSES
 	ibytes	"packed_data/startrek_voyager.spr.lz4"
- ENDIF
+ ENDS
  ENDIF
  IF ZX0 + ZX0_fast > 0
- IF ASTEROIDS = 1
-	ibytes	"packed_data/voyager_asteroids.spr.zx0"
- ELSE
+ SWITCH PICTURE
+ CASE ASTEROIDS
+		ibytes	"packed_data/voyager_asteroids.spr.zx0"
+ CASE EMPTY
+	ibytes	"packed_data/empty.spr.zx0"
+ ELSES
 	ibytes	"packed_data/startrek_voyager.spr.zx0"
- ENDIF
+ ENDS
+
  ENDIF
 
  IF TP = 1
- IF ASTEROIDS = 1
+ SWITCH PICTURE
+ CASE ASTEROIDS
 	ibytes	"packed_data/voyager_asteroids.pck"
- ELSE
+ CASE EMPTY
+	ibytes "packed_data/empty.pck"
+ ELSES
 	ibytes	"packed_data/startrek_voyager.pck"
- ENDIF
+ ENDS
  ENDIF
 
  IF EXO42 = 1
- IF ASTEROIDS = 1
+ SWITCH PICTURE
+ CASE ASTEROIDS
 	ibytes	"packed_data/voyager_asteroids.spr.exoraw"
- ELSE
+ CASE EMPTY
+	ibytes "packed_data/empty.spr.exoraw"
+ ELSES
 	ibytes	"packed_data/startrek_voyager.spr.exoraw"
- ENDIF
+ ENDS
  ENDIF
 
  IF EXO = 1
- IF ASTEROIDS = 1
+ SWITCH PICTURE
+ CASE ASTEROIDS
 	ibytes	"packed_data/voyager_asteroids.spr.exo"
- ELSE
+ ELSES
 	ibytes	"packed_data/startrek_voyager.spr.exo"
- ENDIF
+ ENDS
  ENDIF
 
  IF UPKR = 1
- IF ASTEROIDS = 1
+ SWITCH PICTURE
+ CASE ASTEROIDS
 	ibytes	"packed_data/voyager_asteroids.spr.upk"
- ELSE
+ CASE EMPTY
+	ibytes "packed_data/empty.spr.upk"
+ ELSES
 	ibytes	"packed_data/startrek_voyager.spr.upk"
- ENDIF
+ ENDS
  ENDIF
 
  IF UPKR_255 = 1
- IF ASTEROIDS = 1
+ SWITCH PICTURE
+ CASE ASTEROIDS
 	ibytes	"packed_data/voyager_asteroids.spr.upk255"
- ELSE
+ ELSES
 	ibytes	"packed_data/startrek_voyager.spr.upk255"
- ENDIF
+ ENDS
  ENDIF
 
  IF RAW = 1
- IF ASTEROIDS = 1
-	ibytes	"voyager_asteroids.spr"
- ELSE
-	ibytes	"startrek_voyager.spr"
- ENDIF
+ SWITCH PICTURE
+ CASE ASTEROIDS
+	ibytes	"packed_data/voyager_asteroids.spr"
+ ELSES
+	ibytes	"packed_data/startrek_voyager.spr"
+ ENDS
  ENDIF
 packed_e:
 

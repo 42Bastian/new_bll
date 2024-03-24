@@ -7,54 +7,54 @@ unzx0::
 	stz	zx0_offset+1
 	lda	#1
 	sta	zx0_offset
-	stz	zx0_bc
+	stz	zx0_stor
 .literal
+	sec
 	jsr	zx0_elias
 .litcpy
 	jsr	zx0_getbyte
 	jsr	zx0_storebyte
-	inx
 	bne	.litcpy
 	iny
 	bne	.litcpy
 	jsr	zx0_getbit
-	bcc	.old_offset
 .new_off
+	php
+	sec
 	jsr	zx0_elias
+	plp
+	bcc	.old_offset
+
 	lda	zx0_value+1
 	bne	.99		; > 255 => EOF
+
 	lsr	zx0_value
 	ror
-	tax
+	sta	zx0_offset
 	jsr	zx0_getbyte
 	lsr
-	php			; save C
-	sta	zx0_value+1
+	php
+	eor	#$ff
 	sec
-	txa
-	sbc	zx0_value+1
+	adc	zx0_offset
 	sta	zx0_offset
 	lda	zx0_value
 	adc	#$ff
 	sta	zx0_offset+1
-	plp
 
+	plp
 	ldx	#$fe		; min count = 2
 	ldy	#$ff
-	bcs	.off
+	bcs	.off2
 
-	lda	#1
-	stz	zx0_value+1
-	sta	zx0_value
-	jsr	zx0_elias_pre
-	dex			; matchlen + 1
-	bne	.off
-	dey
-	bra	.off
-.old_offset
+//->	clc			; C=0 => no bit reading
 	jsr	zx0_elias
-.off
+	dex			; matchlen + 1
+	bne	.old_offset
+	dey
+.old_offset
 	sec
+.off2
 	lda	dst
 	sbc	zx0_offset
 	sta	zx0_ptr
@@ -67,7 +67,6 @@ unzx0::
 	bne	.3
 	inc	zx0_ptr+1
 .3	jsr	zx0_storebyte
-	inx
 	bne	.matchcpy
 	iny
 	bne	.matchcpy
@@ -79,33 +78,34 @@ unzx0::
 zx0_elias
 	stz	zx0_value+1
 	lda	#1
-	sta	zx0_value
-.el
-	jsr	zx0_getbit
-	bcs	.done
+	bcs	.el
 zx0_elias_pre
 	jsr	zx0_getbit
-	rol	zx0_value
+	rol
 	rol	zx0_value+1
-	bra	.el
+.el
+	jsr	zx0_getbit
+	bcc	zx0_elias_pre
 .done
-	lda	#0
-	sbc	zx0_value
+	sta	zx0_value
+	eor	#$ff
+	inc
 	tax
-	lda	#0
-	sbc	zx0_value+1
+	lda	zx0_value+1
+	eor	#$ff
 	tay
 .99	rts
 
 zx0_getbit::
-	dec	zx0_bc
-	bpl	.1
-	jsr	zx0_getbyte
-	sta	zx0_stor
-	lda	#7
-	sta	zx0_bc
-.1
 	asl	zx0_stor
+	bne	.1
+	tax
+	jsr	zx0_getbyte
+	sec
+	rol
+	sta	zx0_stor
+	txa
+.1
 	rts
 
 zx0_getbyte::
@@ -120,4 +120,5 @@ zx0_storebyte::
 	inc	dst
 	bne	.9
 	inc	dst+1
-.9	rts
+.9	inx
+	rts

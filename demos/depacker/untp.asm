@@ -7,26 +7,22 @@
 CPY8		EQU 0
 
 untp::
-	stz	tp_bc		; clear bit count
 	eor	#$ff
 	sta	tp_end
 	tya
 	eor	#$ff
 	sta	tp_end+1
+	stz	tp_token
 .loop0
-	asl	tp_bc		; get next bit
+	asl	tp_token
 	bne	.loop1		; not last bit =>
 .token
 	jsr	tp_getbyte	; get next byte
- IF CPY8 = 1
-	tay
-	beq	.cpy8
- ENDIF
+	sec
+	rol
 	sta	tp_token	; and save
-	dec	tp_bc		; re-init bit tp_bcer
 .loop1
 	jsr	tp_getbyte	; literal byte or (count and offset)
-	asl	tp_token	; PackByte <<
 	bcs	.cont0		; C=1 => match
 ;-- literal
 	sta	(dst)
@@ -35,20 +31,6 @@ untp::
 .incdst
 	inc	dst+1
 	bra	.loop0
- IF CPY8 = 1
-.cpy8
-	ldx	#7
-.1
-	jsr	tp_getbyte
-	sta	(dst)
-	inc	dst
-	bne	.2
-	inc	dst+1
-.2
-	dex
-	bpl	.1
-	bra	.token
- ENDIF
 ;-- match
 .cont0
 	tay			; save count
@@ -84,16 +66,40 @@ untp::
 	bcc	.loop0
 	bra	.incdst
 
+
+ IF 1=1
 tp_getbyte
 	lda	(src)
 	inc	src
 	bne	.9
 	inc	src+1
-.9	inc	tp_end
-	bne	.99
+.9
+	inc	tp_end
+	bne	.91
 	inc	tp_end+1
-	bne	.99
+	bne	.91
 	pla
 	pla
-.99
+.91	rts
+ ELSE
+tp_getbyte
+	lda	(src)
+	inc	src
+	beq	.9
+	inc	tp_end
+	beq	.91
 	rts
+
+.9	inc	src+1
+	inc	tp_end
+	beq	.91
+	rts
+.91
+	inc	tp_end+1
+	beq	.99
+	rts
+.99
+	pla
+	pla
+	rts
+ ENDIF
