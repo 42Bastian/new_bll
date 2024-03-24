@@ -74,13 +74,13 @@ SerialIRQ::
                 stz TxPtrOut
                 stz RxPtrIn
                 stz RxPtrOut
-.noBreak        lda #$48|contrl        ; RxIRQ setzen und Fehler l”schen
+.noBreak        lda #$48|contrl        ; RxIRQ setzen und Fehler loeschen
                 sta $fd8c
                 lda #$10
                 sta $fd80
                 END_IRQ
 
-.rx_irq         lda #$48|contrl        ; RxIRQ setzen und Fehler l”schen
+.rx_irq         lda #$48|contrl        ; RxIRQ setzen und Fehler loeschen
                 sta $fd8c
                 txa
 IFD DEBUG
