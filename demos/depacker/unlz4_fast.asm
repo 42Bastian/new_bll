@@ -7,12 +7,6 @@
 LZ4_MAX_LEN_256 EQU 0
 
 unlz4::
-	clc
-	adc	src
-	sta	lz4_src_e
-	tya
-	adc	src+1
-	sta	lz4_src_e+1
 .token
 	jsr	lz4_getbyte
 	sta	.smc+1
@@ -49,22 +43,25 @@ unlz4::
 	bcc	.91
 	inc	src+1
 .91
-	cmp	lz4_src_e
-	bne	.match
-	lda	src+1
-	cmp	lz4_src_e+1
-	beq	._rts
 .match
 	clc
 	jsr	lz4_getbyte
+	tay
 	sbc	dst
 	eor	#$ff
 	sta	lz4_ptr
 
 	jsr	lz4_getbyte
+	tax
 	sbc	dst+1
 	eor	#$ff
 	sta	lz4_ptr+1
+
+	tya
+	bne	.notdone
+	txa
+	beq	._rts
+.notdone
 .smc
 	lda	#10
 	and	#15

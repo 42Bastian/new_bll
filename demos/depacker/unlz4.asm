@@ -5,12 +5,6 @@
 ;;; A:Y packed length
 
 unlz4::
-	clc
-	adc	src
-	sta	lz4_src_e
-	tya
-	adc	src+1
-	sta	lz4_src_e+1
 .token
 	jsr	lz4_getbyte
 	sta	.smc+1
@@ -23,27 +17,26 @@ unlz4::
 .litloop
 	jsr	lz4_getbyte
 	jsr	lz4_storebyte
-	inx
 	bne	.litloop
-	iny
-	bne	.litloop
-	lda	src
-	cmp	lz4_src_e
-	bne	.match
-	lda	src+1
-	cmp	lz4_src_e+1
-	beq	._rts
+
 .match
-	clc
 	jsr	lz4_getbyte
+	tay
+	clc
 	sbc	dst
 	eor	#$ff
 	sta	lz4_ptr
 
 	jsr	lz4_getbyte
+	tax
 	sbc	dst+1
 	eor	#$ff
 	sta	lz4_ptr+1
+
+	tya
+	bne	.smc
+	txa
+	beq	._rts
 .smc
 	lda	#10
 	and	#15
@@ -61,9 +54,6 @@ unlz4::
 	inc	lz4_ptr+1
 .2
 	jsr	lz4_storebyte
-	inx
-	bne	.matchloop
-	iny
 	bne	.matchloop
 	bra	.token
 
@@ -103,6 +93,10 @@ lz4_storebyte::
 	inc	dst
 	bne	.9
 	inc	dst+1
-.9	rts
+.9	inx
+	bne	.99
+	iny
+.99
+	rts
 
 	echo "%hunlz4 %hlz4_getlen"
