@@ -15,8 +15,6 @@ unzx0::
 	jsr	zx0_getbyte
 	jsr	zx0_storebyte
 	bne	.litcpy
-	iny
-	bne	.litcpy
 	jsr	zx0_getbit
 .new_off
 	php
@@ -67,8 +65,6 @@ unzx0::
 	bne	.3
 	inc	zx0_ptr+1
 .3	jsr	zx0_storebyte
-	bne	.matchcpy
-	iny
 	bne	.matchcpy
 
 	jsr	zx0_getbit
@@ -121,4 +117,7 @@ zx0_storebyte::
 	bne	.9
 	inc	dst+1
 .9	inx
+	bne	.99
+	iny
+.99
 	rts
