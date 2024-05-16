@@ -6,7 +6,7 @@
 *
 ****************
 
-VERSION		equ "06"
+VERSION		equ "07"
 Baudrate	EQU 62500
 ;;->BRKuser	    set 1
 DEBUG		set 1
@@ -55,6 +55,45 @@ _CurrX		 ds 1		; cursor X(0..79)
 _CurrY		 ds 1		; cursor Y(0..16)
 _TxtPtr		 ds 2
  END_ZP
+
+;;      shifter               counter
+;;  1 1 1 1 1 1 1 1   1
+;;  8 7 6 5 4 3 2 1   0 9 8 7 6 5 4 3 2 1 0
+;;  ---------------------------------------
+;;  x x x x 1 0 1 0   1 0 1 0 1 0 1 0 1 0 1
+;;          |_____|   |___________________|
+;;            =10             =1365
+;;          |_____________________________|
+;;                     =0x5555
+
+;;      shifter               counter
+;;  1 1 1 1 1 1 1 1   1
+;;  8 7 6 5 4 3 2 1   0 9 8 7 6 5 4 3 2 1 0
+;;  ---------------------------------------
+;;  x x x x 0 1 0 1   0 1 0 1 0 1 0 1 0 1 0
+;;          |_____|   |___________________|
+;;            =05             =682
+;;          |_____________________________|
+;;                     =0x2AAA
+
+	MACRO BlockShift_0
+	lda	#3
+	STZ	$FD8B
+	sta	$fd87
+	dec
+	sta	$fd87
+ IFVAR \0
+	lda	_IOdat
+	sta	$fd8b
+ ENDIF
+	ENDM
+
+	MACRO	BlockShift_1
+	lda	#3
+	sta	$fd87
+	dec
+	sta	$fd87
+	ENDM
 
 
  BEGIN_MEM
@@ -229,11 +268,15 @@ chipErase::
 	lda #$AA
 	sta _CARD1
 
-	jsr set2aaa
+	BlockShift_1		; $5555 => $2aaa
+	jsr set2aa
+//->	jsr set2aaa
 	lda #$55
 	sta _CARD1
 
-	jsr set5555
+	BlockShift_0		; $2aaa => $5555
+	jsr set555
+//->	jsr set5555
 	lda #$80
 	sta _CARD1
 
@@ -241,11 +284,14 @@ chipErase::
 	lda #$AA
 	sta _CARD1
 
-	jsr set2aaa
+	BlockShift_1		; $5555 => $2aaa
+	jsr set2aa
+//->	jsr set2aaa
 	lda #$55
 	sta _CARD1
 
-	jsr set5555
+	BlockShift_0 X		; $2aaa => $5555, restore IODAT
+	jsr set555
 	lda #$10
 	sta _CARD1
 .wait
@@ -253,94 +299,30 @@ chipErase::
 	bpl .wait
 	rts
 ;----------------------------------------
-; Erase sector of 4k
-;
-; Note: A Lynx block is 2k, so this routine will
-;	clear 2 Lynx blocks!
-;----------------------------------------
- IF 0
-sectorErase::
-	pha
-
-	jsr set5555
-	lda #$AA
-	sta _CARD1
-
-	jsr set2aaa
-	lda #$55
-	sta _CARD1
-
-	jsr set5555
-	lda #$80
-	sta _CARD1
-
-	jsr set5555
-	lda #$AA
-	sta _CARD1
-
-	jsr set2aaa
-	lda #$55
-	sta _CARD1
-
-	pla
-	jsr SelectBlockA
-
-	lda #$30
-	sta _CARD1
-.wait
-	lda _CARD0
-	bpl .wait
-	rts
- ENDIF
-;----------------------------------------
-; Read flash ID
-;----------------------------------------
- IF 0
-check_flash::
-	jsr set5555
-	lda #$AA
-	sta _CARD1
-
-	jsr set2aaa
-	lda #$55
-	sta _CARD1
-
-	jsr set5555
-	lda #$90
-	sta _CARD1
-
-	lda #100
-	jsr delay
-
-	lda #0
-	jsr SelectBlockA
-
-	lda _CARD0
-	jsr PrintHex
-	lda _CARD0
-	ldx #$f0
-	stx _CARD1
-	jmp PrintHex
- ENDIF
-;----------------------------------------
 ; Write one byte into the current block
 ;----------------------------------------
 writeBlockByte::
-//->	inc
-//->	beq	.ff
+	cmp	#$ff
+	beq	.ff
 
 	phy
 	pha
 
+	inc $fdbe
+
 	jsr set5555
 	lda #$AA
 	sta _CARD1
 
-	jsr set2aaa
+	BlockShift_1		; $5555 => $2aaa
+	jsr set2aa
+//->	jsr set2aaa
 	lda #$55
 	sta _CARD1
 
-	jsr set5555
+	BlockShift_0		; $2aaa => $5555
+	jsr set555
+//->	jsr set5555
 	lda #$A0
 	sta _CARD1
 
@@ -353,17 +335,14 @@ writeBlockByte::
 	dec
 	bne .1
 .2
-	lda blockAddress
+	ldx blockAddress
 	beq .4
-	lsr
-	bcc .3
-	stz _CARD0
-	beq .4
-.3
-	stz _CARD0
-	stz _CARD0
-	dec
-	bne .3
+	lda	incA_lo,x
+	sta	incX_addr+1
+	lda	incA_hi,x
+	sta	incX_addr+2
+incX_addr:
+	jsr	$1234
 .4
 	pla
 	sta _CARD1
@@ -374,11 +353,10 @@ writeBlockByte::
 .8
 	inc blockAddress+1
 	rts
-//->.ff
-//->	dec
-//->	inc blockAddress
-//->	beq .8
-//->	rts
+.ff
+	inc blockAddress
+	beq .8
+	rts
 
 ;----------------------------------------
 ; Set $2AAA
@@ -387,7 +365,7 @@ writeBlockByte::
 set2aaa::
 	lda #5
 	jsr SelectBlockA
-
+set2aa::
 	jsr inc256
 	jsr inc256
 	jmp incAA
@@ -398,11 +376,12 @@ set2aaa::
 set5555::
 	lda #10
 	jsr SelectBlockA
-
+set555::
 	REPT 5
 	jsr inc256
 	ENDR
 	jmp inc55
+
 ****************
 * Hello
 ****************
@@ -413,9 +392,10 @@ Hello::
 * SendCRCs     *
 ***************
 SendCRCs::
-	jsr WaitSerialDebug	; get blocksize
+	jsr WaitSerial	; get blocksize
 	bcs .99		; got a break
 	sta size
+
 	stz BlockCounter
 .0
 	  jsr SelectBlock
@@ -812,6 +792,8 @@ WriteBlock::
 	  iny
 	bne .41
 .99
+	lda	#$f
+	sta	$fdbe
 	rts
 ****************
 *  CheckBlock  *
@@ -1082,6 +1064,14 @@ SelectBlockA::
 	sta $fd8b
 	RTS
 ****************
+incX:
+	lda	incA_lo,x
+	sta	incA_addr+1
+	lda	incA_hi,x
+	sta	incA_addr+2
+incA_addr:
+	jmp	$1234
+
 inc256::
 	REPT 256-$aa
 	stz _CARD0
@@ -1095,6 +1085,22 @@ inc55:
 	stz _CARD0
 	ENDR
 	rts
+
+s	set inc256+256*3
+incA_lo:
+	rept 256
+	dc.b <s
+s	set s-3
+	endr
+
+s	set inc256+256*3
+incA_hi:
+	rept 256
+	dc.b >s
+s	set s-3
+	endr
+
+
 ****************
 * INCLUDES
 	include <includes\debug.inc>

@@ -166,6 +166,7 @@ def checkBlock(block) -> bool:
 
 def sendBlock(block, verbose):
     global sectorbuffer
+    sleep(0.1)
     sendByte(b'C')
     sendByte(b'1')
     sendByte(int(blocksize/256))
@@ -178,14 +179,17 @@ def sendBlock(block, verbose):
     c = b'E'
     while c != 0x41 and c != 42:
         sectorbuffer = image[block*blocksize:(block+1)*blocksize]
+
         sent = ser.write(sectorbuffer)
         sectorbuffer.clear()
-        while len(sectorbuffer) != blocksize:
-            try:
-                sectorbuffer+=ser.read(blocksize-len(sectorbuffer))
-            except:
-                print("Error reading CRCs")
-                exit(1)
+        sectorbuffer+= ser.read(blocksize)
+
+#        while len(sectorbuffer) != blocksize:
+#            try:
+#                sectorbuffer+=ser.read(blocksize-len(sectorbuffer))
+#            except:
+#                print("Error reading CRCs")
+#                exit(1)
 
         sendByte(imagecrc[block])
         c = 0
@@ -196,7 +200,11 @@ def sendBlock(block, verbose):
             else:
                 c = 42
 
-    while c != 0x42 and c != 42:
+    if (c == 0x41):
+        print("... ",end='',flush=True)
+        sleep(2)
+
+    while c != 0x42 and c != 42 and c != 0x14:
         c = getByte()
         if c != -1:
             print("%02x " % (c), end='', flush=True)
@@ -283,7 +291,8 @@ if  n == 1:
     print("flash_up [-p <device>] [-b baud] [-l] -r file")
     exit(1)
 
-flashcard_o = dirname(sys.argv[0])+'/flashcard.o'
+
+flashcard_o = dirname(sys.argv[0])+'flashcard.o'
 
 p=1
 while p < n:
@@ -376,7 +385,7 @@ if not flashimage  and not readimage and not getcrc and not erase:
     exit(1)
 
 try:
-    ser = serial.Serial(port,baud,parity='E',timeout=.5)
+    ser = serial.Serial(port,baud,parity='E',timeout=.1)
 except:
     print("Could not open: ",port)
     exit(1)
