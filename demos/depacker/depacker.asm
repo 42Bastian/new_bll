@@ -6,10 +6,10 @@ STARTREK	EQU 0
 ASTEROIDS	EQU 1
 EMPTY		EQU 2
 
-PICTURE		EQU STARTREK
+PICTURE		EQU 0
 
 RAW		EQU 0
-LZ4		EQU 1
+LZ4		EQU 0
 LZ4_fast	EQU 0
 ZX0		EQU 0
 ZX0_fast	EQU 0
@@ -18,6 +18,7 @@ EXO		EQU 0
 EXO42		EQU 0
 UPKR		EQU 0
 UPKR_255	EQU 0
+TSC		EQU 1
 
 
 Baudrate	set 62500	; define baudrate for serial.inc
@@ -68,6 +69,10 @@ DEBUG	set 1			; if defined BLL loader is included
  IF ZX0 + ZX0_fast > 0
 	include "unzx0.var"
  ENDIF
+ IF TSC > 0
+	include "untsc.var"
+ ENDIF
+
 *
 * local MACROs
 *
@@ -180,6 +185,12 @@ Start::				; Start-Label needed for reStart
 	MOVEI	voyager_data,dst
 	jsr	unupkr
  ENDIF
+ IF TSC > 0
+	MOVEI	packed,tsget
+	MOVEI	voyager_data,tsput
+	jsr	untsc
+ ENDIF
+
 	lda	_1000Hz
 	pha
 	lda	_1000Hz+1
@@ -269,6 +280,10 @@ get_crunched_byte::
 	inc	src+1
 	rts
  ENDIF
+ IF TSC = 1
+	include	"untsc.asm"
+ ENDIF
+
 depacker_e:
 
 packed:
@@ -285,7 +300,7 @@ packed:
  IF ZX0 + ZX0_fast > 0
  SWITCH PICTURE
  CASE ASTEROIDS
-		ibytes	"packed_data/voyager_asteroids.spr.zx0"
+	ibytes	"packed_data/voyager_asteroids.spr.zx0"
  CASE EMPTY
 	ibytes	"packed_data/empty.spr.zx0"
  ELSES
@@ -351,6 +366,17 @@ packed:
 	ibytes	"packed_data/voyager_asteroids.spr"
  ELSES
 	ibytes	"packed_data/startrek_voyager.spr"
+ ENDS
+ ENDIF
+
+ IF TSC = 1
+ SWITCH PICTURE
+ CASE ASTEROIDS
+	ibytes	"packed_data/voyager_asteroids.spr.tsc"
+ CASE EMPTY
+	ibytes "packed_data/empty.spr.tsc"
+ ELSES
+	ibytes	"packed_data/startrek_voyager.spr.tsc"
  ENDS
  ENDIF
 packed_e:
