@@ -1,0 +1,9 @@
+; -*-asm-*-
+;;; Variable definitions for TScrunch unpacker
+
+	BEGIN_ZP
+tsget		DS 2
+tstemp		DS 1
+tsput		DS 2
+lzput		DS 2
+	END_ZP

@@ -7,21 +7,21 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 * File sizes (in bytes)
 
-| Original | lz4 -12 | zx0 -c | Turbopacker | Exomizer | Exomizer RAW | upkr | upkr 255 |
-| :-:      | :-:     | :-:    | :-:         | :-:      | :-:          | :-:  | :-:  |
-| 7381     | 3959    | 3074   | 3741        | 2927     | 2924         | 2778 | 2803 |
+| Original | lz4 -12 | zx0 -c | Turbopacker | Exomizer | Exomizer RAW | upkr | upkr 255 | TSCrunch
+| :-:      | :-:     | :-:    | :-:         | :-:      | :-:          | :-:  | :-:  | :-: |
+| 7381     | 3959    | 3074   | 3741        | 2927     | 2924         | 2778 | 2803 | 3534
 
 * Depacker sizes (in bytes)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr | upkr 255 |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-:  | :-:  |
-| 131   | 178        | 167 | 232/314  | 108 | 270 | 308     | 352  | 303 |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr | upkr 255 | TSCrunch |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-:  | :-:  | :-: |
+| 131   | 178        | 167 | 232/314  | 108 | 270 | 308     | 352  | 303 | 193 |
 
 * Depack speed (in ms) (memory to memory)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr |upkr 255 |memcpy |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-: | :-: | :-: |
-| 156   | 84         | 262 | 209/166  | 107 | 303 | 280     |1629 | 1669  | 53  |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr |upkr 255 | TSCrunch | memcpy |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-: | :-: | :-: | :-: |
+| 156   | 84         | 262 | 209/166  | 107 | 303 | 280     |1629 | 1669  | 60 | 53  |
 
 ## unlz4/unlz4_fast
 
@@ -74,3 +74,9 @@ Packer: https://github.com/exoticorn/upkr
 ## upkr_255
 
 Pack with --max-offset 255 --max-length 255
+
+## TSCrunch
+
+Depacker for [TSCrunch](https://github.com/tonysavon/TSCrunch)
+
+Pack w/o any options.
