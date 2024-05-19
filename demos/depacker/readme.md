@@ -13,15 +13,15 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 * Depacker sizes (in bytes)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr | upkr 255 | TSCrunch |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-:  | :-:  | :-: |
-| 131   | 178        | 167 | 232/314  | 108 | 270 | 308     | 352  | 303 | 193 |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr | upkr 255 | TSCrunch | TSC small
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-:  | :-:  | :-: | :-: |
+| 131   | 178        | 167 | 232/314  | 108 | 270 | 308     | 352  | 303 | 187 | 158 |
 
 * Depack speed (in ms) (memory to memory)
 
-| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr |upkr 255 | TSCrunch | memcpy |
-| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-: | :-: | :-: | :-: |
-| 156   | 84         | 262 | 209/166  | 107 | 303 | 280     |1629 | 1669  | 60 | 53  |
+| unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr |upkr 255 | TSCrunch | TSC - small| memcpy |
+| :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-: | :-: | :-: | :-: |:-: |
+| 156   | 84         | 262 | 209/166  | 107 | 303 | 280     |1629 | 1669  | 60 | 63  | 53  |
 
 ## unlz4/unlz4_fast
 
@@ -80,3 +80,5 @@ Pack with --max-offset 255 --max-length 255
 Depacker for [TSCrunch](https://github.com/tonysavon/TSCrunch)
 
 Pack w/o any options.
+
+Small version has a minimal speed impact.

@@ -4,12 +4,14 @@
 ;; IN: tsget - packed data
 ;;     tsput - destination
 ;;
+SMALL	EQU 1
+
 untsc::
 	lda	(tsget)
 	sta	optRun+1
-	inc	tsget
-	bne	entry2
-	inc	tsget+1
+	clc
+	lda	#1
+	bra	uptdate_getonly
 entry2:
 	lda	(tsget)
 	tax
@@ -61,17 +63,20 @@ ts_derle_loop:
 	sta	(tsput),y
 	bne	ts_derle_loop
 	lda	tstemp
-updatezp_noclc_1
 	bra	updatezp_noclc
 lz2:
 	beq	done		; == $20
 	ora	#$80
 	adc	tsput
+ IFD SMALL
+	ldx	#1
+	stx	lzto+1
+	bra	lz2_put
+ ELSE
 	sta	lzput
 	lda	tsput+1
 	sbc	#$0
 	sta	lzput+1
-
 	lda	(lzput)
 	sta	(tsput)
 	iny			; y = 1
@@ -80,18 +85,15 @@ lz2:
 
 	tya
 	dey
+
 	adc	tsput
 	sta	tsput
-	bcs	lz2_put_hi
-skp
-	inc	tsget
-	bne	entry2
-	inc	tsget+1
-	bra	entry2
-lz2_put_hi:
+	lda	#1
+	bcc	uptdate_getonly
+	dec
 	inc	tsput+1
-	bra	skp
-
+	bra	uptdate_getonly
+ ENDIF
 	// LZ
 ts_delz:
 	lsr
@@ -100,16 +102,21 @@ ts_delz:
 	lda	tsput
 	bcc	long
 	sbc	(tsget),y
+	ldx	#2
+lz2_put:
 	sta	lzput
 	lda	tsput+1
 	sbc	#$0
-	ldx	#2
 lz_put:
 	sta	lzput+1
 
+ IFD SMALL
+	ldy	#$ff
+ ELSE
 	lda	(lzput)
 	sta	(tsput)
 	ldy	#0
+ ENDIF
 ts_delz_loop:
 	iny
 	lda	(lzput),y
@@ -119,7 +126,7 @@ lzto:
 	bne	ts_delz_loop
 	tya
 	ldy	#0
-	bra	updatezp_noclc_1
+	bra	updatezp_noclc
 optRun:
 	ldy	#255
 	sty	tstemp

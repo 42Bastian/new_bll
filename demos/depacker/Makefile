@@ -14,7 +14,8 @@ endif
 
 $(DEMO).o: unlz4.asm unzx0.asm untp.asm unlz4_fast.asm unzx0_fast.asm \
 	krilldecr.inc krilldecr.var unupkr.var unupkr.asm\
-	unupkr_255.var unupkr_255.asm unexo.asm unexo.var
+	unupkr_255.var unupkr_255.asm unexo.asm unexo.var \
+	untsc.asm untsc.var
 
 .PHONY: lnx
 lnx: $(DEMO).bin
