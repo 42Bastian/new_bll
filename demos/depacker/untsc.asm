@@ -13,11 +13,12 @@ untsc::
 	lda	#1
 	bra	uptdate_getonly
 entry2:
+	iny			; Y = 1
 	lda	(tsget)
-	tax
 	bmi	rleorlz
 	cmp	#$20
 	bcs	lz2
+	tax
 	tay
 ts_delit_loop:
 	lda	(tsget),y
@@ -29,7 +30,13 @@ ts_delit_loop:
 updatezp_noclc:
 	adc	tsput
 	sta	tsput
+ IFD SMALL
+	bcc putnoof
+	inc tsput+1
+	clc
+ ELSE
 	bcs	updateput_hi
+ ENDIF
 putnoof:
 	txa
 uptdate_getonly:
@@ -38,21 +45,21 @@ uptdate_getonly:
 	bcc	entry2
 	inc	tsget+1
 	bra	entry2
-
+ IFND SMALL
 updateput_hi:
 	inc	tsput+1
 	clc
 	bra	putnoof
+ ENDIF
 
 rleorlz:
+	ldx	#2
 	and	#$7f
 	lsr
 	bcc	ts_delz
 	// RLE
 	beq	optRun
 plain:
-	ldx	#2
-	iny
 	sta	tstemp		; count
 	lda	(tsget),y
 	ldy	tstemp
@@ -62,6 +69,7 @@ ts_derle_loop:
 	dey
 	sta	(tsput),y
 	bne	ts_derle_loop
+
 	lda	tstemp
 	bra	updatezp_noclc
 lz2:
@@ -79,12 +87,11 @@ lz2:
 	sta	lzput+1
 	lda	(lzput)
 	sta	(tsput)
-	iny			; y = 1
 	lda	(lzput),y
 	sta	(tsput),y
 
 	tya
-	dey
+	dey			; y = 0
 
 	adc	tsput
 	sta	tsput
@@ -98,11 +105,9 @@ lz2:
 ts_delz:
 	lsr
 	sta	lzto+1
-	iny
 	lda	tsput
 	bcc	long
 	sbc	(tsget),y
-	ldx	#2
 lz2_put:
 	sta	lzput
 	lda	tsput+1
@@ -131,7 +136,7 @@ optRun:
 	ldy	#255
 	sty	tstemp
 	ldx	#1
-	bne	runStart
+	bra	runStart
 
 long:
 	adc	(tsget),y
