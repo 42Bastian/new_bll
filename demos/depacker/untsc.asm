@@ -8,10 +8,13 @@
 
 untsc::
 	lda	(tsget)
+ IFD SMALL
+	pha
+ ELSE
 	sta	optRun+1
-	clc
-	lda	#1
-	bra	uptdate_getonly
+ ENDIF
+	ldx	#1
+	bra	putnoof
 entry2:
 	lda	(tsget)
 	bmi	rleorlz
@@ -60,17 +63,27 @@ rleorlz:
 	// RLE
 	beq	optRun
 plain:
+ IFD SMALL
+	pha
+	pha
+	lda	(tsget),y
+	ply
+ ELSE
 	sta	tstemp		; count
 	lda	(tsget),y
 	ldy	tstemp
+ ENDIF
 runStart:
 	sta	(tsput),y
 ts_derle_loop:
 	dey
 	sta	(tsput),y
 	bne	ts_derle_loop
-
+ IFD SMALL
+	pla
+ ELSE
 	lda	tstemp
+ ENDIF
 	bra	updatezp_noclc
 lz2:
 	beq	done		; == $20
@@ -126,8 +139,14 @@ lzto:
 	ldy	#0
 	bra	updatezp_noclc
 optRun:
+ IFD SMALL
+	ply
+	phy
+	phy
+ ELSE
 	ldy	#255
 	sty	tstemp
+ ENDIF
 	dex
 	bra	runStart
 
@@ -144,4 +163,7 @@ long:
 	inx
 	bra	lz_put
 done:
+ IFD SMALL
+	ply
+ ENDIF
 	rts
