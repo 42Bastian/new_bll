@@ -15,13 +15,13 @@ The number shown is the time to depack the `unpacked` sprite data (sprpck -u).
 
 | unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr | upkr 255 | TSCrunch | TSC small
 | :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-:  | :-:  | :-: | :-: |
-| 131   | 178        | 167 | 232/314  | 108 | 270 | 308     | 352  | 303 | 183 | 153 |
+| 131   | 178        | 167 | 232/314  | 108 | 270 | 308     | 352  | 303 | 170 | 151 |
 
 * Depack speed (in ms) (memory to memory)
 
 | unlz4 | unlz4 fast | zx0 | zx0 fast | tp  | exo | exo RAW | upkr |upkr 255 | TSCrunch | TSC - small| memcpy |
 | :-:   | :-:        | :-: | :-:      | :-: | :-: | :-:     | :-: | :-: | :-: | :-: |:-: |
-| 156   | 84         | 262 | 209/166  | 107 | 303 | 280     |1629 | 1669  | 59 | 64  | 53  |
+| 156   | 84         | 262 | 209/166  | 107 | 303 | 280     |1629 | 1669  | 60 | 64  | 53  |
 
 ## unlz4/unlz4_fast
 

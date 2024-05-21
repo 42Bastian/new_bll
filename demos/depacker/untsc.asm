@@ -4,7 +4,7 @@
 ;; IN: tsget - packed data
 ;;     tsput - destination
 ;;
-SMALL	EQU 1
+//->SMALL	EQU 1
 
 untsc::
 	lda	(tsget)
@@ -13,7 +13,6 @@ untsc::
 	lda	#1
 	bra	uptdate_getonly
 entry2:
-	iny			; Y = 1
 	lda	(tsget)
 	bmi	rleorlz
 	cmp	#$20
@@ -28,16 +27,18 @@ ts_delit_loop:
 	txa
 	inx
 updatezp_noclc:
+	iny
+updatezp_noclc2:
 	adc	tsput
 	sta	tsput
  IFD SMALL
 	bcc putnoof
 	inc tsput+1
-	clc
  ELSE
 	bcs	updateput_hi
  ENDIF
 putnoof:
+	clc
 	txa
 uptdate_getonly:
 	adc	tsget
@@ -48,7 +49,6 @@ uptdate_getonly:
  IFND SMALL
 updateput_hi:
 	inc	tsput+1
-	clc
 	bra	putnoof
  ENDIF
 
@@ -91,15 +91,8 @@ lz2:
 	sta	(tsput),y
 
 	tya
-	dey			; y = 0
-
-	adc	tsput
-	sta	tsput
-	lda	#1
-	bcc	uptdate_getonly
-	dec
-	inc	tsput+1
-	bra	uptdate_getonly
+	tax
+	bra	updatezp_noclc2
  ENDIF
 	// LZ
 ts_delz:
@@ -135,7 +128,7 @@ lzto:
 optRun:
 	ldy	#255
 	sty	tstemp
-	ldx	#1
+	dex
 	bra	runStart
 
 long:
@@ -143,12 +136,12 @@ long:
 	sta	lzput
 	iny
 	lda	(tsget),y
-	tax
+	tay
 	ora	#$80
 	adc	tsput+1
-	cpx	#$80
+	cpy	#$80
 	rol	lzto+1
-	ldx	#3
+	inx
 	bra	lz_put
 done:
 	rts
