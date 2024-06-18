@@ -1,0 +1,45 @@
+; -*-asm-*-
+	MACRO ROM_BLOCK_ALIGN
+ALIGN_ROM_PC set (BlockSize-(ROM_PC & (BlockSize-1)))
+ROM_PC	set ROM_PC + ALIGN_ROM_PC
+
+	REPT ALIGN_ROM_PC
+ IFVAR \0
+	dc.b	\0
+ ELSE
+	dc.b	$ff
+ ENDIF
+	ENDR
+	ENDM
+
+	MACRO	OVERLAY_BEGIN ; name, code-address
+ROM_\0	equ ROM_PC
+	run	\1
+start_\0::
+	ENDM
+
+	MACRO	OVERLAY_END 	; name
+end_\0::
+size_\0::	equ end_\0 - start_\0
+ROM_PC	set ROM_PC+size_\0
+	ENDM
+
+	MACRO OVERLAY_BLOCK 	; name
+	dc.b ROM_\0 / BlockSize
+	ENDM
+
+	MACRO OVERLAY_OFFSET_LO
+	dc.b (<(ROM_\0 & 1023))^$ff
+	ENDM
+
+	MACRO OVERLAY_OFFSET_HI
+	dc.b (>(ROM_\0 & 1023))^$ff
+	ENDM
+
+	MACRO OVERLAY_SIZE_LO
+	dc.b (<size_\0)^$ff
+	ENDM
+
+	MACRO OVERLAY_SIZE_HI
+	dc.b (>size_\0)^$ff
+	ENDM
