@@ -29,11 +29,11 @@ ROM_PC	set ROM_PC+size_\0
 	ENDM
 
 	MACRO OVERLAY_OFFSET_LO
-	dc.b (<(ROM_\0 & 1023))^$ff
+	dc.b (<(ROM_\0 & (BlockSize-1)))^$ff
 	ENDM
 
 	MACRO OVERLAY_OFFSET_HI
-	dc.b (>(ROM_\0 & 1023))^$ff
+	dc.b (>(ROM_\0 & (BlockSize-1)))^$ff
 	ENDM
 
 	MACRO OVERLAY_SIZE_LO
