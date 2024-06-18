@@ -7,18 +7,13 @@
 
 ; LoadFile  : load File #Accu (dest. address is in the dir.)
 ; LoadDir   : load dir-entry A at entry
+ IFD LoadDirUser
 ****************
 * load dir-entry
 * IN : A number
 ****************
 LoadDir::       stz CurrBlock
                 jsr SelectBlock
-;>                IFD NEWHEAD
-;>                cmp #16
-;>                bne .1
-;>                inc
-;>.1
-;>                ENDIF
                 asl
                 asl
                 asl             ; * 8
@@ -50,11 +45,15 @@ LoadDir::       stz CurrBlock
                   dey
                 bne .loopLD
                 rts
-IFD LoadPrgUser
+ ENDIF
+ IFD LoadPrgUser
 ****************
 * load program A
 * Y != 0 => execute
 ****************
+ IFND OpenFileUser
+OpenFileUser	set 1
+ ENDIF
 LoadPrg::       phy
                 jsr OpenFile
                 lda entry+ExecFlag
@@ -65,18 +64,18 @@ LoadPrg::       phy
                 pla
                 beq .10
                 bra .2
-IFD LoadPckUser
+ IFD LoadPckUser
 .1              cmp #$89
                 bne .exit
                 jsr ReadPackedBytes
                 pla
                 beq .10
-ENDIF
+ ENDIF
 .2              jmp (entry+DestAddr)
 
-IFND LoadPckUser
+ IFND LoadPckUser
 .1
-ENDIF
+ ENDIF
 .exit           sec
                 rts
 
@@ -86,7 +85,23 @@ ENDIF
                 ldy entry+DestAddr+1
                 clc
                 rts
-ENDIF
+ ENDIF
+ IFD LoadFileUser
+****************
+* load file (A = number)
+****************
+ IFND OpenFileUser
+OpenFileUser	set 1
+ ENDIF
+
+LoadFile::      jsr OpenFile
+                jsr ReadBytes
+                ldx entry+DestAddr
+                ldy entry+DestAddr+1
+                rts
+ ENDIF
+
+ IFD OpenFileUser
 ****************
 * Open File, i.e. select block, over-read offset , set DestPtr
 * IN : A   : File-Number
@@ -114,17 +129,8 @@ OpenFile::      jsr LoadDir
                 ldx entry+FileLen
                 ldy entry+FileLen+1
                 rts
-IFD LoadFileUser
-****************
-* load file (A = number)
-****************
-LoadFile::      jsr OpenFile
-                jsr ReadBytes
-                ldx entry+DestAddr
-                ldy entry+DestAddr+1
-                rts
-ENDIF
-IFD LoadPckUser
+ ENDIF
+ IFD LoadPckUser
 ****************
 * read TPacked file
 * length (unpacked) in FileLen
@@ -185,7 +191,7 @@ ReadPackedBytes::
                 bpl .loop2
                 bra .loop0
 .ende           rts
-ENDIF
+ ENDIF
 ****************
 * overead bytes
 * X:Y count ( EOR $FFFF )
