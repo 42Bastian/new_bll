@@ -1,0 +1,40 @@
+;;; -*-asm-*-
+;;;  Macro to set the LNX header
+;;;
+
+PAGESIZE_512	equ 512
+PAGESIZE_1024	equ 1024
+PAGESIZE_2048	equ 2048
+
+;;->typedef struct
+;;->{
+;;->  UBYTE   magic[4];
+;;->  UWORD   page_size_bank0;
+;;->  UWORD   page_size_bank1;
+;;->  UWORD   version;
+;;->  char   cartname[32];
+;;->  char   manufname[16];
+;;->  char   rotation;
+;;->  char audBit
+;;->  char eeprom
+;;->  UBYTE   spare[3];
+;;->}LYNX_HEADER_NEW;
+
+ MACRO LNX_HEADER ; pagesize0, pagesize1, cartname, manufname, rotation,eeprom
+ dc.b "LYNX"
+ dc.w \0			; page_size_bank0
+ dc.w \1			; page_size_bank1
+ dc.w 1				; version
+.\_0
+ dc.b \2			; cartname [32]
+.\_1
+ ds 32-(.\_1-.\_0)
+.\_2
+ dc.b \3			; manufacturer[16]
+.\_3
+ ds 16-(.\_3-.\_2)
+ dc.b \4			; rotation
+ dc.b 0 			; AUDIN
+ dc.b \5			; eeprom
+ dc.b 0,0,0
+ ENDM
