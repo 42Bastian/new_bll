@@ -48,7 +48,7 @@ LITTLEFNT2user  set 0
                   ENDIF
                 ENDIF
                 ENDM
-                
+
                 MACRO INC_CURRY
                 IF SCR_MAX_Y>255
                   IFVAR \0
@@ -118,7 +118,7 @@ LITTLEFNT2user  set 0
                   ENDIF
                 ENDIF
                 ENDM
-                
+
                 MACRO PRINT
                 IFVAR \2
                   bra .\_print1
@@ -137,8 +137,11 @@ LITTLEFNT2user  set 0
                 ENDIF
                 jsr print
                 ENDM
-                
+
                 MACRO INITFONT ; Font,BG_color,FG_color,Ajust
+ IFD InitFont
+ ECHO "INITFONT macro must be invoked _before_ including font.inc"
+ ENDIF
                 IFVAR \0
                 SWITCH \0
                 CASE SMALLFNT
@@ -169,4 +172,3 @@ LITTLEFNT2user  set 1
                 ENDIF
                 ENDM
                 END
-

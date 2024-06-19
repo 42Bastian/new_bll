@@ -1,0 +1,42 @@
+# -*-makefile-*-
+ifneq ($(findstring darwin,$(OSTYPE)),)
+#SENDOBJ=$(BLL_ROOT)/sendobj.js/sendobj.js
+SENDOBJ=python3 $(BLL_ROOT)/sendobj.py/sendobj.py -q
+FLASHER=python3 $(BLL_ROOT)/flash_up.py/flash_up.py -q
+COM?=/dev/tty.usbserial-FT63V37G
+else
+SENDOBJ=sendobj.exe
+FLASHER=flash_up.exe
+COM?=COM7
+endif
+
+MACOS=@prlexec --vm "Windows 11" -r
+ifeq ($(findstring aarch64,$(MACHTYPE)),aarch64)
+FELIX=$(MACOS) /fun/Felix.exe
+else
+FELIX=/fun/lynx/Felix.exe
+endif
+
+BAUD?=1000000
+
+.PHONY: send
+send: $(DEMO).o
+	@$(SENDOBJ) -b $(BAUD) -p $(COM) $<
+
+.PHONY: erase
+erase:
+	@$(FLASHER) -b $(BAUD) -p $(COM) -e
+
+.PHONY: flash
+flash: lnx
+	@$(FLASHER) -b $(BAUD) -p $(COM) -e -f $(DEMO)$(DEMO_EXT).lnx
+
+.PHONY: sram
+sram: lnx
+	@sram_up.exe -b $(BAUD) -p $(COM) -w $(DEMO)$(DEMO_EXT).lnx
+
+felix: $(DEMO).o
+	$(FELIX) $<
+
+felix_lnx felix_rom: $(DEMO)$(DEMO_EXT).lnx
+	$(FELIX) $<

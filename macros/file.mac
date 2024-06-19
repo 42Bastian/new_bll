@@ -1,4 +1,5 @@
-; MACROS und Konstanten fÅr FILE
+; -*-asm-*-
+; MACROS and constants for FILE
 ;
 IFND BlockSize
 BlockSize       set 1024
@@ -11,12 +12,12 @@ ExecFlag        db 0
 DestAddr        dw 0
 FileLen         dw 0
  ENDSTRUCT DirEntry
-                
+
                 MACRO LOADDIR
                 IFVAR \0
                   lda \0
                 ENDIF
-                jsr LoadDir 
+                jsr LoadDir
                 ENDM
 
                 MACRO LOADFILE
@@ -43,7 +44,7 @@ LoadFileUser    SET 1
                 ENDIF
                 jsr LoadFile
                 ENDM
-                
+
                 MACRO LOADPRG
 LoadPrgUser     SET 1
                 IFVAR \0

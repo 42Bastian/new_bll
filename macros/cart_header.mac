@@ -1,0 +1,22 @@
+; -*-asm-*-
+;;;
+;;; Game cartridge header
+;;;
+	MACRO CART_HEADER ; name, manufacture, rotation eeprom
+	run	0
+	LNX_HEADER BlockSize,0,\0,\1,\2,\3
+
+	run 0
+ SWITCH BlockSize
+ CASE 1024
+	ibytes	<uloader/ml.enc>
+ CASE 2048
+	ibytes	<uloader/ml512.enc>
+ ELSES
+	echo "Wrong blocksize %dBlockSize"
+	error
+ ENDS
+size_of_loader:
+
+ROM_PC	set size_of_loader
+	ENDM

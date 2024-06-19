@@ -1,4 +1,11 @@
 ; -*-asm-*-
+;;; Macros to help building a ROM with overlays to be loaded during
+;;; runtime
+
+;;;
+;;; Align the ROM PC on the next block for fast loading of the
+;;; next overlay
+;;;
 	MACRO ROM_BLOCK_ALIGN
 ALIGN_ROM_PC set (BlockSize-(ROM_PC & (BlockSize-1)))
 ROM_PC	set ROM_PC + ALIGN_ROM_PC
@@ -12,18 +19,35 @@ ROM_PC	set ROM_PC + ALIGN_ROM_PC
 	ENDR
 	ENDM
 
+;;;
+;;; Start a new overlay
+;;; Parameter
+;;; name of the overlay (must be a legal symbol)
+;;; addres in RAM where to run
+;;;
 	MACRO	OVERLAY_BEGIN ; name, code-address
 ROM_\0	equ ROM_PC
 	run	\1
 start_\0::
 	ENDM
 
+;;;
+;;; Close an overlay
+;;; Parameter
+;;; name of the overlay (must be the same as for OVERLAY_BEGIN
+;;;
 	MACRO	OVERLAY_END 	; name
 end_\0::
 size_\0::	equ end_\0 - start_\0
 ROM_PC	set ROM_PC+size_\0
 	ENDM
 
+;;;
+;;; Helpers to build the directory tables
+;;;
+;;; Parameter
+;;; Name of the overlay (same as for BEGIN and END)
+;;;
 	MACRO OVERLAY_BLOCK 	; name
 	dc.b ROM_\0 / BlockSize
 	ENDM
@@ -42,4 +66,40 @@ ROM_PC	set ROM_PC+size_\0
 
 	MACRO OVERLAY_SIZE_HI
 	dc.b (>size_\0)^$ff
+	ENDM
+
+	MACRO OVERLAY_DEST_LO
+	dc.b (<start_\0)
+	ENDM
+
+	MACRO OVERLAY_DEST_HI
+	dc.b (>start_\0)
+	ENDM
+
+;;;
+;;; Classic directory entry (reverse order!)
+;;;
+;;; Parameter
+;;; Name of the overlay (same as for BEGIN and END)
+;;; exec flag (optional) : $88 => code, $89 TP packed code
+;;;
+;; StartBlock      db 0
+;; BlockOffset     dw 0
+;; ExecFlag        db 0
+;; DestAddr        dw 0
+;; FileLen         dw 0
+
+	MACRO OVERLAY_DIR_ENTRY
+	dc.b (>size_\0)^$ff
+	dc.b (<size_\0)^$ff
+	dc.b (>start_\0)
+	dc.b (<start_\0)
+ IFVAR \1
+	dc.b \1
+ ELSE
+	dc.b 0
+ ENDIF
+	dc.b (>(ROM_\0 & (BlockSize-1)))^$ff
+	dc.b (<(ROM_\0 & (BlockSize-1)))^$ff
+	dc.b ROM_\0 / BlockSize
 	ENDM
