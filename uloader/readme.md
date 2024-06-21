@@ -4,7 +4,12 @@ This is a minimal loader for card files.
 
 * ml.enc
 
-  Encrypted header. Must be concatenated with the binary of the game.
+  Encrypted header for 256K carts. Must be concatenated with the binary of the game.
+  First byte of the game must contain the number of pages. Game goes to $200.
+
+* ml512.enc
+
+  Encrypted header for 512K carts. Must be concatenated with the binary of the game.
   First byte of the game must contain the number of pages. Game goes to $200.
 
 * bll.enc
