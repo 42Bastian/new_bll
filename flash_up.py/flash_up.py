@@ -292,7 +292,12 @@ if  n == 1:
     exit(1)
 
 
-flashcard_o = dirname(sys.argv[0])+'flashcard.o'
+flashcard_o = dirname(sys.argv[0])
+
+if flashcard_o[-1] != '/':
+    flashcard_o += '/'
+
+flashcard_o += 'flashcard.o'
 
 p=1
 while p < n:
