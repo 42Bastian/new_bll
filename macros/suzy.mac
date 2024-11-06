@@ -24,11 +24,8 @@ SuzyInitFlag    equ 1
 
                 MACRO HOME
                 stz $fc04
-                stz $fc05
                 stz $fc06
-                stz $fc07
                 ENDM
-
 
                 MACRO READKEY
                 lda $fcb0
@@ -37,11 +34,8 @@ SuzyInitFlag    equ 1
                 sta Cursor
                 pla
                 and #$0f
-                asl
-                sta Button
-                lda $fcb1
-                and #1
-                ora Button
+                lsr $fcb1
+                rol
                 sta Button
                 ENDM
 
@@ -54,11 +48,8 @@ SuzyInitFlag    equ 1
                 MACRO READBUTTON
                 lda $fcb0
                 and #$0f
-                asl
-                sta Button
-                lda $fcb1
-                and #1
-                ora Button
+                lsr $fcb1
+                rol
                 sta Button
                 ENDM
 
