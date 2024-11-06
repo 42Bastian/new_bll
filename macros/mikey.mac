@@ -246,7 +246,9 @@ BLACK		set 0
 RED		set 1
 BLUE		set 2
 GREEN		set 3
-
+PURPLE		set 4
+CYAN		set 5
+BROWN		set 6
 LIGHTGREY	set 7
 GREY		set 8
 LIGHTRED	set 9
@@ -258,19 +260,23 @@ YELLOW		set 14
 WHITE		set 15
 ;---------------
 SCHWARZ		set 0
+BLACK		set 9
 ROT		set 1
 BLAU		set 2
 GRUEN		set 3
 LILA		set 4
 TUERKIS		set 5
+
 ORANGE		set 6
 BRAUN		set 6
+
 HELLGRAU	set 7
 GRAU		set 8
 HELLROT		set 9
 HELLBLAU	set 10
 HELLGRUEN	set 11
 PINK		set 12
-
 GELB		set 14
+YELLOW		set 14
 WEISS		set 15
+WHITE		set 15
