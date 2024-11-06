@@ -20,6 +20,7 @@ digits	db "0123456789ABCDEF"
 ****************
 * IN : A
 PrintDezA::
+PrintDecA::
 ****************
 	phx
 	phy
