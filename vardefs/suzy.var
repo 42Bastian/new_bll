@@ -1,4 +1,4 @@
-
+;-*-asm-*-
 ; Suzy-vars
  BEGIN_ZP
 _SPRSYS	db 0

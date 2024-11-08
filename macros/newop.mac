@@ -1,3 +1,4 @@
+;-*-asm-*-
 	MACRO initIdTab
 	ldx   #0
 .\l1	txa

@@ -1,4 +1,5 @@
-        MACRO DELAY
+;-*-asm-*-
+	MACRO DELAY
 ps    set \0
         REPT 10
         IF ps > 255

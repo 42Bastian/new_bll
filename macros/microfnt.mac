@@ -1,3 +1,4 @@
+;-*-asm-*-
 ;
 ; MACROs for microfnt and microfn1
 ;
@@ -66,4 +67,3 @@ mfnt            ibytes <microfnt/microfnt.o>
                 lda #<\2
                 jsr MFNT_PrintStringXY
                 ENDM
-

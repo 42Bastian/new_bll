@@ -1,4 +1,4 @@
-
+;-*-asm-*-
 ; vars for FILE.INC
 
  BEGIN_ZP
@@ -9,6 +9,6 @@ BlockByte	ds 2
 BlockByte	ds 1
  ENDIF
 
-entry	ds DirEntry.LEN	; space for current entry
-DestPtr	dw 0
+entry		ds DirEntry.LEN	; space for current entry
+DestPtr		dw 0
  END_ZP

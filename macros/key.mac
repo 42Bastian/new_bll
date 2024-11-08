@@ -1,3 +1,4 @@
+;-*-asm-*-
 _PAUSE	equ %00001
 _FIREA	equ %00010
 _FIREB	equ %00100

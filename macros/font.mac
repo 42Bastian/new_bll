@@ -1,3 +1,4 @@
+;-*-asm-*-
 IFND SCR_MAX_X
 SCR_MAX_X       EQU 160
 SCR_MAX_Y       EQU 102

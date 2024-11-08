@@ -1,8 +1,8 @@
-
+;-*-asm-*-
  IFND SmpTimer
 SmpTimer	equ 1
  ENDIF
- 
+
  BEGIN_ZP
 SmpSema	ds 1
 SmpTemp	ds 1

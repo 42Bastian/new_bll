@@ -1,3 +1,4 @@
+;-*-asm-*-
 ; vars for MSG
 ; 97/08/13      42BS            commented out all tx-irq stuff
 ; 07/08/21      42BS            deleted all tx-irq stuff

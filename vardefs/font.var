@@ -1,4 +1,5 @@
-; Variablen fÅr FONT
+;-*-asm-*-
+; Variables for FONT
 
  BEGIN_ZP
 TextPtr         dw 0
@@ -42,8 +43,8 @@ MaxY            dw 0
 MinY            db 0
 MaxY            db 0
  ENDIF
-BG_Color        db 0 
-FG_Color        db 0 
+BG_Color        db 0
+FG_Color        db 0
  END_ZP
 
 ; vars may lay anywhere YOU want
@@ -56,11 +57,3 @@ BitCounter2     ds 1
 BitBuff         ds 10
 Laenge          ds 2
  END_ZP
-
-
-
-
-
-
-
-

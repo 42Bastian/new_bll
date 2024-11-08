@@ -1,3 +1,4 @@
+;-*-asm-*-
 PAUSE:          SET 1
 BUTTON_A        SET 2
 BUTTON_B        SET 4

@@ -1,3 +1,4 @@
+;-*-asm-*-
 ; vars for SERIAL
 
  IFND TxBufferSize
@@ -9,19 +10,19 @@ TimeOutTimer	equ 7
 RxParityErr	equ %00010000
 RxOverrun	equ %00001000
 RxFrameErr	equ %00000100
-RxBreak	equ %00000010
+RxBreak		equ %00000010
 
  BEGIN_ZP
-TxPtrIn	ds 1
+TxPtrIn		ds 1
 TxPtrOut	ds 1
-RxPtrIn	ds 1
+RxPtrIn		ds 1
 RxPtrOut	ds 1
 
 LastSerialStat	ds 1
 SerialStat	ds 1	; ComLynx-Errors $FD8C(r)
 SerialContrl	ds 1	; copy of $FD8C(w)
 TimeOutFlag	ds 1	; <0 => TimeOut
-TxDone	ds 1	; <0 last char send
+TxDone		ds 1	; <0 last char send
 SerialLastRxTime ds 2	; time of last char received
 SerialTimeOut	ds 1	; time for TimeOut
  END_ZP

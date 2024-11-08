@@ -13,4 +13,3 @@ x3              ds 2
 y3              ds 2
 ENDIF
  END_ZP
-

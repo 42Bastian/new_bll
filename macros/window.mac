@@ -1,3 +1,4 @@
+;-*-asm-*-
 	MACRO DEFLCB	; LineControlBlock definieren
 	IF SCR_MAX_X>255  ; X
 	  dw \0

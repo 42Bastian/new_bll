@@ -1,3 +1,4 @@
+;-*-asm-*-
  BEGIN_ZP
 IFD BRKuser
 BRKvec	ds 2

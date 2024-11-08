@@ -1,3 +1,4 @@
+;-*-asm-*-
 IFND SCR_MAX_X
 SCR_MAX_X       EQU 160
 SCR_MAX_Y       EQU 102
@@ -73,7 +74,7 @@ TextColor       db 0            ; well, the color
                   ENDIF
                 ENDIF
                 ENDM
-                
+
                 MACRO INC_CURRY
                 IF SCR_MAX_Y>255
                   IFVAR \0
@@ -143,7 +144,7 @@ TextColor       db 0            ; well, the color
                   ENDIF
                 ENDIF
                 ENDM
-                
+
                 MACRO PRINT                     ; print a text
                 IFVAR \1                        ; got a second parameter ?
                   ldx \0                        ; yes => indirect
@@ -168,7 +169,7 @@ TextColor       db 0            ; well, the color
                 ENDIF
                 jsr DrawSprite                  ; and draw it
                 ENDM
-                
+
                 MACRO REPRINT                   ; draw a previously prepared text
                 IFVAR \1                        ; indirect ?
                   clc
@@ -214,7 +215,7 @@ LITTLEFNT2user  set 1
                 dw \4,\5        ; X/Y-Size
                 db \6           ; color
                 ENDM
-                
+
 ;
 ; shorter call of a PCB
 ; no Flip no resizing
@@ -244,7 +245,7 @@ LITTLEFNT2user  set 1
                 dw NORMAL_SIZE,NORMAL_SIZE
                 db \3           ; Farbe
                 ENDM
-                
+
                 MACRO INITFONT
                 IFVAR \0
                 SWITCH \0
@@ -266,4 +267,3 @@ LITTLEFNT2user  set 1
                 ENDIF
                 ENDM
                 END
-

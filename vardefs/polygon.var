@@ -1,3 +1,4 @@
+;-*-asm-*-
 ; vars for DRAW.INC
  BEGIN_ZP
 x1              ds 2
@@ -12,4 +13,3 @@ ay              ds 2
 bx              ds 2
 by              ds 2
  END_ZP
-

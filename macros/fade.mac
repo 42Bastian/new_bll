@@ -1,3 +1,4 @@
+;-*-asm-*-
 FADERATE	SET 40
 
 	MACRO FADE_OUT
@@ -94,4 +95,3 @@ FADERATE	SET 40
 	  ECHO "FADE_IN :Farbtabelle fehlt !!"
 	ENDIF
 	ENDM
-

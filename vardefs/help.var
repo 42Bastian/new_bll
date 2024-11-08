@@ -1,3 +1,4 @@
+;-*-asm-*-
 *
 * just three temp-registers ;)
 *
@@ -6,3 +7,7 @@ temp::    ds 2
 temp1::   ds 2
 temp2::   ds 2
  END_ZP
+
+tmp0	equ temp
+tmp1	equ temp1
+tmp2	equ temp2

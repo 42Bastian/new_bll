@@ -1,3 +1,4 @@
+;-*-asm-*-
 ; vars for RANDOM
  BEGIN_ZP
 LastRND	dw 0
