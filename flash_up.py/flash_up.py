@@ -294,8 +294,9 @@ if  n == 1:
 
 flashcard_o = dirname(sys.argv[0])
 
-if flashcard_o[-1] != '/':
-    flashcard_o += '/'
+
+if flashcard_o == "" or flashcard_o == ".":
+    flashcard_o = "./"
 
 flashcard_o += 'flashcard.o'
 
