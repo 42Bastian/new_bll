@@ -295,10 +295,14 @@ if  n == 1:
 flashcard_o = dirname(sys.argv[0])
 
 
-if flashcard_o == "" or flashcard_o == ".":
-    flashcard_o = "./"
+if flashcard_o == "":
+    flashcard_o = "."
+
+flashcard_o += "/"
+
 
 flashcard_o += 'flashcard.o'
+print(flashcard_o)
 
 p=1
 while p < n:
