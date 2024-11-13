@@ -300,9 +300,8 @@ if flashcard_o == "":
 
 flashcard_o += "/"
 
-
 flashcard_o += 'flashcard.o'
-print(flashcard_o)
+
 
 p=1
 while p < n:
