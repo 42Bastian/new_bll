@@ -1,14 +1,9 @@
 ;-*-asm-*-
 ; vars for minihex
 
- IFND MICROHEX
-MICROHEX EQU 1
- ENDIF
  BEGIN_ZP
 mh_screenBase	ds 2
 mh_color	ds 1
- IFD MICROHEX
 mh_low		ds 1
 mh_high		ds 1
- ENDIF
  END_ZP
