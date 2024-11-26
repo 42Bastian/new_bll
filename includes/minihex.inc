@@ -5,18 +5,17 @@
 ;;;
 ;;; Input: Y:A > 8 bit or A
 ;;;
-	include <macros/if_while.mac>
 
 minihex16::
 	pha
 	tya
 	jsr	minihex8
-	pla
-	bra	minihex8
-minihex12::
-	pha
-	tya
-	jsr	minihex4
+;;->	bra	minihex8a
+;;->minihex12::
+;;->	pha
+;;->	tya
+;;->	jsr	minihex4
+;;->minihex8a
 	pla
 minihex8::
 	pha
@@ -63,9 +62,9 @@ minihex4::
 	lda	mh_screenBase
 	adc	#78
 	sta	mh_screenBase
-	_IFCS
-	  inc	mh_screenBase+1
-	_ENDIF
+	bcc	.5
+	inc	mh_screenBase+1
+.5
 	cpy	#9
 	bne	.loop
 
