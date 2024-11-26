@@ -27,11 +27,6 @@ minihex8::
 	jsr	minihex4
 	pla
 minihex4::
-	ldy	mh_screenBase+1
-	phy
-	ldy	mh_screenBase
-	phy
-
 	and	#$f
 	tay
 	lda	_l_0,y
@@ -74,12 +69,12 @@ minihex4::
 	cpy	#9
 	bne	.loop
 
-	pla
-	clc
-	adc	#2
+	sec			; rewind ptr and next char
+	lda	mh_screenBase
+	sbc	#<(5*78-2)
 	sta	mh_screenBase
-	pla
-	adc	#0
+	lda	mh_screenBase+1
+	sbc	#>(5*78-2)
 	sta	mh_screenBase+1
 	rts
 
