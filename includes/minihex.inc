@@ -79,18 +79,13 @@ minihex4::
 	lda	#0
 	asl	mh_low
 	rol	mh_high
-	bcs	.2
-	asl	mh_low
-	rol	mh_high
-	bcc	.3
-	lda	#$f
-	bra	.3
-.2
+	bcc	.2
 	lda	#$f0
+.2
 	asl	mh_low
 	rol	mh_high
 	bcc	.3
-	lda	#$ff
+	ora	#$f
 .3
 	and	mh_color
 	iny
