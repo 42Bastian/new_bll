@@ -1,5 +1,9 @@
 ;-*-asm-*-
 ;**************
+ IFND IF_WHILE_MAC
+
+IF_WHILE_MAC	EQU 1
+
                 MACRO _IFNE
                 IFVAR \0
                   SWITCH "\0"
@@ -412,4 +416,5 @@ _WHILE@         SET *
 .\WEND@
                 DEC@
                 ENDM
+ ENDIF
 ;***************

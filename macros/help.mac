@@ -10,6 +10,10 @@
 
 ; MOVE is in 68k-mode : src,dst !!
 
+ IFND HELP_MAC
+
+HELP_MAC	EQU 1
+
 		MACRO SKIP1
 		dc.b $e2		;; NOP with 2 bytes/2 cycles
 		ENDM
@@ -394,7 +398,8 @@ LOMEM		SET NEXT_MEM
 		ENDIF
 		ENDM
 
-		MACRO STRUCT
+		macro STRUCT
+STRUCT_	equ 1
 		IFVAR \0
 		INC@
 STRUCT_PC@	SET *		; save current PC
@@ -402,6 +407,16 @@ STRUCT_PC@	SET *		; save current PC
 		ORG 0		; needed for offsets
 		ELSE
 		  fail "Error : Name of STRUCT missing !!"
+		ENDIF
+		ENDM
+
+		MACRO ENDSTRUCT
+		IFVAR \0
+\0.LEN		EQU *		; size of STRUCTure
+		ORG STRUCT_PC@+\0.LEN ; restore PC
+		DEC@
+		ELSE
+		  fail "Error : ENDSTRUCT : Name missing !!"
 		ENDIF
 		ENDM
 
@@ -415,16 +430,6 @@ STRUCT_PC@	SET *		; save current PC
 		ENDIF
 		dex
 		bne .\M_1
-		ENDM
-
-		MACRO ENDSTRUCT
-		IFVAR \0
-\0.LEN		EQU *		; size of STRUCTure
-		ORG STRUCT_PC@+\0.LEN ; restore PC
-		DEC@
-		ELSE
-		  fail "Error : ENDSTRUCT : Name missing !!"
-		ENDIF
 		ENDM
 
 		MACRO MOVE.W
@@ -561,3 +566,4 @@ lbpld		set -lbpld
 		cpx	$5aa5
 		dc.b $ec,0,0	; CPX $0000
 		ENDM
+ ENDIF
