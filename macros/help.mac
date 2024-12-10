@@ -399,7 +399,6 @@ LOMEM		SET NEXT_MEM
 		ENDM
 
 		macro STRUCT
-STRUCT_	equ 1
 		IFVAR \0
 		INC@
 STRUCT_PC@	SET *		; save current PC
