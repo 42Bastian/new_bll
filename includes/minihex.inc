@@ -5,6 +5,10 @@
 ;;;
 ;;; Input: Y:A > 8 bit or A
 ;;;
+;;; Set mh_screenBase to the screen to write to.
+;;;   There is no cursor, so just set base to move.
+;;;
+;;; Set mh_color (both nibbles!, e.g. $DD)
 
 minihex16::
 	pha
