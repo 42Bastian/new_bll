@@ -239,6 +239,11 @@ def loadImage(filename, verbose) -> bytearray:
         fd = open(filename,'rb')
         lnxhead.fromFile(fd.read(64))
         image = bytearray(fd.read())
+        l = len(image);
+        if ( l != lnxhead.page_size_bank0*256 ):
+            print("Size only ",len(image))
+            for i in range(0,lnxhead.page_size_bank0*256-l):
+                image.append(0xff)
         fd.close
     except:
         print("Error reading ",filename)
