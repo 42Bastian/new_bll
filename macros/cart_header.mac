@@ -2,6 +2,13 @@
 ;;;
 ;;; Game cartridge header
 ;;;
+;;; Expects labels End and Start.
+;;;
+
+ IFND BlockSize
+	echo "Need to define BlockSize (1024 or 2048). Defaulting to 1024"
+BlockSize	equ 1024
+ ENDIF
 	MACRO CART_HEADER ; name, manufacture, rotation eeprom
 	run	0
 	LNX_HEADER BlockSize,0,\0,\1,\2,\3
@@ -17,6 +24,9 @@
 	error
  ENDS
 size_of_loader:
+	run $1ff
+	; number of pages to load (must by 1st byte!!!)
+	dc.b 1+((End-Start)>>8)
 
 ROM_PC	set size_of_loader
 	ENDM

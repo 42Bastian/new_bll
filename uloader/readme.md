@@ -27,3 +27,7 @@ This is a minimal loader for card files.
 * allff.lyx.bz2
 
   A binary with 256K $FF to fill the ROM file (better for flashing).
+
+* demo.s
+
+ A small demo doing nothing but showing the use of the CART_HEADER macro to build a ready to run LNX file from single source.

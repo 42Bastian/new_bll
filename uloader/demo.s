@@ -1,13 +1,20 @@
-;
+;;; Demo for CART_HEADER
+;;;
 
-	RUN $1ff	; do not change!!
+BlockSize	equ 1024
 
+	include <macros/lnx_header.mac>
+	include <macros/cart_header.mac>
 
-	; number of pages to load (must by 1st byte!!!)
-	dc.b 	(size+255)>>8	; round up to full pages
+ IFD LNX
+	CART_HEADER "RAYCAST","42Bastian",0,0
+ ELSE
+	run $200
+ ENDIF
 
+Start::
 ; code will be loaded at $200!
-	jsr	ende
+	jsr	subroutine
 	sta 0
 endless:
 	jmp	endless
@@ -21,6 +28,8 @@ endless:
 	dc.b "Hjfvhfdsjhgjkfdhjkghfdkjghfdj sdafjdshgjkfhjkhghfjs"
 	dc.b "000000000001111111111111111222222222222222222222222"
 	ENDR
-ende	rts
+subroutine:
+	rts
+End:
 
 size	EQU *-$200	; Take encrypted loader into account!
