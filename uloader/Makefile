@@ -43,4 +43,4 @@ demo0006_512.lnx: bll512.enc
 .PHONY: clean
 clean:
 	rm -f *.bin
-	rm -f ml.lnx ml.lyx demo0006.lnx demo0006_512.lnx
+	rm -f demo.lnx ml.lyx demo0006.lnx demo0006_512.lnx
