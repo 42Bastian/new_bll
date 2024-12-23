@@ -233,6 +233,11 @@ IFD BRKuser
 ****************
 * Init BRK-server
 InitBRK::
+	lda $fff9
+	pha
+	lda #$C
+	sta $fff9		; enable RAM under the ROM
+
 	ldx #BRKlen
 .1	  lda _BRKserver-1,x
 	  sta BRKserver-1,x
@@ -244,6 +249,8 @@ InitBRK::
 	  sta EnterBRK,x
 	  dex
 	bpl .2
+	pla
+	sta $fff9
 	rts
 _EnterBRK
 	pha
@@ -343,7 +350,8 @@ _brk_baud
 * continue from BRK and restore registers
 *
 Continue
-.99	IFD SERIAL
+.99
+	IFD SERIAL
 	lda #%01011101
 	sta $fd8c	; reset ComLynx-errors and enable RX-irq
 	stz TxDone
@@ -399,7 +407,8 @@ BRKSetRegisters::
 * modify Lynx memory
 * $84,addr,n
 ****************
-BRKWriteMem::	jsr GetAddrCnt
+BRKWriteMem::
+	jsr GetAddrCnt
 	ldy #0
 .loop	  jsr BRK_RecByte	; what
 	  sta (DebugPtr),y
@@ -411,7 +420,8 @@ BRKWriteMem::	jsr GetAddrCnt
 * read Lynx memory
 * $85,addr,n
 ****************
-BRKReadMem::	jsr GetAddrCnt
+BRKReadMem::
+	jsr GetAddrCnt
 	ldy #0
 .loop	  lda (DebugPtr),y
 	  jsr BRKSendByte
@@ -421,7 +431,8 @@ BRKReadMem::	jsr GetAddrCnt
 	rts
 ****************
 * read Address and count
-GetAddrCnt::	jsr BRK_RecByte
+GetAddrCnt::
+	jsr BRK_RecByte
 	sta DebugPtr+1
 	jsr BRK_RecByte
 	sta DebugPtr
@@ -434,14 +445,16 @@ GetAddrCnt::	jsr BRK_RecByte
 *
 * send serial-data
 *
-BRKSendByte::	bit $fd8c
+BRKSendByte::
+	bit $fd8c
 	bpl BRKSendByte
 	sta $fd8d
 ;>	  rts
 *
 * wait for serial-data
 *
-BRK_RecByte::	bit $fd8c
+BRK_RecByte::
+	bit $fd8c
 	bvc BRK_RecByte
 	lda $fd8d
 	rts
