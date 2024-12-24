@@ -11,21 +11,24 @@ port='/dev/cu.usbserial-FT63V37G'
 
 n = len(sys.argv)
 
-p=1
-while p < n-1:
-    if sys.argv[p] == '-b':
-        baud = sys.argv[p+1]
-        p += 2
+para=1
+while para < n-1:
+    if sys.argv[para] == '-b':
+        baud = sys.argv[para+1]
+        para += 2
+        continue
 
-    if sys.argv[p] == '-p':
-        port = sys.argv[p+1]
-        p += 2
+    if sys.argv[para] == '-p':
+        port = sys.argv[para+1]
+        para += 2
+        continue
 
-    if sys.argv[p] == '-v':
+    if sys.argv[para] == '-v':
         verbose=1
-        p += 1
+        para += 1
+        continue
 
-    if sys.argv[p] == '-h':
+    if sys.argv[para] == '-h':
         print("read_regs [-v] [-p <device>] [-b baud] file")
         print("Default: ",baud,"Bd Port:",port)
         exit(1)
@@ -40,13 +43,13 @@ result=bytearray(9+1)
 if verbose == 1:
     print("Port:", port,"\nBaud:",baud)
 
-# Prepare transmit header
+# Prepare Command
 command[0] = 0x86
 
-ser = serial.Serial(port,baud,parity='E',timeout=2.)
-
+ser = serial.Serial(port,baud,parity='E')
 ser.write(command)
-result=ser.read(9+1); # read back to slow down
+result=ser.read(9+1);
+ser.close()
 
 p=result[6]
 print(f'A:{result[9]:02x}')
