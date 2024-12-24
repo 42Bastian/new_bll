@@ -50,4 +50,4 @@ Start
 	BREAKPOINT 0
 	bra .1
 
-	include "debug.inc"
+	include <includes/debug.inc>
