@@ -6,13 +6,14 @@ import sys
 from os.path import exists
 
 verbose=1
-baud=62500
+baud=1000000
 port='/dev/cu.usbserial-FT63V37G'
 
 n = len(sys.argv)
 
 if  n == 1:
-    print("sendobj -p <device> [-b baud] file")
+    print("sendobj [-q] [-p <device>] [-b baud] file")
+    print("Default: ",baud,"Bd Port:",port)
     exit(1)
 
 p=1
