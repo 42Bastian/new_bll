@@ -6,7 +6,6 @@
 EnterBRK        ds 1            ; pha
                 ds 2            ; lda #$C
                 ds 3            ; sta $fff9
-                ds 1            ; pla
                 ds 3            ; jmp BRKserver
  ENDIF
 DebugEnable     ds 1            ; = 0 => Debug possible

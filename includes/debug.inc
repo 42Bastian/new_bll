@@ -256,18 +256,18 @@ _EnterBRK
 	pha
 	lda #$C	; vectors + ROM = RAM
 	sta $fff9
-	pla
 	jmp BRKserver
 _EnterBRKe
 ****************
 _BRKserver	set *
-	RUN $FE40
+	RUN $FF00
 ****************
 * BRKserver handles BRK #xx
 * and host-commands
 ****************
 BRKserver::
 	cld	; we do it binary ;-)
+	pla
 	sta SaveA
 	stx SaveX
 	sty SaveY
@@ -472,7 +472,18 @@ SaveBRKNum
 	dc.b $81		; Header
 ****************
 BRKend	set *
+
+ IF BRKend > $fff8
+    FAIL "Change start of BRKserver ! Current end: %HBRKend "
+ ENDIF
+
 BRKlen	set BRKend-BRKserver
+BRKstart set $FFF8-BRKlen
+
 	echo "length of BRK-server :%DBRKlen"
+	echo "End of BRK-server:%HBRKend"
+ IF BRKstart <> BRKserver
+	echo "Possible start: %HBRKstart"
+ ENDIF
 	RUN _BRKserver+BRKlen
 ENDIF ; BRKuser
