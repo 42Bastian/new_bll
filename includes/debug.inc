@@ -14,22 +14,23 @@
 *		     $85 - read	 : 0/1/2
 *
 * 11.8.96	$81,"M" : This cmd. sends the complete RAM to host
-*		modified Loader : not self-mod. anymore, shorter
+*			modified Loader : not self-mod. anymore, shorter
 * 16.8.96	removed $81,"M"
-*		changed BRK-remote commands :
-*		  $84,addr,n
-*		  $85,addr,n
+*			changed BRK-remote commands :
+*			$84,addr,n
+*			$85,addr,n
 * 19.8.96	bug found: BRKserver now has a own SendByte-routine
 *
 * 28.8.96	included special-BRK : BRK #$FF only sends data and continues
 *  2.8.96	TxDone is cleared after BRK
 * 23.12.96	Test for the Profiling BRK changed
-*		wait until Xmitter done after host-command
+*			wait until Xmitter done after host-command
 * 26.03.97	BRK-server waits for echo on ComLynx
 * 18.11.97	moved Loader installation from serial/talktalk..
-*		added :	     $86 - get registers
-*		if BRK comes up while not in monlynx, this helps to get
-*		the current status
+*			added :	     $86 - get registers
+*			if BRK comes up while not in monlynx, this helps to get
+*			the current status
+* 7.1.25	added $8f - breakpoint to distinguish breakpoint from $86
 *
 
 ***************
@@ -305,7 +306,7 @@ _brk_baud
 ;>	    jsr BRKSendByte
 ;>	    dex
 ;>	  bpl .loop
-	jsr BRKSndRegisters
+	jsr BRKSendBreakpoint
 *
 * wait until the comlynx-port is silent
 *
@@ -380,17 +381,22 @@ BRK_routs_host::
 	dc.w BRKSetRegisters	; $83,A,X,Y,S,P,PC
 	dc.w BRKWriteMem	; $84,addr,n,...
 	dc.w BRKReadMem		; $85,addr,n
-	dc.w BRKSndRegisters	; $86
+	dc.w BRKSendRegisters	; $86
 
 MAX_BRK_FN	equ $86
 ****************
-* send current registers
-BRKSndRegisters::
+* Send breakpoint number and fall into sending registers
+BRKSendBreakpoint::
 	ldx #8
-.loop	  lda SaveA,x
+	bra loop
+
+* send current registers
+BRKSendRegisters::
+	ldx #7
+loop	  lda SaveA,x
 	  jsr BRKSendByte
 	  dex
-	bpl .loop
+	bpl loop
 	rts
 ****************
 * set processor registers
@@ -469,7 +475,7 @@ SaveS	ds 1
 SavePC	ds 2
 SaveBRKNum
 	ds 1
-	dc.b $81		; Header
+	dc.b $8f		; Header
 ****************
 BRKend	set *
 
