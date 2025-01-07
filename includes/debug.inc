@@ -14,22 +14,23 @@
 *		     $85 - read	 : 0/1/2
 *
 * 11.8.96	$81,"M" : This cmd. sends the complete RAM to host
-*		modified Loader : not self-mod. anymore, shorter
+*			modified Loader : not self-mod. anymore, shorter
 * 16.8.96	removed $81,"M"
-*		changed BRK-remote commands :
-*		  $84,addr,n
-*		  $85,addr,n
+*			changed BRK-remote commands :
+*			$84,addr,n
+*			$85,addr,n
 * 19.8.96	bug found: BRKserver now has a own SendByte-routine
 *
 * 28.8.96	included special-BRK : BRK #$FF only sends data and continues
 *  2.8.96	TxDone is cleared after BRK
 * 23.12.96	Test for the Profiling BRK changed
-*		wait until Xmitter done after host-command
+*			wait until Xmitter done after host-command
 * 26.03.97	BRK-server waits for echo on ComLynx
 * 18.11.97	moved Loader installation from serial/talktalk..
-*		added :	     $86 - get registers
-*		if BRK comes up while not in monlynx, this helps to get
-*		the current status
+*			added :	     $86 - get registers
+*			if BRK comes up while not in monlynx, this helps to get
+*			the current status
+* 7.1.25	added $8f - breakpoint to distinguish breakpoint from $86
 *
 
 ***************
@@ -42,9 +43,10 @@ InstallLoader::
 	sta $fff9		; enable RAM under the ROM
 
 	ldx #LoaderLen-1	; put Loader in the right place
-.loop	  lda _Loader,x
-	  sta Loader,x
-	  dex
+.loop	  
+		lda _Loader,x
+		sta Loader,x
+		dex
 	bpl .loop
 	pla
 	eor #$80
@@ -69,9 +71,10 @@ load_ptr2	equ $4
 
 Loader::
 	ldy #4
-.loop0	  READ_BYTE
-	  sta load_len-1,y
-	  dey
+.loop0	  
+		READ_BYTE
+		sta load_len-1,y
+		dey
 	bne .loop0	; get destination and length
 	tax	; lowbyte of length
 
@@ -80,7 +83,8 @@ Loader::
 	lda load_ptr+1
 	sta load_ptr2+1
 
-.loop1	inx
+.loop1	
+	inx
 	bne .1
 	inc load_len+1
 	bne .1
@@ -112,10 +116,12 @@ do_debug::
 	sta DebugFlag	; set flag
 	clc	; C=0 => SERIAL ,don't use this byte
 	rts
-.no_debug	sec	; C=1 => use this one
+.no_debug	
+	sec	; C=1 => use this one
 	rts
 
-.no_head	bit DebugFlag	; flag set ?
+.no_head
+	bit DebugFlag	; flag set ?
 	bpl .no_debug	; >0 => no => ready
 	cmp #"P"	; (P)rogram down-load ?
 	bne .cont
@@ -123,7 +129,8 @@ do_debug::
 	lda #$C
 	sta $fff9	; enable RAM under the ROM/vectors
 	jmp Loader	; get it
-.cont	cmp #"R"	; (R)eset ?
+.cont	
+	cmp #"R"	; (R)eset ?
 	bne .cont1
 	jmp Start	; yes => reset program
 .cont1
@@ -134,12 +141,14 @@ do_debug::
 * Headerbyte $81 + undefinded command
 * => 'resend' the header-byte
 
-.exit	pha
+.exit
+	pha
 	lda #$81
 
 	IFD TALKTALK	 ; which IRQ-service-routine ?
 	ldx MessagePtrIn
-.ok_rx	sta MessageBufferIn,x
+.ok_rx	
+	sta MessageBufferIn,x
 	inx
 	cpx MessageLenIn
 	bne .exit0
@@ -165,7 +174,8 @@ ENDIF
 	cpx RxPtrOut
 	bne .exit0
 	tax
-.exit0	stx RxPtrIn
+.exit0
+	stx RxPtrIn
 	ENDIF
 ****************
 	IFD MSG
@@ -175,7 +185,8 @@ ENDIF
 	ENDIF
 
 	pla
-.exit1	stz DebugFlag
+.exit1
+	stz DebugFlag
 	sec
 	rts
 
@@ -195,9 +206,10 @@ ENDIF
 screen_to_comlynx::
 	phy
 	ldx #31
-.loopc	 lda $fda0,x
-	 jsr SendByte
-	 dex
+.loopc	 
+		lda $fda0,x
+		jsr SendByte
+		dex
 	bpl .loopc	; colors first
 	ldy #102
 ;-- send screen with Y lines
@@ -207,15 +219,17 @@ ELSE
 	MOVE ScreenBase,DebugPtr
 ENDIF
 
-.loopy	  ldx #79
-.loopx	    lda (DebugPtr)
+.loopy	  
+		ldx #79
+.loopx	    
+		lda (DebugPtr)
 	    inc DebugPtr
 	    bne .cont
 	    inc DebugPtr+1
 .cont	    jsr SendByte
 	    dex
-	  bpl .loopx
-	  dey
+		bpl .loopx
+		dey
 	bne .loopy
 	jmp Start	; reset
 	ENDIF
@@ -239,15 +253,17 @@ InitBRK::
 	sta $fff9		; enable RAM under the ROM
 
 	ldx #BRKlen
-.1	  lda _BRKserver-1,x
-	  sta BRKserver-1,x
-	  dex
+.1	  
+		lda _BRKserver-1,x
+		sta BRKserver-1,x
+		dex
 	bne .1
 	MOVEI EnterBRK,BRKvec
 	ldx #_EnterBRKe-_EnterBRK-1
-.2	  lda _EnterBRK,x
-	  sta EnterBRK,x
-	  dex
+.2	  
+		lda _EnterBRK,x
+		sta EnterBRK,x
+		dex
 	bpl .2
 	pla
 	sta $fff9
@@ -281,8 +297,9 @@ BRKserver::
 	sty DebugPtr
 	iny
 	bne .cont
-	  dex
-.cont	stx DebugPtr+1
+	dex
+.cont	
+	stx DebugPtr+1
 	lda (DebugPtr)	; get BRK-number
 	sta SaveBRKNum
 	tsx
@@ -300,16 +317,12 @@ _brk_baud
 *
 * send current registers
 *
-;>	  ldx #8
-;>.loop	    lda SaveA,x
-;>	    jsr BRKSendByte
-;>	    dex
-;>	  bpl .loop
-	jsr BRKSndRegisters
+	jsr BRKSendBreakpoint
 *
 * wait until the comlynx-port is silent
 *
-.wait0	bit $fd8c
+.wait0	
+	bit $fd8c
 	bvc .wait1
 	lda $fd8d
 	bra .wait0
@@ -341,7 +354,8 @@ _brk_baud
 * wait, until Tx totally done
 *
 	lda #$20
-.wait2	bit $fd8c
+.wait2	
+	bit $fd8c
 	beq .wait2
 
 	ldy #1
@@ -371,7 +385,8 @@ Continue
 *
 * jump via X to the BRK-command
 *
-call_BRK_fn::	jmp (BRK_routs_host,x)
+call_BRK_fn::	
+	jmp (BRK_routs_host,x)
 *
 * remote-routines
 *
@@ -380,17 +395,23 @@ BRK_routs_host::
 	dc.w BRKSetRegisters	; $83,A,X,Y,S,P,PC
 	dc.w BRKWriteMem	; $84,addr,n,...
 	dc.w BRKReadMem		; $85,addr,n
-	dc.w BRKSndRegisters	; $86
+	dc.w BRKSendRegisters	; $86
 
 MAX_BRK_FN	equ $86
 ****************
-* send current registers
-BRKSndRegisters::
+* Send breakpoint number and fall into sending registers
+BRKSendBreakpoint::
 	ldx #8
-.loop	  lda SaveA,x
-	  jsr BRKSendByte
-	  dex
-	bpl .loop
+	bra loop
+
+* send current registers
+BRKSendRegisters::
+	ldx #7
+loop	  
+		lda SaveA,x
+		jsr BRKSendByte
+		dex
+	bpl loop
 	rts
 ****************
 * set processor registers
@@ -398,9 +419,10 @@ BRKSndRegisters::
 ****************
 BRKSetRegisters::
 	ldx #6
-.loop1	  jsr BRK_RecByte
-	  sta SaveA,x
-	  dex
+.loop1
+		jsr BRK_RecByte
+		sta SaveA,x
+		dex
 	bpl .loop1
 	rts
 ****************
@@ -410,10 +432,11 @@ BRKSetRegisters::
 BRKWriteMem::
 	jsr GetAddrCnt
 	ldy #0
-.loop	  jsr BRK_RecByte	; what
-	  sta (DebugPtr),y
-	  iny
-	  dex
+.loop	  
+		jsr BRK_RecByte	; what
+		sta (DebugPtr),y
+		iny
+		dex
 	bne .loop
 	rts
 ****************
@@ -423,10 +446,11 @@ BRKWriteMem::
 BRKReadMem::
 	jsr GetAddrCnt
 	ldy #0
-.loop	  lda (DebugPtr),y
-	  jsr BRKSendByte
-	  iny
-	  dex
+.loop
+		lda (DebugPtr),y
+		jsr BRKSendByte
+		iny
+		dex
 	bne .loop
 	rts
 ****************
@@ -469,7 +493,7 @@ SaveS	ds 1
 SavePC	ds 2
 SaveBRKNum
 	ds 1
-	dc.b $81		; Header
+	dc.b $8f		; Header
 ****************
 BRKend	set *
 
