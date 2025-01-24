@@ -5,59 +5,64 @@
 * 28.8.96       new MACRO : BREAKPOINT [x[,"remote-command"]]
 
 
-                MACRO INITBRK
+  MACRO INITBRK
 
 IFD BRKuser
-                jsr InitBRK
+    jsr InitBRK
 ENDIF
-                ENDM
 
+  ENDM
 
-                MACRO BREAKPOINT
-                IFVAR \0
-                  IF \0 > $1f
-                    fail "BREAKPOINT: Number to big !"
-                  ENDIF
-                  IFVAR \1
-                    brk #(\0)|$20
-.\_0                dc.b .\_1-.\_0
-                    dc.b \1
+  MACRO BREAKPOINT
+IFD BRKuser
+  IFVAR \0
+    IF \0 > $1f
+      fail "BREAKPOINT: Number too big. Valid range #$00 to #$1f"
+    ENDIF
+    IFVAR \1
+      brk #(\0)|$20
+.\_0
+      dc.b .\_1-.\_0
+      dc.b \1
 .\_1
-                  ELSE
-                    brk #\0
-                  ENDIF
-                ELSE
-                  brk #\0
-                ENDIF
-                ENDM
+    ELSE
+      brk #\0
+    ENDIF
+  ELSE
+    brk #$ff ; Profiling breakpoint
+  ENDIF
+ENDIF
+  ENDM
 
-                MACRO DEBUG
-                php
-                pha
-                IFVAR \0
-                  SWITCH \0
-                  case "X"
-                    txa
-                  case "Y"
-                    tya
-                  elses
-                    lda \0
-                  ENDS
-                ENDIF
-;               jsr SndComLynxByte
-.\wait_         bit $fd8c
-                bpl .\wait_
-                sta $fd8d
-                pla
-                plp
-                ENDM
+  MACRO DEBUG
+  php
+  pha
+  IFVAR \0
+    SWITCH \0
+    case "X"
+      txa
+    case "Y"
+      tya
+    elses
+      lda \0
+    ENDS
+  ENDIF
+;  jsr SndComLynxByte
+.\wait_
+  bit $fd8c
+  bpl .\wait_
+  sta $fd8d
+  pla
+  plp
+  ENDM
 
-                MACRO DEBUG_WAIT
-                php
-                pha
-                stz DebugFlag
-.\wait_deb      lda DebugFlag
-                beq .\wait_deb
-                pla
-                plp
-                ENDM
+  MACRO DEBUG_WAIT
+  php
+  pha
+  stz DebugFlag
+.\wait_deb
+  lda DebugFlag
+  beq .\wait_deb
+  pla
+  plp
+  ENDM

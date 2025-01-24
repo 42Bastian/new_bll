@@ -493,8 +493,8 @@ BRKend	set *
 BRKlen	set BRKend-BRKserver
 BRKstart set $FFF8-BRKlen
 
-	echo "length of BRK-server :%DBRKlen"
-	echo "End of BRK-server:%HBRKend"
+	echo "length of BRK-server: %DBRKlen"
+	echo "End of BRK-server: %HBRKend"
  IF BRKstart <> BRKserver
 	echo "Possible start: %HBRKstart"
  ENDIF
