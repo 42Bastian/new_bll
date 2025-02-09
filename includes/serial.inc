@@ -1,5 +1,5 @@
 * -*-asm-*-
-	db "SERIAL"
+                  db "SERIAL"
 * SERIAL
 * (c) 1993 Bastian Schick
 *
@@ -9,22 +9,27 @@
 * 31.08.96      42BS            error in WaitComLynxByte
 * 07.02.96      42BS            removed old stuff
 * 18.11.97      42BS            move Loader init. to debug.inc
+* 09.02.25      42BS            echo fixed, TurboMode added
 
 SERIAL          equ 1           ; set flag for DEBUG.INC
+
 ***************
 * TIMER4 = UART-Timer
 * initialisieren
 ***************
 contrl          equ %00011101   ; even par
 
-IFND Baudrate
+ IFND Baudrate
 Baudrate        set 9615
-ENDIF
+ ENDIF
 
 prescale        set 125000/Baudrate-1
 
+ IFD UARTturbo
+                echo "Baudrate: 1000000"
+ ELSE
                 echo "Baudrate : %DBaudrate"
-
+ ENDIF
 ****************
 InitComLynx::
 ****************
@@ -44,6 +49,12 @@ patch0          IF prescale<256
                 lda #%00011001
                 ENDIF
                 sta $fd11
+ IFD UARTturbo
+                lda #%00010000
+                sta $FD9C      ; MTEST0: UARTturbo
+ ELSE
+                stz $FD9C      ; MTEST0: UARTturbo
+ ENDIF
 
                 lda #contrl
                 sta SerialContrl
@@ -141,6 +152,7 @@ ENDIF
                 bit #$20
                 beq .exit1
                 bvs .exit1
+	lda	$fd8d
                 stz TxDone
                 lda #$48|contrl
                 sta $fd8c
