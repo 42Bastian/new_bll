@@ -1,7 +1,7 @@
 * -*-asm-*-
 * Mathe-Register
-* A = C * E
-* A : B = D + R/2
+* A = C * E       (writing E+1 starts multiplication)
+* A : B = D + R/2 (writing A+3 starts division)
 *
 MATHE_A		EQU $FC60
 MATHE_B		EQU $FC56
