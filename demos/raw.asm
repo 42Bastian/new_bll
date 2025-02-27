@@ -49,8 +49,9 @@ DEBUG	set 1			; if defined BLL loader is included
 *
 
  BEGIN_ZP
-counter	ds 1
+counter		ds 1
 Save1000Hz	ds 2
+pcm_cnt		ds 1
  END_ZP
 
  BEGIN_MEM
@@ -89,6 +90,11 @@ Start::				; Start-Label needed for reStart
 
 	SET_MINMAX 0,0,160,102	; screen-dim. for FONT.INC
 
+	stz	$fd24
+	stz	$fd25
+	stz	$fd26
+	stz	$fd50
+
 .loop	SET_XY 40,40		; set FONT-cursor
 	lda _1000Hz+1
 	jsr PrintHex
@@ -118,6 +124,16 @@ VBL::	jsr Keyboard		; read buttons
 	END_IRQ
 
 HBL::	inc $fda0
+
+	;; some PCM sound
+	inc 	pcm_cnt
+	lda	pcm_cnt
+	ldx	#$20
+	and	#$20
+	beq	.x
+	ldx	#-$20
+.x
+	stx	$fd22
 	END_IRQ
 ****************
 StartPause::

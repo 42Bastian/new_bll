@@ -110,7 +110,7 @@ tabelle	DC.B 128,-64,-32,-16,-8,-4,-2,-1,0,1,2,4,8,16,32,64
 InitSample::	stz $fd01+SmpTimer*4
 
 	lda $fd44
-	ora $11
+	ora #$11
 	sta $fd44	; channel A - panning
 
 	lda #$ff	; full volume right/left
