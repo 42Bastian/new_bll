@@ -81,6 +81,7 @@ SetCartBlock
 		RTS				; Back to decryption routine
 
 		; Clear all memory from $0003 to $FFFF to 0x00
+		; (except $fff8!)
 ClearMemory
 		STZ dest+1
 		LDA #$00
@@ -183,7 +184,9 @@ InitSuzy
 
 Decrypt
 	echo "RAM code: %HDecrypt"
-		RUN $5000
+
+		RUN WORK_ORG
+
 		LDA #<scratch0
 		STA acc0		; Pointer to start of zero page temporary data
 		LDA #<scratch1		; End of working data zero page address
@@ -210,22 +213,23 @@ _5018
 		STA temp0		; Store in work variable
 		DEC bitcount
 .20		LDA acc0		; Change data address to work on
-		STA $5037		; Self-modifying code (see FEF7)
-		STA $5043		; Self-modifying code (see FF04)
-		STA $5047		; Self-modifying code (see FF08)
+		STA .20a+1		; Self-modifying code (see FEF7)
+		STA .21+1		; Self-modifying code (see FF04)
+		STA .21a+1		; Self-modifying code (see FF08)
 		CLC
 		LDX #SIZEKEY-1
-_FEF7
-		ROL $00,x		; Operand corresponds to $5037
+.20a
+		ROL $00,x
 		DEX
-		BPL _FEF7
+		BPL .20a
+
 		ASL $0A
 		BCC _FF11
 		LDX #$32
 		CLC
-.21		LDA dest,x		; Operand corresponds to $5043
+.21		LDA dest,x
 		ADC inputcode,x
-		STA dest,x		; Operand corresponds to $5047
+.21a		STA dest,x		; Operand corresponds to $5047
 		DEX
 		BPL .21
 ; TODO: Name routine X
@@ -262,6 +266,7 @@ done
 		RTS
 
 		; SCB data for INSERT GAME sprite
+INSERT_SCB
 		DB $05			; SPRCTLO (1 bit/pixel, no flipping, non-collideable sprite)
 		DB $93			; SPRCTL1 (Totally literal, HSIZE and VSIZE specified, drawing starts at upper left quadrant)
 		DB $00			; SPRCOLL
@@ -368,8 +373,8 @@ SuzyOffsets
 ; Initialization values for Suzy addresses (see also $FFE6)
 SuzyValues
 		DB $01	; Draw sprite (no everon detection)
-		DB $50	; SCBNEXT = $5082
-		DB $82	;
+		DB >INSERT_SCB	; SCBNEXT = INSERT_SCB
+		DB <INSERT_SCB	;
 		DB $20	; VIDBAS = $2000
 		DB $00	;
 		DB $00	; VOFF = $0000
