@@ -364,7 +364,7 @@ PrintTime       sta MATHE_B
 
 IF CUBE
 *******************
-* WÅrfel
+* Wuerfel
 InitCube::      lda punkte
                 dec
                 sta points
@@ -608,14 +608,14 @@ DrawSCBs3::     ldy #101
                   adc winkel_add1
                   tax
 .cont
-stz SCBsizex
-lda SCBy
-inc
-lsr
-ror SCBsizex
-lsr
-ror SCBsizex
-sta SCBsizex+1
+ stz SCBsizex
+ lda SCBy
+ inc
+ lsr
+ ror SCBsizex
+ lsr
+ ror SCBsizex
+ sta SCBsizex+1
 
                   phy
                   lda #<SCB
