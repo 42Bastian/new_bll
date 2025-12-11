@@ -119,15 +119,14 @@ triangle8_:
 	  sty	py2
 	  sta	py1
 	  ldx	x2
-	  stx	px1
 	  tay		; y = py1
 	_ELSE
-	  stx	px1
-	  sty	py1
 	  sta	py2
 	  lda	x2
 	  sta	px2
 	_ENDIF
+	stx	px1
+	sty	py1
 	lda	y3
 	cpy	y3
 	_IFCS		; py1 > y3
