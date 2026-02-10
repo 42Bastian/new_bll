@@ -1,6 +1,9 @@
 //
 // make_lnx2
 //
+// New header structure to handle up to four possible banks.
+//
+// Original version:
 // K.Wilkins July97
 //
 // V1 - Creation
@@ -8,7 +11,7 @@
 // V3 - A little more user friendly
 // V4 - Fixed missing command line params
 // V5 - Added image rotation flag to header & command line
-//
+
 
 #include <stdio.h>
 #include <stdlib.h>
