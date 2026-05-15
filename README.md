@@ -2,6 +2,9 @@
 
 This is "fork" of the original BLL to start moving it to the 21th century.
 
+Moved to CodeBerg:
+https://codeberg.org/42Bastian/new_bll
+
 # Tools
 
 ## lyxass
